@@ -28,6 +28,9 @@ jobs:
     - name: Grant Execute Permission for Gradle Wrapper
       run: chmod +x gradlew
 
+    - name: Setup Gradle
+      uses: gradle/actions/setup-gradle@v3
+
     - name: Build Signed Release App Bundle (AAB)
       run: ./gradlew :app:bundleRelease --no-daemon
 
