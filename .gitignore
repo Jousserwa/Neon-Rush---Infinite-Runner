@@ -1,0 +1,21 @@
+# Gradle files and cache
+.gradle/
+build/
+app/build/
+.build-outputs/
+
+# IDE files
+.idea/
+*.iml
+*.ipr
+*.iws
+.navigation/
+
+# OS specific files
+.DS_Store
+Thumbs.db
+
+# Ensure release keystore is tracked since you requested it in the repository
+!release.keystore
+!app/release.keystore
+!gradle-wrapper.jar
