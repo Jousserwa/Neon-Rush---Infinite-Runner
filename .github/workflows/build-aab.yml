@@ -22,19 +22,15 @@ jobs:
         run: |
           gradle wrapper --gradle-version 8.6
 
-      # Force-deletes any old corrupted placeholder file and creates a structurally flawless new keystore
-      - name: Generate Fresh Production Keystore
+      # This clears out any generic placeholder files and decodes your original secret
+      - name: Decode Original Production Keystore
         run: |
           rm -f app/release.keystore
-          keytool -genkeypair -v \
-            -keystore app/release.keystore \
-            -alias neonrush \
-            -keyalg RSA \
-            -keysize 2048 \
-            -validity 10000 \
-            -storepass neonrush123 \
-            -keypass neonrush123 \
-            -dname "CN=NeonRush, O=NeonRush, C=US"
+          echo "${{ secrets.RELEASE_KEYSTORE_BASE64 }}" | base64 --decode > app/release.keystore
+
+      # Verification step to ensure the key is placed correctly for Gradle
+      - name: Verify Keystore Location
+        run: ls -la app/
 
       - name: Grant Execute Permission for Gradle Wrapper
         run: chmod +x gradlew
