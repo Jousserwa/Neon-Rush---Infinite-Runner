@@ -11,22 +11,18 @@ android {
         applicationId = "com.neonrushinfinite.game"
         minSdk = 26
         targetSdk = 35
-        versionCode = 10
-        versionName = "1.0.9"
+        versionCode = 11 // Bumped to 11 to ensure a completely fresh track run
+        versionName = "1.0.10"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     signingConfigs {
         create("release") {
-            // Looks for the keystore file decoded by your GitHub Actions workflow step
-            val keystoreFile = file("release.keystore")
-            if (keystoreFile.exists()) {
-                storeFile = keystoreFile
-                storePassword = "neonrush123"
-                keyAlias = "neonrush"
-                keyPassword = "neonrush123"
-            }
+            storeFile = file("release.keystore")
+            storePassword = "neonrush123"
+            keyAlias = "neonrush"
+            keyPassword = "neonrush123"
         }
     }
 
@@ -34,9 +30,7 @@ android {
         release {
             isMinifyEnabled = false
             isShrinkResources = false
-            if (file("release.keystore").exists()) {
-                signingConfig = signingConfigs.getByName("release")
-            }
+            signingConfig = signingConfigs.getByName("release")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -70,7 +64,6 @@ dependencies {
     implementation("androidx.compose.material3:material3:1.1.2")
     implementation("androidx.navigation:navigation-compose:2.7.7")
 
-    // Play Store Submission Integrations
     implementation("com.google.android.gms:play-services-ads:23.0.0")
     implementation("com.google.firebase:firebase-firestore-ktx:24.11.0")
     implementation("com.google.firebase:firebase-common-ktx:20.4.3")
