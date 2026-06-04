@@ -1,5 +1,3 @@
-import java.util.Base64
-
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -21,10 +19,14 @@ android {
 
     signingConfigs {
         create("release") {
-            storeFile = file("release.keystore")
-            storePassword = "neonrush123"
-            keyAlias = "neonrush"
-            keyPassword = "neonrush123"
+            // Looks for the keystore file decoded by your GitHub Actions workflow step
+            val keystoreFile = file("release.keystore")
+            if (keystoreFile.exists()) {
+                storeFile = keystoreFile
+                storePassword = "neonrush123"
+                keyAlias = "neonrush"
+                keyPassword = "neonrush123"
+            }
         }
     }
 
@@ -32,7 +34,9 @@ android {
         release {
             isMinifyEnabled = false
             isShrinkResources = false
-            signingConfig = signingConfigs.getByName("release")
+            if (file("release.keystore").exists()) {
+                signingConfig = signingConfigs.getByName("release")
+            }
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -74,66 +78,3 @@ dependencies {
 
     testImplementation("junit:junit:4.13.2")
 }
-
-tasks.register("generateKeystore") {
-    doLast {
-        val keystoreFile = file("release.keystore")
-        if (!keystoreFile.exists()) {
-            println("Generating release keystore...")
-            val process = ProcessBuilder(
-                "keytool", "-genkeypair", "-noprompt",
-                "-keystore", keystoreFile.absolutePath,
-                "-alias", "neonrush",
-                "-keyalg", "RSA",
-                "-keysize", "2048",
-                "-validity", "10000",
-                "-dname", "CN=NeonRush, O=NeonRush, C=US",
-                "-storepass", "neonrush123",
-                "-keypass", "neonrush123"
-            ).inheritIO().start()
-            val exitCode = process.waitFor()
-            if (exitCode != 0) {
-                throw RuntimeException("Failed to generate keystore, exit code: $exitCode")
-            }
-            println("Release keystore generated successfully at ${keystoreFile.absolutePath}")
-        } else {
-            println("Release keystore already exists.")
-        }
-    }
-}
-
-tasks.register("encodeKeystoreToBase64") {
-    doLast {
-        val keystoreFile = file("release.keystore")
-        if (keystoreFile.exists()) {
-            val bytes = keystoreFile.readBytes()
-            val base64String = Base64.getEncoder().encodeToString(bytes)
-            println("--- BEGIN BASE64 KEYSTORE ---")
-            println(base64String)
-            println("--- END BASE64 KEYSTORE ---")
-        } else {
-            println("ERROR: release.keystore not found!")
-        }
-    }
-}
-
-tasks.register("copyBundleToRoot") {
-    doLast {
-        val bundleFile = file("${layout.buildDirectory.get().asFile}/outputs/bundle/release/app-release.aab")
-        if (bundleFile.exists()) {
-            val destFile = file("${rootDir.absolutePath}/app-release.aab")
-            bundleFile.copyTo(destFile, overwrite = true)
-            println("Successfully copied bundle from ${bundleFile.absolutePath} to ${destFile.absolutePath}")
-        } else {
-            println("ERROR: Release bundle not found at ${bundleFile.absolutePath}")
-        }
-    }
-}
-
-// Ensure the keystore is generated before compiling release bundles or assets
-tasks.matching { it.name.startsWith("bundle") || it.name.startsWith("assemble") }.configureEach {
-    dependsOn("generateKeystore")
-}
-
-
-
