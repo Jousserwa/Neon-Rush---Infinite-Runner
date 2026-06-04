@@ -21,7 +21,7 @@ jobs:
       # This step forces GitHub to download a fresh, uncorrupted gradle-wrapper.jar file automatically
       - name: Setup Gradle Wrapper
         run: |
-          gradle wrapper --gradle-version 8.2
+          gradle wrapper --gradle-version 8.6
 
       - name: Decode Keystore
         run: |
