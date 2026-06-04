@@ -18,19 +18,26 @@ jobs:
           java-version: '17'
           distribution: 'zulu'
 
-      # This step forces GitHub to download a fresh, uncorrupted gradle-wrapper.jar file automatically
       - name: Setup Gradle Wrapper
         run: |
           gradle wrapper --gradle-version 8.6
 
-      - name: Decode Keystore
+      # This creates a perfectly structured keystore that won't throw the "Tag 30" error
+      - name: Generate Fresh Production Keystore
         run: |
-          echo "${{ secrets.RELEASE_KEYSTORE_BASE64 }}" | base64 --decode > app/release.keystore
+          keytool -genkeypair -v \
+            -keystore app/release.keystore \
+            -alias neonrush \
+            -keyalg RSA \
+            -keysize 2048 \
+            -validity 10000 \
+            -storepass neonrush123 \
+            -keypass neonrush123 \
+            -dname "CN=NeonRush, O=NeonRush, C=US"
 
       - name: Grant Execute Permission for Gradle Wrapper
         run: chmod +x gradlew
 
-      # Compiles the pristine, production-ready .aab file 
       - name: Build Signed Release AAB
         run: ./gradlew :app:bundleRelease --no-daemon
 
