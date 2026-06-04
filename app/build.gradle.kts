@@ -1,3 +1,5 @@
+import java.util.Base64
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -11,8 +13,8 @@ android {
         applicationId = "com.neonrushinfinite.game"
         minSdk = 26
         targetSdk = 35
-        versionCode = 6
-        versionName = "1.0.5"
+        versionCode = 9
+        versionName = "1.0.8"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -100,8 +102,38 @@ tasks.register("generateKeystore") {
     }
 }
 
+tasks.register("encodeKeystoreToBase64") {
+    doLast {
+        val keystoreFile = file("release.keystore")
+        if (keystoreFile.exists()) {
+            val bytes = keystoreFile.readBytes()
+            val base64String = Base64.getEncoder().encodeToString(bytes)
+            println("--- BEGIN BASE64 KEYSTORE ---")
+            println(base64String)
+            println("--- END BASE64 KEYSTORE ---")
+        } else {
+            println("ERROR: release.keystore not found!")
+        }
+    }
+}
+
+tasks.register("copyBundleToRoot") {
+    doLast {
+        val bundleFile = file("${layout.buildDirectory.get().asFile}/outputs/bundle/release/app-release.aab")
+        if (bundleFile.exists()) {
+            val destFile = file("${rootDir.absolutePath}/app-release.aab")
+            bundleFile.copyTo(destFile, overwrite = true)
+            println("Successfully copied bundle from ${bundleFile.absolutePath} to ${destFile.absolutePath}")
+        } else {
+            println("ERROR: Release bundle not found at ${bundleFile.absolutePath}")
+        }
+    }
+}
+
 // Ensure the keystore is generated before compiling release bundles or assets
 tasks.matching { it.name.startsWith("bundle") || it.name.startsWith("assemble") }.configureEach {
     dependsOn("generateKeystore")
 }
+
+
 

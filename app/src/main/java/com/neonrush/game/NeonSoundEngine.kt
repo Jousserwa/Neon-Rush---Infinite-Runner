@@ -74,7 +74,7 @@ class NeonSoundEngine {
             if (isInitialized) return
             synchronized(this) {
                 if (isInitialized) return
-                appContext = context.applicationContext
+                appContext = context
                 sharedPrefs = appContext?.getSharedPreferences("neon_rush_settings", Context.MODE_PRIVATE)
                 
                 // Read configurations
@@ -110,7 +110,7 @@ class NeonSoundEngine {
                 ).coerceAtLeast(BLOCK_SIZE * 2 * 4)
                 
                 audioTrack = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    AudioTrack.Builder()
+                    val builder = AudioTrack.Builder()
                         .setAudioAttributes(
                             AudioAttributes.Builder()
                                 .setUsage(AudioAttributes.USAGE_GAME)
@@ -126,7 +126,10 @@ class NeonSoundEngine {
                         )
                         .setBufferSizeInBytes(bufferSizeInBytes)
                         .setTransferMode(AudioTrack.MODE_STREAM)
-                        .build()
+                    
+                    // Avoid builder.setContext to bypass AppOps and prevent "attributionTag not declared in manifest" blockages on Android 12+
+                    
+                    builder.build()
                 } else {
                     @Suppress("DEPRECATION")
                     AudioTrack(
