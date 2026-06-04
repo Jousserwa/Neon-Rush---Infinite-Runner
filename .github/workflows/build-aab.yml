@@ -1,4 +1,4 @@
-name: Build Android App Bundle
+name: Build Signed Android App Bundle
 
 on:
   push:
@@ -22,16 +22,28 @@ jobs:
         run: |
           gradle wrapper --gradle-version 8.6
 
+      # Force-deletes any old corrupted placeholder file and creates a structurally flawless new keystore
+      - name: Generate Fresh Production Keystore
+        run: |
+          rm -f app/release.keystore
+          keytool -genkeypair -v \
+            -keystore app/release.keystore \
+            -alias neonrush \
+            -keyalg RSA \
+            -keysize 2048 \
+            -validity 10000 \
+            -storepass neonrush123 \
+            -keypass neonrush123 \
+            -dname "CN=NeonRush, O=NeonRush, C=US"
+
       - name: Grant Execute Permission for Gradle Wrapper
         run: chmod +x gradlew
 
-      # Compiles a clean, standard release bundle file
-      - name: Build Release AAB
+      - name: Build Signed Release AAB
         run: ./gradlew :app:bundleRelease --no-daemon
 
-      - name: Upload AAB Artifact
+      - name: Upload Signed AAB Artifact
         uses: actions/upload-artifact@v4
         with:
           name: neon-rush-release-aab
           path: app/build/outputs/bundle/release/app-release.aab
-  
