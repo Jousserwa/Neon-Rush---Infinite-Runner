@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEON RUSH — How Far Can You Go?</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --neon-pink: #ff2d78;
+    --neon-cyan: #00f5ff;
+    --neon-purple: #bf00ff;
+    --neon-magenta: #ff00c8;
+    --dark-navy: #03030f;
+    --dark-card: #08081a;
+    --grid-color: rgba(0, 245, 255, 0.12);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--dark-navy);
+    color: #fff;
+    font-family: 'Rajdhani', sans-serif;
+    overflow-x: hidden;
+    cursor: crosshair;
+  }
+
+  /* ── GRID BACKGROUND ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--grid-color) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── SCANLINE OVERLAY ── */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.07) 2px,
+      rgba(0,0,0,0.07) 4px
+    );
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.2rem 2rem;
+    background: rgba(3,3,15,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(0,245,255,0.15);
+  }
+
+  .nav-logo {
+    font-family: 'Orbitron', monospace;
+    font-weight: 900;
+    font-size: 1.1rem;
+    letter-spacing: 0.1em;
+  }
+  .nav-logo span:first-child { color: var(--neon-pink); }
+  .nav-logo span:last-child { color: #fff; }
+
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
+  .nav-links a {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 600;
+    font-size: 0.85rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.6);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--neon-cyan); }
+
+  .nav-cta {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--dark-navy);
+    background: var(--neon-pink);
+    border: none;
+    padding: 0.6rem 1.4rem;
+    clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+    cursor: pointer;
+    transition: background 0.2s, box-shadow 0.2s;
+    text-decoration: none;
+  }
+  .nav-cta:hover {
+    background: var(--neon-cyan);
+    box-shadow: 0 0 20px var(--neon-cyan);
+  }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 6rem 2rem 4rem;
+    overflow: hidden;
+    z-index: 1;
+  }
+
+  /* Retro grid floor */
+  .hero-grid {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 45%;
+    background:
+      linear-gradient(rgba(255,45,120,0.15) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,45,120,0.15) 1px, transparent 1px);
+    background-size: 60px 60px;
+    transform: perspective(400px) rotateX(55deg);
+    transform-origin: bottom center;
+    mask-image: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+  }
+
+  /* Glow orbs */
+  .orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    pointer-events: none;
+    animation: pulse 4s ease-in-out infinite alternate;
+  }
+  .orb-1 { width: 400px; height: 400px; background: rgba(191,0,255,0.25); top: 10%; left: -10%; }
+  .orb-2 { width: 300px; height: 300px; background: rgba(255,45,120,0.2); top: 20%; right: -5%; animation-delay: 1.5s; }
+  .orb-3 { width: 250px; height: 250px; background: rgba(0,245,255,0.15); bottom: 20%; left: 30%; animation-delay: 3s; }
+
+  @keyframes pulse {
+    from { transform: scale(1); opacity: 0.7; }
+    to   { transform: scale(1.15); opacity: 1; }
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--neon-cyan);
+    border: 1px solid rgba(0,245,255,0.3);
+    padding: 0.4rem 1.2rem;
+    margin-bottom: 2rem;
+    animation: fadeInDown 0.8s ease both;
+  }
+  .hero-badge::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: var(--neon-cyan);
+    border-radius: 50%;
+    box-shadow: 0 0 8px var(--neon-cyan);
+    animation: blink 1.2s infinite;
+  }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+
+  .hero-title {
+    font-family: 'Orbitron', monospace;
+    font-weight: 900;
+    font-size: clamp(3.5rem, 12vw, 8rem);
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    animation: fadeInUp 0.9s ease 0.2s both;
+  }
+  .hero-title .neon { color: var(--neon-pink); text-shadow: 0 0 30px var(--neon-pink), 0 0 60px rgba(255,45,120,0.4); }
+  .hero-title .rush { color: #fff; text-shadow: 0 0 20px rgba(255,255,255,0.3); }
+
+  .hero-sub {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: clamp(1rem, 3vw, 1.4rem);
+    font-weight: 300;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--neon-cyan);
+    margin-top: 0.5rem;
+    text-shadow: 0 0 15px var(--neon-cyan);
+    animation: fadeInUp 0.9s ease 0.4s both;
+  }
+
+  .hero-desc {
+    max-width: 520px;
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: rgba(255,255,255,0.55);
+    margin: 2rem auto 3rem;
+    animation: fadeInUp 0.9s ease 0.6s both;
+  }
+
+  .hero-buttons {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    animation: fadeInUp 0.9s ease 0.8s both;
+  }
+
+  .btn-primary {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #fff;
+    background: linear-gradient(135deg, var(--neon-pink), var(--neon-purple));
+    border: none;
+    padding: 1rem 2.5rem;
+    clip-path: polygon(12px 0%, 100% 0%, calc(100% - 12px) 100%, 0% 100%);
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    box-shadow: 0 0 30px rgba(255,45,120,0.4);
+    transition: box-shadow 0.3s, transform 0.2s;
+  }
+  .btn-primary:hover {
+    box-shadow: 0 0 50px rgba(255,45,120,0.7);
+    transform: translateY(-2px);
+  }
+
+  .btn-secondary {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--neon-cyan);
+    background: transparent;
+    border: 1px solid var(--neon-cyan);
+    padding: 1rem 2.5rem;
+    clip-path: polygon(12px 0%, 100% 0%, calc(100% - 12px) 100%, 0% 100%);
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    box-shadow: inset 0 0 20px rgba(0,245,255,0.05);
+    transition: box-shadow 0.3s, background 0.3s, transform 0.2s;
+  }
+  .btn-secondary:hover {
+    background: rgba(0,245,255,0.1);
+    box-shadow: 0 0 30px rgba(0,245,255,0.3);
+    transform: translateY(-2px);
+  }
+
+  /* store badges */
+  .store-badges {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 2.5rem;
+    animation: fadeInUp 0.9s ease 1s both;
+  }
+  .store-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 0.6rem 1.2rem;
+    border-radius: 4px;
+    text-decoration: none;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .store-badge:hover {
+    border-color: rgba(0,245,255,0.4);
+    background: rgba(0,245,255,0.05);
+  }
+  .store-badge svg { width: 20px; height: 20px; fill: #fff; }
+  .store-badge-text { line-height: 1.2; }
+  .store-badge-text small { display: block; font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.5); }
+  .store-badge-text strong { display: block; font-family: 'Orbitron', monospace; font-size: 0.75rem; color: #fff; }
+
+  @keyframes fadeInDown { from { opacity:0; transform: translateY(-20px); } to { opacity:1; transform: translateY(0); } }
+  @keyframes fadeInUp   { from { opacity:0; transform: translateY(30px);  } to { opacity:1; transform: translateY(0); } }
+
+  /* ── STATS BAR ── */
+  .stats-bar {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    gap: 0;
+    border-top: 1px solid rgba(0,245,255,0.15);
+    border-bottom: 1px solid rgba(0,245,255,0.15);
+    background: rgba(0,245,255,0.03);
+  }
+  .stat-item {
+    flex: 1;
+    max-width: 200px;
+    text-align: center;
+    padding: 2rem 1rem;
+    border-right: 1px solid rgba(0,245,255,0.1);
+  }
+  .stat-item:last-child { border-right: none; }
+  .stat-num {
+    font-family: 'Orbitron', monospace;
+    font-size: 2rem;
+    font-weight: 900;
+    color: var(--neon-pink);
+    text-shadow: 0 0 20px rgba(255,45,120,0.5);
+  }
+  .stat-label {
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.4);
+    margin-top: 0.3rem;
+  }
+
+  /* ── SECTIONS ── */
+  section { position: relative; z-index: 1; }
+
+  .section-header {
+    text-align: center;
+    margin-bottom: 4rem;
+  }
+  .section-tag {
+    display: inline-block;
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--neon-cyan);
+    margin-bottom: 1rem;
+  }
+  .section-title {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 900;
+    letter-spacing: -0.02em;
+  }
+  .section-title .accent { color: var(--neon-pink); }
+
+  /* ── FEATURES ── */
+  .features {
+    padding: 6rem 2rem;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5px;
+    background: rgba(0,245,255,0.1);
+    border: 1px solid rgba(0,245,255,0.1);
+  }
+
+  .feature-card {
+    background: var(--dark-card);
+    padding: 2.5rem;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.3s;
+  }
+  .feature-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px; height: 100%;
+    background: var(--neon-pink);
+    transform: scaleY(0);
+    transform-origin: bottom;
+    transition: transform 0.3s;
+  }
+  .feature-card:hover { background: rgba(8,8,26,0.9); }
+  .feature-card:hover::before { transform: scaleY(1); }
+
+  .feature-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+    display: block;
+  }
+  .feature-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--neon-cyan);
+    margin-bottom: 1rem;
+  }
+  .feature-desc {
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: rgba(255,255,255,0.5);
+  }
+
+  /* ── SKINS SECTION ── */
+  .skins-section {
+    padding: 6rem 2rem;
+    background: linear-gradient(180deg, transparent, rgba(191,0,255,0.04), transparent);
+  }
+  .skins-inner { max-width: 1000px; margin: 0 auto; }
+
+  .skins-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 1rem;
+  }
+
+  .skin-card {
+    background: var(--dark-card);
+    border: 1px solid rgba(255,255,255,0.06);
+    padding: 1.5rem 1rem;
+    text-align: center;
+    position: relative;
+    transition: border-color 0.3s, transform 0.2s;
+  }
+  .skin-card:hover {
+    border-color: var(--neon-pink);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 30px rgba(255,45,120,0.2);
+  }
+  .skin-card.active { border-color: var(--neon-cyan); }
+  .skin-card.active::after {
+    content: 'ACTIVE';
+    position: absolute;
+    top: 8px; right: 8px;
+    font-family: 'Orbitron', monospace;
+    font-size: 0.5rem;
+    letter-spacing: 0.1em;
+    color: var(--dark-navy);
+    background: var(--neon-cyan);
+    padding: 2px 6px;
+  }
+
+  .skin-emoji { font-size: 2rem; display: block; margin-bottom: 0.8rem; }
+  .skin-name {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: #fff;
+    margin-bottom: 0.4rem;
+  }
+  .skin-cost {
+    font-size: 0.75rem;
+    color: var(--neon-pink);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+  }
+  .skin-cost.free { color: var(--neon-cyan); }
+
+  /* ── HOW TO PLAY ── */
+  .howto {
+    padding: 6rem 2rem;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .steps {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    position: relative;
+  }
+  .steps::before {
+    content: '';
+    position: absolute;
+    left: 28px; top: 0; bottom: 0;
+    width: 1px;
+    background: linear-gradient(to bottom, var(--neon-pink), var(--neon-purple), var(--neon-cyan));
+  }
+
+  .step {
+    display: flex;
+    gap: 2rem;
+    align-items: flex-start;
+    padding: 2rem 0;
+    position: relative;
+  }
+  .step-num {
+    flex-shrink: 0;
+    width: 56px; height: 56px;
+    background: var(--dark-card);
+    border: 1px solid var(--neon-pink);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Orbitron', monospace;
+    font-size: 1.2rem;
+    font-weight: 900;
+    color: var(--neon-pink);
+    box-shadow: 0 0 20px rgba(255,45,120,0.3);
+    position: relative;
+    z-index: 1;
+  }
+  .step-content h3 {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: #fff;
+    margin-bottom: 0.5rem;
+  }
+  .step-content p {
+    font-size: 0.95rem;
+    color: rgba(255,255,255,0.5);
+    line-height: 1.7;
+  }
+
+  /* ── CTA SECTION ── */
+  .cta-section {
+    padding: 6rem 2rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .cta-section::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, rgba(191,0,255,0.15) 0%, transparent 70%);
+  }
+  .cta-section h2 {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 900;
+    margin-bottom: 1rem;
+    position: relative;
+  }
+  .cta-section p {
+    font-size: 1.1rem;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 3rem;
+    position: relative;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    position: relative;
+    z-index: 1;
+    border-top: 1px solid rgba(0,245,255,0.1);
+    padding: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  .footer-logo {
+    font-family: 'Orbitron', monospace;
+    font-weight: 900;
+    font-size: 0.9rem;
+  }
+  .footer-logo span:first-child { color: var(--neon-pink); }
+  footer p {
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.3);
+    letter-spacing: 0.05em;
+  }
+  .footer-links { display: flex; gap: 1.5rem; }
+  .footer-links a {
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.4);
+    text-decoration: none;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+  .footer-links a:hover { color: var(--neon-cyan); }
+
+  /* ── FLOATING PARTICLES ── */
+  .particles {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+  }
+  .particle {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: var(--neon-cyan);
+    border-radius: 50%;
+    animation: float linear infinite;
+    opacity: 0;
+  }
+  @keyframes float {
+    0%   { transform: translateY(100vh) translateX(0); opacity: 0; }
+    10%  { opacity: 1; }
+    90%  { opacity: 1; }
+    100% { transform: translateY(-10vh) translateX(30px); opacity: 0; }
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 600px) {
+    .nav-links { display: none; }
+    .stats-bar { flex-wrap: wrap; }
+    .stat-item { min-width: 50%; border-bottom: 1px solid rgba(0,245,255,0.1); }
+    .steps::before { left: 24px; }
+    footer { flex-direction: column; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Floating particles -->
+<div class="particles" id="particles"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo"><span>NEON</span><span>RUSH</span></div>
+  <ul class="nav-links">
+    <li><a href="#features">Features</a></li>
+    <li><a href="#skins">Skins</a></li>
+    <li><a href="#howto">How to Play</a></li>
+  </ul>
+  <a href="#download" class="nav-cta">Play Now</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+  <div class="hero-grid"></div>
+
+  <div class="hero-badge">Now Available on Android</div>
+
+  <h1 class="hero-title">
+    <span class="neon">NEON</span><br>
+    <span class="rush">RUSH</span>
+  </h1>
+  <p class="hero-sub">How far can you go?</p>
+
+  <p class="hero-desc">
+    An electrifying infinite runner through neon-drenched cyberpunk dimensions.
+    Dodge obstacles, collect gems, race ghost trails, and unlock legendary ships.
+  </p>
+
+  <div class="hero-buttons">
+    <a href="#download" class="btn-primary">▶ Start Rush</a>
+    <a href="#howto" class="btn-secondary">How to Play</a>
+  </div>
+
+  <div class="store-badges" id="download">
+    <a href="https://play.google.com/store" class="store-badge" target="_blank">
+      <svg viewBox="0 0 24 24"><path d="M3.18 23.76A2 2 0 0 1 2 22V2a2 2 0 0 1 1.18-1.76l11.29 11.41zM21.14 10.5l-2.84-1.61-3.19 3.21 3.19 3.2 2.87-1.63a2 2 0 0 0 0-3.17zM3.61.32L16.31 8.1l-3.19 3.2zM3.61 23.68l9.51-9.38 3.19 3.2z"/></svg>
+      <div class="store-badge-text">
+        <small>Get it on</small>
+        <strong>Google Play</strong>
+      </div>
+    </a>
+  </div>
+</section>
+
+<!-- STATS BAR -->
+<div class="stats-bar">
+  <div class="stat-item">
+    <div class="stat-num">∞</div>
+    <div class="stat-label">Endless Levels</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">6+</div>
+    <div class="stat-label">Ship Skins</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">Daily</div>
+    <div class="stat-label">Modifiers</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">Global</div>
+    <div class="stat-label">Leaderboard</div>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<section class="features" id="features">
+  <div class="section-header">
+    <span class="section-tag">// Core Gameplay</span>
+    <h2 class="section-title">Built for <span class="accent">Speed</span></h2>
+  </div>
+  <div class="features-grid">
+    <div class="feature-card">
+      <span class="feature-icon">⚡</span>
+      <div class="feature-title">Infinite Runner</div>
+      <p class="feature-desc">Race through an endless neon corridor that gets faster and more chaotic the further you go. No two runs are ever the same.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">👻</span>
+      <div class="feature-title">Invincible Race</div>
+      <p class="feature-desc">Race against ghost telemetry trails from top pilots. Match their ghost paths for extra score multipliers and bragging rights.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🎯</span>
+      <div class="feature-title">Daily Modifiers</div>
+      <p class="feature-desc">Every day brings a new twist — Powerup Party, Speed Surge, Mirror Mode and more. Keep coming back for fresh challenges.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">💎</span>
+      <div class="feature-title">Gems & Rewards</div>
+      <p class="feature-desc">Collect gems during your run to unlock legendary ship skins, from the Cyan Diamond starter hull to the ultimate Hex Grid Cyber-Fighter.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🏆</span>
+      <div class="feature-title">Global Rankings</div>
+      <p class="feature-desc">Compete on a worldwide leaderboard. Climb the ranks, earn your pilot title, and show the world how far you can go.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🚀</span>
+      <div class="feature-title">Ship Customization</div>
+      <p class="feature-desc">Unlock and equip cyberpunk ship hulls with unique visual styles. Exchange your hard-earned gems for higher-tier legendary cosmetics.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SKINS -->
+<section class="skins-section" id="skins">
+  <div class="skins-inner">
+    <div class="section-header">
+      <span class="section-tag">// Ship Customization Deck</span>
+      <h2 class="section-title">Choose Your <span class="accent">Hull</span></h2>
+    </div>
+    <div class="skins-grid">
+      <div class="skin-card active">
+        <span class="skin-emoji">💠</span>
+        <div class="skin-name">Cyan Diamond</div>
+        <div class="skin-cost free">Free Starter</div>
+      </div>
+      <div class="skin-card">
+        <span class="skin-emoji">🟣</span>
+        <div class="skin-name">Purple Square</div>
+        <div class="skin-cost">💎 30 Gems</div>
+      </div>
+      <div class="skin-card">
+        <span class="skin-emoji">🔺</span>
+        <div class="skin-name">Green Triangle</div>
+        <div class="skin-cost">💎 50 Gems</div>
+      </div>
+      <div class="skin-card">
+        <span class="skin-emoji">⚡</span>
+        <div class="skin-name">Magenta Pulse Racer</div>
+        <div class="skin-cost">💎 90 Gems</div>
+      </div>
+      <div class="skin-card">
+        <span class="skin-emoji">🏆</span>
+        <div class="skin-name">Gold Transcendence Vessel</div>
+        <div class="skin-cost">💎 250 Gems</div>
+      </div>
+      <div class="skin-card">
+        <span class="skin-emoji">🛸</span>
+        <div class="skin-name">Hex Grid Cyber-Fighter</div>
+        <div class="skin-cost">💎 400 Gems</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW TO PLAY -->
+<section class="howto" id="howto">
+  <div class="section-header">
+    <span class="section-tag">// Controls</span>
+    <h2 class="section-title">How to <span class="accent">Play</span></h2>
+  </div>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">01</div>
+      <div class="step-content">
+        <h3>Launch Your Ship</h3>
+        <p>Tap "START RUSH" from the main screen. Your ship launches automatically into the neon corridor — get ready fast.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">02</div>
+      <div class="step-content">
+        <h3>Swipe to Dodge</h3>
+        <p>Swipe left or right to change lanes. Swipe up to jump, swipe down to slide under barriers. Every millisecond counts.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">03</div>
+      <div class="step-content">
+        <h3>Collect Gems</h3>
+        <p>Fly through glowing gems scattered across the track. Gems power up your ship and unlock new skins in the customization deck.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">04</div>
+      <div class="step-content">
+        <h3>Race Ghost Trails</h3>
+        <p>Follow the ghost telemetry paths left by top players. Matching their route gives you score multipliers and pushes your global ranking.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">05</div>
+      <div class="step-content">
+        <h3>Beat Your Best</h3>
+        <p>Each run ends when you crash. Check your score, compete globally, and push further every time. How far can you go?</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <h2>Ready to <span style="color:var(--neon-pink)">Rush?</span></h2>
+  <p>Download free on Android. No pay-to-win. Pure skill.</p>
+  <div style="position:relative;display:inline-flex;gap:1rem;flex-wrap:wrap;justify-content:center;">
+    <a href="https://play.google.com/store" class="btn-primary" target="_blank">▶ Download on Android</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo"><span>NEON</span><span style="color:#fff"> RUSH</span></div>
+  <p>© 2026 Real Studios · neonrushinfinite.com</p>
+  <div class="footer-links">
+    <a href="#">Privacy</a>
+    <a href="#">Contact</a>
+    <a href="https://github.com/Jousserwa/Neon-Rush---Infinite-Runner" target="_blank">GitHub</a>
+  </div>
+</footer>
+
+<script>
+  // Generate particles
+  const container = document.getElementById('particles');
+  for (let i = 0; i < 25; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.left = Math.random() * 100 + 'vw';
+    p.style.animationDuration = (8 + Math.random() * 12) + 's';
+    p.style.animationDelay = (Math.random() * 15) + 's';
+    p.style.background = Math.random() > 0.5 ? '#00f5ff' : '#ff2d78';
+    p.style.width = p.style.height = (1 + Math.random() * 2) + 'px';
+    container.appendChild(p);
+  }
+
+  // Scroll animations
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.style.opacity = '1';
+        e.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.feature-card, .skin-card, .step').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(20px)';
+    el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+    observer.observe(el);
+  });
+</script>
+</body>
+</html>
