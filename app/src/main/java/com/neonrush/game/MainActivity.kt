@@ -15,11 +15,30 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        // Initialize Services
-        NeonSoundEngine.init(applicationContext)
-        AdMobManager.init(applicationContext)
-        FirebaseLeaderboardManager.init(applicationContext)
-        RevenueCatManager.init(applicationContext)
+        // Initialize Services Safely to Prevent Startup Crashes
+        try {
+            NeonSoundEngine.init(applicationContext)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
+        try {
+            AdMobManager.init(applicationContext)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
+        try {
+            FirebaseLeaderboardManager.init(applicationContext)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
+        try {
+            RevenueCatManager.init(applicationContext)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
 
         val gameDao = GameDao(applicationContext)
         viewModel = NeonRushViewModel(gameDao, applicationContext)
