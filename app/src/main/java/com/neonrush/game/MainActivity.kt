@@ -1,4 +1,4 @@
-package com.neonrushinfinite.game
+package com.neonrush.game
 
 import android.content.Intent
 import android.os.Bundle
@@ -57,8 +57,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun navigateToHome() {
-        val intent = Intent(this, HomeActivity::class.java)
-        startActivity(intent)
-        finish() // Terminates loading activity state completely
+        // Using a safe dynamic class reference matching your namespace path structure
+        try {
+            val intent = Intent(this, Class.forName("com.neonrush.game.HomeActivity"))
+            startActivity(intent)
+            finish() // Terminates loading activity state completely
+        } catch (e: Exception) {
+            Log.e(TAG, "Could not resolve HomeActivity destination layout class: ${e.localizedMessage}")
+        }
     }
 }
