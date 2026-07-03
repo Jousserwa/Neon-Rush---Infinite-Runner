@@ -1204,6 +1204,19 @@ fun SkinsDeckTab(viewModel: NeonRushViewModel, profile: GameProfile) {
 @Composable
 fun RacingSimulatorScreen(simState: SimulationState, viewModel: NeonRushViewModel) {
     var controlOffset by remember { mutableStateOf(50f) }
+    var previousUserYPos by remember { mutableStateOf(simState.userYPos) }
+    val tiltAngle = (simState.userYPos - previousUserYPos).toFloat().coerceIn(-10f, 10f) * 1.8f
+    SideEffect { previousUserYPos = simState.userYPos }
+
+    val pf1 = imageResource(id = R.drawable.pilot_run_1)
+    val pf2 = imageResource(id = R.drawable.pilot_run_2)
+    val pf3 = imageResource(id = R.drawable.pilot_run_3)
+    val pf4 = imageResource(id = R.drawable.pilot_run_4)
+    val pf5 = imageResource(id = R.drawable.pilot_run_5)
+    val pf6 = imageResource(id = R.drawable.pilot_run_6)
+    val pilotFrames = remember(pf1, pf2, pf3, pf4, pf5, pf6) {
+        listOf(pf1, pf2, pf3, pf4, pf5, pf6)
+    }
 
     Column(
         modifier = Modifier
