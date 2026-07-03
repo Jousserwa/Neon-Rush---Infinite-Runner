@@ -1462,7 +1462,7 @@ fun RacingSimulatorScreen(simState: SimulationState, viewModel: NeonRushViewMode
                             dstOffset = IntOffset(topLeftX.roundToInt(), topLeftY.roundToInt()),
                             dstSize = IntSize(displayWidth.roundToInt(), displayHeight.roundToInt())
                         )
-                    
+                    }  
                  // Clean screen shake translation reset
                     drawContext.canvas.translate(-simState.screenShakeX, -simState.screenShakeY)
                 }
