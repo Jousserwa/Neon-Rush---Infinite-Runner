@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "806181430974",
+    "project_id": "neon-rush-infinite-runner",
+    "storage_bucket": "neon-rush-infinite-runner.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:806181430974:android:aa1833ad05f6d3c33420ef",
+        "android_client_info": {
+          "package_name": "com.neonrushinfinite.game"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDMKNN5e8atefKCTXwJupbtV06ZyGKhnRY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
