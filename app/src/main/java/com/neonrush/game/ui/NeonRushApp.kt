@@ -1426,15 +1426,14 @@ fun RacingSimulatorScreen(simState: SimulationState, viewModel: NeonRushViewMode
                             center = Offset(ghostX, ghostY)
                         )
                     }
-
-                    // Draw User Vehicle (represented by fluorescent cyan ring)
+// Draw User Pilot Character using real sprite art
                     val userY = ch * (simState.userYPos / 100f)
 
                     // Draw protective shields or active powerup halo visual hints
                     if (simState.activePowerupDurations.containsKey("PU1")) {
                         drawCircle(
                             color = Color(0xFF3A86FF),
-                            radius = 16.dp.toPx(),
+                            radius = 26.dp.toPx(),
                             center = Offset(userX, userY),
                             style = Stroke(width = 2.dp.toPx())
                         )
@@ -1442,25 +1441,29 @@ fun RacingSimulatorScreen(simState: SimulationState, viewModel: NeonRushViewMode
                     if (simState.activePowerupDurations.containsKey("PU7")) {
                         drawCircle(
                             color = Color(0xFFF72585),
-                            radius = 18.dp.toPx(),
+                            radius = 28.dp.toPx(),
                             center = Offset(userX, userY),
                             style = Stroke(width = 2.dp.toPx())
                         )
                     }
 
-                    drawCircle(
-                        color = CyberPrimary,
-                        radius = 10.dp.toPx(),
-                        center = Offset(userX, userY),
-                        style = Stroke(width = 2.dp.toPx())
-                    )
-                    drawCircle(
-                        color = Color.White,
-                        radius = 4.dp.toPx(),
-                        center = Offset(userX, userY)
-                    )
+                    val frameIdx = (simState.tickIndex / 3) % pilotFrames.size
+                    val currentFrameImg = pilotFrames[frameIdx]
 
-                    // Clean screen shake translation reset
+                    val displayHeight = ch * 0.20f
+                    val aspect = currentFrameImg.width.toFloat() / currentFrameImg.height.toFloat()
+                    val displayWidth = displayHeight * aspect
+                    val topLeftX = userX - displayWidth * 0.42f
+                    val topLeftY = userY - displayHeight * 0.55f
+
+                    rotate(degrees = tiltAngle, pivot = Offset(userX, userY)) {
+                        drawImage(
+                            image = currentFrameImg,
+                            dstOffset = IntOffset(topLeftX.roundToInt(), topLeftY.roundToInt()),
+                            dstSize = IntSize(displayWidth.roundToInt(), displayHeight.roundToInt())
+                        )
+                    
+                 // Clean screen shake translation reset
                     drawContext.canvas.translate(-simState.screenShakeX, -simState.screenShakeY)
                 }
 
