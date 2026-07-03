@@ -111,8 +111,7 @@ object ZoneGenerator {
         val rand = Random(seed + zone * 1337 + 101)
         val envIdx = selectEnvironment(zone)
         val env = ENVIRONMENTS[envIdx]
-        
-        val obsSetId = (zone * 1597 + seed) % 24
+        val obsSetId = (((zone * 1597 + seed) % 24) + 24) % 24      
         val obsSetName = OBSTACLE_SETS[obsSetId.toInt()]
         
         val mechIds = selectMechanics(zone, rand)
