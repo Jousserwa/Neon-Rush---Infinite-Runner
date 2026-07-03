@@ -17,6 +17,11 @@ import kotlin.math.sin
 import kotlin.math.cos
 import kotlin.math.PI
 import kotlin.math.pow
+import androidx.compose.ui.res.imageResource
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.IntSize
+import kotlin.math.roundToInt
+import com.neonrush.game.R
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextOverflow
