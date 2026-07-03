@@ -17,6 +17,7 @@ import kotlin.math.sin
 import kotlin.math.cos
 import kotlin.math.PI
 import kotlin.math.pow
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
@@ -1208,12 +1209,12 @@ fun RacingSimulatorScreen(simState: SimulationState, viewModel: NeonRushViewMode
     val tiltAngle = (simState.userYPos - previousUserYPos).toFloat().coerceIn(-10f, 10f) * 1.8f
     SideEffect { previousUserYPos = simState.userYPos }
 
-    val pf1 = imageResource(id = R.drawable.pilot_run_1)
-    val pf2 = imageResource(id = R.drawable.pilot_run_2)
-    val pf3 = imageResource(id = R.drawable.pilot_run_3)
-    val pf4 = imageResource(id = R.drawable.pilot_run_4)
-    val pf5 = imageResource(id = R.drawable.pilot_run_5)
-    val pf6 = imageResource(id = R.drawable.pilot_run_6)
+    val pf1 = ImageBitmap.imageResource(id = R.drawable.pilot_run_1)
+    val pf2 = ImageBitmap.imageResource(id = R.drawable.pilot_run_2)
+    val pf3 = ImageBitmap.imageResource(id = R.drawable.pilot_run_3)
+    val pf4 = ImageBitmap.imageResource(id = R.drawable.pilot_run_4)
+    val pf5 = ImageBitmap.imageResource(id = R.drawable.pilot_run_5)
+    val pf6 = ImageBitmap.imageResource(id = R.drawable.pilot_run_6)
     val pilotFrames = remember(pf1, pf2, pf3, pf4, pf5, pf6) {
         listOf(pf1, pf2, pf3, pf4, pf5, pf6)
     }
@@ -1461,11 +1462,11 @@ fun RacingSimulatorScreen(simState: SimulationState, viewModel: NeonRushViewMode
                             image = currentFrameImg,
                             dstOffset = IntOffset(topLeftX.roundToInt(), topLeftY.roundToInt()),
                             dstSize = IntSize(displayWidth.roundToInt(), displayHeight.roundToInt())
-                        )
-                    }  
+                       )
+            }  
                  // Clean screen shake translation reset
                     drawContext.canvas.translate(-simState.screenShakeX, -simState.screenShakeY)
-                }
+              }
 
                 // Render Active Buff Pills Overlay (Level 4)
                 if (simState.activePowerupDurations.isNotEmpty()) {
