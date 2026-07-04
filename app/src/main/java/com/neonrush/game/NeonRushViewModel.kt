@@ -461,7 +461,7 @@ class NeonRushViewModel(
                     speedInPx *= 2.0f
                 }
                 // Live adaptive difficulty: speeds up if doing well, eases off if struggling
-                speedInPx *= liveDifficultyMultiplier
+                speedInPx *= liveDifficultyMultiplier * selectedDifficulty.speedMultiplier
                 
                 // Advance distance by speed multiplier (1 px/frame = ~3.6 meters/tick)
                 val tickDistanceOffset = speedInPx * 3.6f
