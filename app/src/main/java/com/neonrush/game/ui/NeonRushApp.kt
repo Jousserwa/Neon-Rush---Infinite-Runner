@@ -1354,20 +1354,30 @@ val textMeasurer = rememberTextMeasurer()
                         
                         when (elem.type) {
                             "gem" -> {
-                                val gemPath = Path().apply {
-                                    moveTo(x, y - ch * 0.03f)
-                                    lineTo(x + cw * 0.02f, y)
-                                    lineTo(x, y + ch * 0.03f)
-                                    lineTo(x - cw * 0.02f, y)
-                                    close()
-                                }
-                                drawPath(gemPath, color = Color(0xFF00FFCC))
-                                drawPath(gemPath, color = Color.White, style = Stroke(1.dp.toPx()))
+                                                            
+                                val pulse = 1f + 0.15f * sin(simState.tickIndex * 0.3f)
+                                val baseSize = ch * 0.06f
+                                val w = baseSize * (gemImg.width.toFloat() / gemImg.height.toFloat()) * pulse
+                                val h = baseSize * pulse
+                                drawImage(
+                                    image = gemImg,
+                                    dstOffset = IntOffset((x - w / 2f).roundToInt(), (y - h / 2f).roundToInt()),
+                                    dstSize = IntSize(w.roundToInt(), h.roundToInt())
+                                )
                             }
                             "fuel" -> {
-                                drawCircle(color = Color(0xFFFFD23F), radius = 6.dp.toPx(), center = Offset(x, y))
-                                drawCircle(color = Color.White, radius = 3.dp.toPx(), center = Offset(x, y))
+                                val angle = (simState.tickIndex * 6f) % 360f
+                                val baseSize = ch * 0.055f
+                                val w = baseSize * (coinImg.width.toFloat() / coinImg.height.toFloat())
+                                rotate(degrees = angle, pivot = Offset(x, y)) {
+                                    drawImage(
+                                        image = coinImg,
+                                        dstOffset = IntOffset((x - w / 2f).roundToInt(), (y - baseSize / 2f).roundToInt()),
+                                        dstSize = IntSize(w.roundToInt(), baseSize.roundToInt())
+                                    )
+                                }
                             }
+                            
                             "powerup" -> {
                                 drawCircle(color = Color(0xFF8338EC), radius = 9.dp.toPx(), center = Offset(x, y))
                                 drawCircle(color = Color.White, radius = 7.dp.toPx(), center = Offset(x, y), style = Stroke(1.dp.toPx()))
