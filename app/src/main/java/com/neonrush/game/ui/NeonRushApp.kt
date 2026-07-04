@@ -208,8 +208,10 @@ fun NeonRushApp(viewModel: NeonRushViewModel) {
                                         },
                                         onShowGhostSelection = { showGhostSelection = true },
                                         onNavigateToGlobal = { activeTab = "rankings" },
-                                        onNavigateToSkins = { activeTab = "skins" }
-                                    )
+                                        onNavigateToSkins = { activeTab = "skins" },
+                                        isPro = isPro
+        )
+                                    
                                 }
                             }
                             "rankings" -> LeaderboardsTab(viewModel = viewModel, playerProfile = currentProfile)
