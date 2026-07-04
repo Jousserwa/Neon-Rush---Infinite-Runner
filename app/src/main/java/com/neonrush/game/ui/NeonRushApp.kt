@@ -1416,7 +1416,7 @@ val textMeasurer = rememberTextMeasurer()
                                         val baseSize = ch * 0.09f
                                         val w = baseSize * (spikesImg.width.toFloat() / spikesImg.height.toFloat())
                                         val glowPulse = 0.7f + 0.3f * sin(simState.tickIndex * 0.4f)
-                                        androidx.compose.ui.graphics.drawscope.scale(scaleX = 1f, scaleY = -1f, pivot = Offset(x, y)) {
+                                        run {
                                             drawImage(
                                                 image = spikesImg,
                                                 dstOffset = IntOffset((x - w / 2f).roundToInt(), (y - baseSize / 2f).roundToInt()),
