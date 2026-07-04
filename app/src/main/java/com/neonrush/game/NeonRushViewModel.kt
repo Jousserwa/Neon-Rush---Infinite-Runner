@@ -217,6 +217,19 @@ class NeonRushViewModel(
     // Adaptive AI Player Profile statistics for Layer 10
     var avgZoneReached: Float = 10f
     var frustrationIndex: Float = 0.5f
+    
+    enum class DifficultyTier(val speedMultiplier: Float, val spacingMultiplier: Float, val label: String) {
+        EASY(0.75f, 1.35f, "EASY"),
+        MEDIUM(1.0f, 1.0f, "MEDIUM"),
+        HARD(1.2f, 0.8f, "HARD"),
+        LEGENDARY(1.4f, 0.65f, "LEGENDARY")
+    }
+
+    var selectedDifficulty: DifficultyTier = DifficultyTier.MEDIUM
+
+    fun setDifficulty(tier: DifficultyTier) {
+        selectedDifficulty = tier
+    }
     var deathTimes: MutableList<Long> = mutableListOf()
     val deathHeatmap: MutableMap<String, Int> = mutableMapOf()
     var hitObstaclesHistory: MutableList<String> = mutableListOf()
