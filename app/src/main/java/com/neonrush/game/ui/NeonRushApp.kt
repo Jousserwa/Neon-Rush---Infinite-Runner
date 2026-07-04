@@ -1224,7 +1224,7 @@ fun RacingSimulatorScreen(simState: SimulationState, viewModel: NeonRushViewMode
     }
     val textMeasurer = rememberTextMeasurer()
     var previousScoreForPopups by remember { mutableStateOf(simState.score) }
-    val scorePopups = remember { mutableStateListOf<Triple<Int, Int, Float>>() }
+    val scorePopups = remember { mutableStateListOf<Triple<Int, Int,Int>>() }
     val scoreDelta = simState.score - previousScoreForPopups
     if (scoreDelta > 0) {
         scorePopups.add(Triple(scoreDelta, simState.tickIndex, simState.userYPos))
