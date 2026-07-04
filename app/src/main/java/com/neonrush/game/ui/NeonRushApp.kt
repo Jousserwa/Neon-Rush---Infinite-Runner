@@ -576,6 +576,7 @@ fun ArcadeHomeView(
     onShowGhostSelection: () -> Unit,
     onNavigateToGlobal: () -> Unit,
     onNavigateToSkins: () -> Unit
+    isPro: Boolean
 ) {
     Column(
         modifier = Modifier.fillMaxSize(),
