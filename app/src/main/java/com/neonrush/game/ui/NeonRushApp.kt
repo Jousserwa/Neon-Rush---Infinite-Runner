@@ -1414,7 +1414,7 @@ val textMeasurer = rememberTextMeasurer()
                                     }
                                         "STALACTITE" -> {
                                         val baseSize = ch * 0.09f
-                                        val w = baseSize * (spikesImg.width.toFloat() / spikesImg.height.toFloat())
+                                        val w = baseSize * (spikesFlippedImg.width.toFloat() / spikesFlippedImg.height.toFloat())
                                         val glowPulse = 0.7f + 0.3f * sin(simState.tickIndex * 0.4f)
                                         run {
                                             drawImage(
