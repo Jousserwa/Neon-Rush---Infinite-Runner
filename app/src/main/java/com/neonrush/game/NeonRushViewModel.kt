@@ -113,6 +113,48 @@ class NeonRushViewModel(
     val dailyChallengeGoal = 200
 
     private var simJob: Job? = null
+    // --- Story / Worlds system ---
+    private val _storyEvent = MutableSharedFlow<StoryEvent>(extraBufferCapacity = 4)
+    val storyEvent: SharedFlow<StoryEvent> = _storyEvent.asSharedFlow()
+
+    val currentWorld: StateFlow<World> = simState
+        .map { Worlds.worldForZone(it.currentZoneNumber) }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, Worlds.ALL.first())
+
+    private val firedStoryBeats = mutableSetOf<Pair<Int, StoryBeatType>>()
+    private var lastWorldIdForStory = -1
+
+    private fun checkWorldEndingBeat(previousZoneNumber: Int, nextZoneNumber: Int) {
+        val world = Worlds.worldForZone(previousZoneNumber)
+        if (nextZoneNumber > world.endZone && firedStoryBeats.add(world.id to StoryBeatType.ENDING)) {
+            _storyEvent.tryEmit(StoryEvent(world, StoryBeatType.ENDING, world.endingText))
+        }
+    }
+
+    private fun checkStoryBeats(zoneNumber: Int, bossRisingEdge: Boolean) {
+        val world = Worlds.worldForZone(zoneNumber)
+
+        if (world.id != lastWorldIdForStory) {
+            lastWorldIdForStory = world.id
+            if (firedStoryBeats.add(world.id to StoryBeatType.OPENING)) {
+                _storyEvent.tryEmit(StoryEvent(world, StoryBeatType.OPENING, world.openingText))
+            }
+        }
+
+        val midZone = world.startZone + (world.endZone - world.startZone) / 2
+        if (zoneNumber >= midZone && firedStoryBeats.add(world.id to StoryBeatType.MID_RUN)) {
+            _storyEvent.tryEmit(StoryEvent(world, StoryBeatType.MID_RUN, world.midRunText))
+        }
+
+        if (bossRisingEdge && firedStoryBeats.add(world.id to StoryBeatType.BOSS_INTRO)) {
+            _storyEvent.tryEmit(StoryEvent(world, StoryBeatType.BOSS_INTRO, world.bossIntroText))
+        }
+    }
+
+    private fun resetStoryProgress() {
+        firedStoryBeats.clear()
+        lastWorldIdForStory = -1
+    }
 
     init {
         loadSocialComments()
