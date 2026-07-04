@@ -87,8 +87,7 @@ object ZoneGenerator {
             zone >= 50 -> 2
             else -> 1
         }
-        
-        if (zone in 1..4) return listOf(19) // ZM20 Legendary Run (19)
+        if (zone in 1..4) return emptyList() // Tutorial zones: no forced hard mechanic
         if (zone == 5) return listOf(5) // ZM6 Slow Motion (5)
         if (zone == 10) return listOf(14) // ZM15 Boss Gauntlet (14)
         
