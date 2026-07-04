@@ -1504,7 +1504,14 @@ fun RacingSimulatorScreen(simState: SimulationState, viewModel: NeonRushViewMode
                     }
                  // Clean screen shake translation reset
                     drawContext.canvas.translate(-simState.screenShakeX, -simState.screenShakeY)
-              }
+                    val flashAge = simState.tickIndex - flashStartTick
+                    if (flashAge in 0..6) {
+                        val flashAlpha = (1f - flashAge / 6f) * 0.35f
+                        drawRect(color = Color.Red.copy(alpha = flashAlpha), size = Size(cw, ch))
+                        
+                       }
+                   }
+      
 
                 // Render Active Buff Pills Overlay (Level 4)
                 if (simState.activePowerupDurations.isNotEmpty()) {
