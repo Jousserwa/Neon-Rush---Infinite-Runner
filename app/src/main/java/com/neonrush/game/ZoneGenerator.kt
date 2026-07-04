@@ -121,7 +121,8 @@ object ZoneGenerator {
         val density = (0.15f + (zone * 0.012f)).coerceAtMost(0.75f)
         
         // Spacing: Zone 1: 292px, Zone 10: 220px, Zone 25: 100px. Minimum 80px
-        val obstacleSpacing = (300 - (zone * 8)).coerceAtLeast(80)
+        val effectiveZoneForSpacing = (zone - 3).coerceAtLeast(0)
+        val obstacleSpacing = (320 - (effectiveZoneForSpacing * 5)).coerceAtLeast(110)
         
         return ZoneDNA(
             zoneNumber = zone,
