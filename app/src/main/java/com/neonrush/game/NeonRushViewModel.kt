@@ -500,7 +500,7 @@ class NeonRushViewModel(
                 }
 
                 // Spawn Powerup or Obstacle Set Hazards dynamically based on active spacings
-                val spacingVal = (activeDna.obstacleSpacingAndDensity / (12f * spacingBias)).coerceAtLeast(4f).toInt()
+                val spacingVal = (activeDna.obstacleSpacingAndDensity / (12f * spacingBias * liveDifficultyMultiplier)).coerceAtLeast(4f).toInt()
                 if (tick % spacingVal == 0) {
                     val targetGhostY = state.ghostYPath.getOrNull(tick % state.ghostYPath.size.coerceAtLeast(1)) ?: 50
                     
