@@ -1222,6 +1222,23 @@ fun RacingSimulatorScreen(simState: SimulationState, viewModel: NeonRushViewMode
     val pilotFrames = remember(pf1, pf2, pf3, pf4, pf5, pf6) {
         listOf(pf1, pf2, pf3, pf4, pf5, pf6)
     }
+    val textMeasurer = rememberTextMeasurer()
+    var previousScoreForPopups by remember { mutableStateOf(simState.score) }
+    val scorePopups = remember { mutableStateListOf<Triple<Int, Int, Float>>() }
+    val scoreDelta = simState.score - previousScoreForPopups
+    if (scoreDelta > 0) {
+        scorePopups.add(Triple(scoreDelta, simState.tickIndex, simState.userYPos))
+    }
+    previousScoreForPopups = simState.score
+    scorePopups.removeAll { (_, spawnTick, _) -> simState.tickIndex - spawnTick > 25 }
+
+    var previousShakeMagnitude by remember { mutableStateOf(0f) }
+    var flashStartTick by remember { mutableStateOf(-100) }
+    val currentShakeMagnitude = kotlin.math.abs(simState.screenShakeX) + kotlin.math.abs(simState.screenShakeY)
+    if (currentShakeMagnitude > 3f && previousShakeMagnitude <= 3f) {
+        flashStartTick = simState.tickIndex
+    }
+    previousShakeMagnitude = currentShakeMagnitude
 
     Column(
         modifier = Modifier
