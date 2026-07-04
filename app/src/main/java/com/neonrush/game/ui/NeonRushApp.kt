@@ -1418,7 +1418,7 @@ val textMeasurer = rememberTextMeasurer()
                                         val glowPulse = 0.7f + 0.3f * sin(simState.tickIndex * 0.4f)
                                         run {
                                             drawImage(
-                                                image = spikesImg,
+                                                image = spikesFlippedImg,
                                                 dstOffset = IntOffset((x - w / 2f).roundToInt(), (y - baseSize / 2f).roundToInt()),
                                                 dstSize = IntSize(w.roundToInt(), baseSize.roundToInt()),
                                                 alpha = glowPulse
