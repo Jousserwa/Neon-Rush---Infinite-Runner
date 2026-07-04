@@ -575,7 +575,7 @@ fun ArcadeHomeView(
     onStartRush: () -> Unit,
     onShowGhostSelection: () -> Unit,
     onNavigateToGlobal: () -> Unit,
-    onNavigateToSkins: () -> Unit
+    onNavigateToSkins: () -> Unit,
     isPro: Boolean
 ) {
     Column(
