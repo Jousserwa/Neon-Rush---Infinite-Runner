@@ -636,6 +636,15 @@ class NeonRushViewModel(
                     }
                     finalElements.add(elem)
                 }
+                if (hitThisTick) {
+                    ticksSinceLastHit = 0
+                    liveDifficultyMultiplier = (liveDifficultyMultiplier - 0.15f).coerceAtLeast(0.6f)
+                } else {
+                    ticksSinceLastHit++
+                    if (ticksSinceLastHit > 40) {
+                        liveDifficultyMultiplier = (liveDifficultyMultiplier + 0.01f).coerceAtMost(1.4f)
+                    }
+                }
 
                 // 7. Calculate score matching points (Level 2)
                 val targetGhostY = state.ghostYPath.getOrNull(tick % state.ghostYPath.size.coerceAtLeast(1)) ?: 50
