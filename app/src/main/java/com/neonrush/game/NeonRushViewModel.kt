@@ -567,6 +567,7 @@ class NeonRushViewModel(
                 val hasInvincibility = nextDurationsMap.containsKey("PU7") || nextDurationsMap.containsKey("PU12") // Invincibility / Legendary Aura
                 val hasGhostMode = nextDurationsMap.containsKey("PU4") || activeDna.mechanicIds.contains(3)
                 var hasShield = nextDurationsMap.containsKey("PU1")
+                var hitThisTick = false
 
                 for (elem in updatedElements) {
                     // Check horizontal alignment bounds
