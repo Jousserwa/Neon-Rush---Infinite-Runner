@@ -1229,7 +1229,7 @@ fun RacingSimulatorScreen(simState: SimulationState, viewModel: NeonRushViewMode
     val laserImg = ImageBitmap.imageResource(id = R.drawable.laser1)
     val sawbladeImg = ImageBitmap.imageResource(id = R.drawable.sawblade)
     val droneImg = ImageBitmap.imageResource(id = R.drawable.drone)
-    }
+    
   
 val textMeasurer = rememberTextMeasurer()
     var previousScoreForPopups by remember { mutableStateOf(simState.score) }
