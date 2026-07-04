@@ -44,6 +44,7 @@ class MainActivity : ComponentActivity() {
         // Start the real-time audio engine and haptics service.
         // Without this call, sound/vibration silently do nothing.
         NeonSoundEngine.init(applicationContext)
+        NeonSoundEngine.setHomeScreenActiveState(false)
 
         val defaultHandler = Thread.getDefaultUncaughtExceptionHandler()
         Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->
