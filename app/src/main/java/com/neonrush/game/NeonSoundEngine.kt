@@ -325,8 +325,11 @@ class NeonSoundEngine {
         fun setAmbientEnabled(enabled: Boolean) {
             ambientEnabled = enabled
             sharedPrefs?.edit()?.putBoolean("ambient_enabled", enabled)?.apply()
+        }  
+            fun setHomeActive(active: Boolean) {
+            isHomeScreenActive = active
         }
-
+         
         fun getHapticsEnabled(): Boolean = hapticsEnabled
         fun setHapticsEnabled(enabled: Boolean) {
             hapticsEnabled = enabled
