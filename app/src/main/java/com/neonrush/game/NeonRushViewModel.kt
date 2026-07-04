@@ -406,6 +406,8 @@ class NeonRushViewModel(
             val currentFrustration = frustrationIndex
             val spacingBias = if (currentFrustration > 3.0f) 0.85f else if (avgZoneReached > 15f) 1.10f else 1.0f
             val isLuckyActive = isFirstLucky
+            var liveDifficultyMultiplier = 1.0f
+            var ticksSinceLastHit = 0
             
             while (_simState.value.isStarted && !_simState.value.isCompleted) {
                 delay(120) // Game step tick delay
