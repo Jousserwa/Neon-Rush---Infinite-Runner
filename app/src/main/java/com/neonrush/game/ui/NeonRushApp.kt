@@ -1221,6 +1221,13 @@ fun RacingSimulatorScreen(simState: SimulationState, viewModel: NeonRushViewMode
     val pf6 = ImageBitmap.imageResource(id = R.drawable.pilot_run_6)
     val pilotFrames = remember(pf1, pf2, pf3, pf4, pf5, pf6) {
         listOf(pf1, pf2, pf3, pf4, pf5, pf6)
+        
+    val gemImg = ImageBitmap.imageResource(id = R.drawable.gem)
+    val coinImg = ImageBitmap.imageResource(id = R.drawable.coin)
+    val spikesImg = ImageBitmap.imageResource(id = R.drawable.spikes)
+    val laserImg = ImageBitmap.imageResource(id = R.drawable.laser1)
+    val sawbladeImg = ImageBitmap.imageResource(id = R.drawable.sawblade)
+    val droneImg = ImageBitmap.imageResource(id = R.drawable.drone)
     }
     val textMeasurer = rememberTextMeasurer()
     var previousScoreForPopups by remember { mutableStateOf(simState.score) }
