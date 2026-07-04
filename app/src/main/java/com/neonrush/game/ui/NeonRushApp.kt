@@ -1411,39 +1411,63 @@ val textMeasurer = rememberTextMeasurer()
                                             style = Stroke(1.dp.toPx())
                                         )
                                     }
-                                    "STALACTITE" -> {
-                                        val spikePath = Path().apply {
-                                            moveTo(x - cw * 0.03f, 0f)
-                                            lineTo(x + cw * 0.03f, 0f)
-                                            lineTo(x, y)
-                                            close()
+                                        "STALACTITE" -> {
+                                        val baseSize = ch * 0.09f
+                                        val w = baseSize * (spikesImg.width.toFloat() / spikesImg.height.toFloat())
+                                        val glowPulse = 0.7f + 0.3f * sin(simState.tickIndex * 0.4f)
+                                        scale(scaleX = 1f, scaleY = -1f, pivot = Offset(x, y)) {
+                                            drawImage(
+                                                image = spikesImg,
+                                                dstOffset = IntOffset((x - w / 2f).roundToInt(), (y - baseSize / 2f).roundToInt()),
+                                                dstSize = IntSize(w.roundToInt(), baseSize.roundToInt()),
+                                                alpha = glowPulse
+                                            )
                                         }
-                                        drawPath(spikePath, color = obsColor)
                                     }
-                                    "STALAGMITE" -> {
-                                        val spikePath = Path().apply {
-                                            moveTo(x - cw * 0.03f, ch)
-                                            lineTo(x + cw * 0.03f, ch)
-                                            lineTo(x, y)
-                                            close()
-                                        }
-                                        drawPath(spikePath, color = obsColor)
+                                    "STALAGMITE"  -> {
+                                        val baseSize = ch * 0.09f
+                                        val w = baseSize * (spikesImg.width.toFloat() / spikesImg.height.toFloat())
+                                        val glowPulse = 0.7f + 0.3f * sin(simState.tickIndex * 0.4f)
+                                        drawImage(
+                                            image = spikesImg,
+                                            dstOffset = IntOffset((x - w / 2f).roundToInt(), (y - baseSize / 2f).roundToInt()),
+                                            dstSize = IntSize(w.roundToInt(), baseSize.roundToInt()),
+                                            alpha = glowPulse
+                                        )
                                     }
                                     "LASER" -> {
-                                        drawLine(
-                                            color = Color(0xFFFF3366),
-                                            start = Offset(x - cw * 0.1f, y),
-                                            end = Offset(x + cw * 0.1f, y),
-                                            strokeWidth = 4.dp.toPx()
+                                        val glowPulse = 0.6f + 0.4f * sin(simState.tickIndex * 0.5f)
+                                        val h = ch * 0.22f
+                                        val w = h * (laserImg.width.toFloat() / laserImg.height.toFloat())
+                                        drawImage(
+                                            image = laserImg,
+                                            dstOffset = IntOffset((x - w / 2f).roundToInt(), (y - h / 2f).roundToInt()),
+                                            dstSize = IntSize(w.roundToInt(), h.roundToInt()),
+                                            alpha = glowPulse
                                         )
                                     }
                                     "BLADE" -> {
-                                        drawLine(obsColor, Offset(x - 8.dp.toPx(), y - 8.dp.toPx()), Offset(x + 8.dp.toPx(), y + 8.dp.toPx()), strokeWidth = 3.dp.toPx())
-                                        drawLine(obsColor, Offset(x + 8.dp.toPx(), y - 8.dp.toPx()), Offset(x - 8.dp.toPx(), y + 8.dp.toPx()), strokeWidth = 3.dp.toPx())
-                                        drawCircle(Color.White, 3.dp.toPx(), Offset(x, y))
+                                        val angle = (simState.tickIndex * 12f) % 360f
+                                        val size = ch * 0.08f
+                                        rotate(degrees = angle, pivot = Offset(x, y)) {
+                                            drawImage(
+                                                image = sawbladeImg,
+                                                dstOffset = IntOffset((x - size / 2f).roundToInt(), (y - size / 2f).roundToInt()),
+                                                dstSize = IntSize(size.roundToInt(), size.roundToInt())
+                                            )
+                                        }
                                     }
                                     else -> {
-                                        drawCircle(obsColor, 8.dp.toPx(), Offset(x, y))
+                                        val bob = sin(simState.tickIndex * 0.2f) * ch * 0.015f
+                                        val size = ch * 0.07f
+                                        val w = size * (droneImg.width.toFloat() / droneImg.height.toFloat())
+                                        drawImage(
+                                            image = droneImg,
+                                            dstOffset = IntOffset((x - w / 2f).roundToInt(), (y - size / 2f + bob).roundToInt()),
+                                            dstSize = IntSize(w.roundToInt(), size.roundToInt())
+                                        )
+                                    
+                                        
                                     }
                                 }
                             }
