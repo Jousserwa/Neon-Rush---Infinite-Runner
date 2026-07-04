@@ -779,6 +779,43 @@ fun ArcadeHomeView(
                 }
             }
         }
+        
+        // Difficulty selector row
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 8.dp),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            listOf(
+                NeonRushViewModel.DifficultyTier.EASY,
+                NeonRushViewModel.DifficultyTier.MEDIUM,
+                NeonRushViewModel.DifficultyTier.HARD,
+                NeonRushViewModel.DifficultyTier.LEGENDARY
+            ).forEach { tier ->
+                val isLocked = tier == NeonRushViewModel.DifficultyTier.LEGENDARY && !isPro
+                val isSelected = viewModel.selectedDifficulty == tier
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(if (isSelected) CyberPrimary else CyberSurface)
+                        .clickable {
+                            if (!isLocked) {
+                                viewModel.setDifficulty(tier)
+                            }
+                        }
+                        .padding(horizontal = 10.dp, vertical = 6.dp)
+                ) {
+                    Text(
+                        text = if (isLocked) "\uD83D\uDD12 ${tier.label}" else tier.label,
+                        color = if (isSelected) Color.Black else Color.White.copy(alpha = if (isLocked) 0.4f else 1f),
+                        fontSize = 10.sp,
+                        fontFamily = FontFamily.Monospace,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+        }
 
         // Row 6 — START RUSH button: height 52dp, full width, pink gradient
         Button(
