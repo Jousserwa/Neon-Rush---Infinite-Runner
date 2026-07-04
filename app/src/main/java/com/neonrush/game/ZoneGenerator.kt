@@ -71,9 +71,10 @@ object ZoneGenerator {
     )
 
     fun calculateSpeed(zone: Int): Float {
-        // baseSpeed(zone) = 3.0 + (zone * 0.4) - (zone² * 0.002)
-        val speed = 3.0f + (zone * 0.4f) - (zone * zone * 0.002f)
-        return speed.coerceAtMost(25.0f) // Asymptotic ceiling at ~25 px/frame
+        // Grace period: zones 1-3 stay flat so new players get their bearings
+        val effectiveZone = (zone - 3).coerceAtLeast(0)
+        val speed = 3.0f + (effectiveZone * 0.3f) - (effectiveZone * effectiveZone * 0.0015f)
+        return speed.coerceAtMost(22.0f)
     }
 
     fun selectEnvironment(zone: Int): Int {
