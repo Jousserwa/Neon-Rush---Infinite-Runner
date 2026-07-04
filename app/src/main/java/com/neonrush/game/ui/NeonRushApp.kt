@@ -1485,6 +1485,23 @@ fun RacingSimulatorScreen(simState: SimulationState, viewModel: NeonRushViewMode
                             dstSize = IntSize(displayWidth.roundToInt(), displayHeight.roundToInt())
                        )
             }  
+                    scorePopups.forEach { (value, spawnTick, yFractionAtSpawn) ->
+                        val age = simState.tickIndex - spawnTick
+                        val ageFrac = (age / 25f).coerceIn(0f, 1f)
+                        val popupAlpha = 1f - ageFrac
+                        val riseOffset = ageFrac * 60f
+                        val popupY = ch * (yFractionAtSpawn / 100f) - riseOffset - 40f
+                        drawText(
+                            textMeasurer = textMeasurer,
+                            text = "+$value",
+                            topLeft = Offset(userX - 20f, popupY),
+                            style = TextStyle(
+                                color = Color(0xFFFFD700).copy(alpha = popupAlpha),
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        )
+                    }
                  // Clean screen shake translation reset
                     drawContext.canvas.translate(-simState.screenShakeX, -simState.screenShakeY)
               }
