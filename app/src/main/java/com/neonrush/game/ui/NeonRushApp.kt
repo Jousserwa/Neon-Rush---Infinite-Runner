@@ -17,6 +17,9 @@ import kotlin.math.sin
 import kotlin.math.cos
 import kotlin.math.PI
 import kotlin.math.pow
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.text.drawText
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.unit.IntOffset
