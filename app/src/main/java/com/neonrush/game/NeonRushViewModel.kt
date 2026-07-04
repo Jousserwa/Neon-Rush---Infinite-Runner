@@ -627,6 +627,7 @@ class NeonRushViewModel(
                                         fuelLevelState = (fuelLevelState - 20).coerceAtLeast(0)
                                         updatedMsg = "WARNING: IMPACT DETECTED! HULL INTEGRITY LOST"
                                         hitObstaclesHistory.add(elem.subType)
+                                        hitThisTick = true
                                     }
                                 }
                             }
