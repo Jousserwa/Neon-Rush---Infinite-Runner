@@ -1365,7 +1365,7 @@ val textMeasurer = rememberTextMeasurer()
                 .weight(1f)
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(12.dp))
-                .background(Color(0xFF020104))
+                .background(Color(0xFF020104).copy(alpha = 0.55f))
                 .border(2.dp, CyberPrimary, RoundedCornerShape(12.dp))
         ) {
             // Render active powerup durations or boss labels (Levels 1 - 10)
