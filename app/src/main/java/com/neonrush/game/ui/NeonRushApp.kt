@@ -4,6 +4,7 @@ import android.app.Activity
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -22,10 +23,12 @@ import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.res.imageResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import kotlin.math.roundToInt
 import androidx.compose.ui.graphics.drawscope.rotate
+import androidx.compose.ui.layout.ContentScale
 import com.neonrush.game.R
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalDensity
@@ -1290,7 +1293,18 @@ val textMeasurer = rememberTextMeasurer()
         flashStartTick = simState.tickIndex
     }
     previousShakeMagnitude = currentShakeMagnitude
-    Box(modifier = Modifier.fillMaxSize()) {
+    
+        Box(modifier = Modifier.fillMaxSize()) {
+    val currentWorld by viewModel.currentWorld.collectAsState()
+    when (currentWorld.id) {
+        1 -> Image(
+            painter = painterResource(id = R.drawable.bg_world1_blackout_front),
+            contentDescription = null,
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop
+        )
+        else -> {} // no art yet for this World — existing gradient background shows through
+     }
     Column(
         modifier = Modifier
             .fillMaxSize()
