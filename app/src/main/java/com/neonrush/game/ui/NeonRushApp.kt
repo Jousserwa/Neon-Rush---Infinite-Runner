@@ -170,7 +170,12 @@ fun NeonRushApp(viewModel: NeonRushViewModel) {
         ) {
             if (simState.isStarted && !simState.isCompleted) {
                 // Interactive Space Racetrack Simulator Screen!
-                RacingSimulatorScreen(simState = simState, viewModel = viewModel)
+                RacingSimulatorScreen(
+    simState = simState,
+    viewModel = viewModel,
+    isPro = isPro,
+    onShowPaywall = { showPaywall = true }
+)
             } else if (simState.isStarted && simState.isCompleted) {
                 // Dynamic Game Over overlay screen with reward, revive, subscription access point!
                 GameOverOverlayScreen(
