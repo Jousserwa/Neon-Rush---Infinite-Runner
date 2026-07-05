@@ -78,9 +78,12 @@ object AdMobManager {
                     onCompleted()
                 }
             }
+            
             ad.show(activity)
+            lastAdShownTimestamp = System.currentTimeMillis()
             interstitialAd = null
             loadInterstitial(activity) // Preload next
+            
         } else {
             loadInterstitial(activity)
             onCompleted()
@@ -127,11 +130,13 @@ object AdMobManager {
                 Log.d(TAG, "User earned reward: ${rewardItem.amount} ${rewardItem.type}")
                 onRewardEarned()
             }
+            lastAdShownTimestamp = System.currentTimeMillis()
             loadRewarded(activity) // Preload next
         } else {
             Log.d(TAG, "Rewarded ad was not ready. Giving fail-safe reward.")
             onRewardEarned() // Failsafe fallback
             loadRewarded(activity)
+            
         }
     }
 }
