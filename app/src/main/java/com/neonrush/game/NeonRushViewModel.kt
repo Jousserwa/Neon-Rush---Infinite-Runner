@@ -154,7 +154,17 @@ class NeonRushViewModel(
     private fun resetStoryProgress() {
         firedStoryBeats.clear()
         lastWorldIdForStory = -1
+     }
+        fun triggerPaywallTeaser(world: World) {
+        _storyEvent.tryEmit(
+            StoryEvent(
+                world,
+                StoryBeatType.PAYWALL_TEASER,
+                "Command's voice cuts through static: \"Copter's down in the reserve. Something's already found the wreckage. You in?\""
+            )
+        )
     }
+    
 
     init {
         loadSocialComments()
