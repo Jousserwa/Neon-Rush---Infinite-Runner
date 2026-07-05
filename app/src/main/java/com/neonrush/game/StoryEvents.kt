@@ -1,6 +1,5 @@
 package com.neonrush.game
-
-enum class StoryBeatType { OPENING, MID_RUN, BOSS_INTRO, ENDING }
+enum class StoryBeatType { OPENING, MID_RUN, BOSS_INTRO, ENDING, PAYWALL_TEASER }
 
 data class StoryEvent(
     val world: World,
