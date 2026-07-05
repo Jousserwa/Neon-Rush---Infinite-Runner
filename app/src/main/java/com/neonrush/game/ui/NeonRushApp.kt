@@ -237,7 +237,8 @@ var paywallReason by remember { mutableStateOf("generic") }
 
     // Display billing Subscription Paywall when requested
     if (showPaywall) {
-        PaywallDialog(onDismiss = { showPaywall = false })
+        
+        PaywallDialog(onDismiss = { showPaywall = false }, reason = paywallReason)
     }
 }
 
