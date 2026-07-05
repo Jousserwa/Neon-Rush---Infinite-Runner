@@ -31,6 +31,8 @@ object AdMobManager {
     private var isInitialized = false
 
     var gameOverCounter = 0
+    private var lastAdShownTimestamp = 0L
+    private const val INTERSTITIAL_COOLDOWN_MS = 60_000L
 
     fun init(context: Context) {
         if (isInitialized) return
@@ -94,7 +96,8 @@ object AdMobManager {
     }
 
     fun isInterstitialDue(): Boolean {
-        return gameOverCounter > 0 && gameOverCounter % 5 == 0
+        val cooldownPassed = System.currentTimeMillis() - lastAdShownTimestamp >= INTERSTITIAL_COOLDOWN_MS
+        return gameOverCounter > 0 && gameOverCounter % 5 == 0 && cooldownPassed
     }
 
     fun loadRewarded(context: Context) {
