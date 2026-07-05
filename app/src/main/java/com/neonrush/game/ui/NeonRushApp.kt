@@ -1306,6 +1306,11 @@ val textMeasurer = rememberTextMeasurer()
     
         Box(modifier = Modifier.fillMaxSize()) {
     val currentWorld by viewModel.currentWorld.collectAsState()
+    LaunchedEffect(currentWorld.id) {
+        if (currentWorld.requiresPro && !isPro) {
+            onShowPaywall()
+        }
+    }
     when (currentWorld.id) {
         1 -> Image(
             painter = painterResource(id = R.drawable.bg_world1_blackout_front),
