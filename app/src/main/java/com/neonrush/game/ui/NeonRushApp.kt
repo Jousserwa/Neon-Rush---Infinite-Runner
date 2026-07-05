@@ -1776,7 +1776,13 @@ val textMeasurer = rememberTextMeasurer()
             )
         }
     }
+    StoryBannerHost(
+        storyEvent = viewModel.storyEvent,
+        modifier = Modifier.align(Alignment.BottomCenter)
+    )
+    }
 }
+
 
 @Composable
 fun NeonPilotScreensaver() {
