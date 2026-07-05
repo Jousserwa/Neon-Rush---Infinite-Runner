@@ -1289,13 +1289,15 @@ val textMeasurer = rememberTextMeasurer()
         flashStartTick = simState.tickIndex
     }
     previousShakeMagnitude = currentShakeMagnitude
-
+    Box(modifier = Modifier.fillMaxSize()) {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+
+    
         // Telemetry top panel
         Row(
             modifier = Modifier
