@@ -2708,7 +2708,7 @@ fun GameOverOverlayScreen(
 }
 
 @Composable
-fun PaywallDialog(onDismiss: () -> Unit) {
+fun PaywallDialog(onDismiss: () -> Unit, reason: String = "generic") {
     val context = LocalContext.current
     val activity = context as? Activity
 
