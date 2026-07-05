@@ -79,6 +79,7 @@ fun NeonRushApp(viewModel: NeonRushViewModel) {
     
     val isPro by RevenueCatManager.isPro.collectAsState()
     var showPaywall by remember { mutableStateOf(false) }
+var paywallReason by remember { mutableStateOf("generic") }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
