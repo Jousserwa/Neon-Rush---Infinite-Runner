@@ -90,7 +90,7 @@ object AdMobManager {
     }
 
     fun isPaywallDue(): Boolean {
-        return gameOverCounter >= 3
+        return gameOverCounter > 0 && gameOverCounter % 7 == 0
     }
 
     fun isInterstitialDue(): Boolean {
