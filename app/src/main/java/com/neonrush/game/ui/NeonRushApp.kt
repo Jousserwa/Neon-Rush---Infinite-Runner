@@ -2722,7 +2722,7 @@ fun PaywallDialog(onDismiss: () -> Unit, reason: String = "generic") {
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    text = "🏆 NEON RUSH PRO",
+                    text = if (reason == "world4") "🌴 GREEN HELL AWAITS" else "🏆 NEON RUSH PRO",
                     color = CyberPrimary,
                     fontWeight = FontWeight.ExtraBold,
                     fontSize = 22.sp,
@@ -2740,7 +2740,10 @@ fun PaywallDialog(onDismiss: () -> Unit, reason: String = "generic") {
         text = {
             Column(modifier = Modifier.fillMaxWidth()) {
                 Text(
-                    text = "Gain supreme access to unrestricted flight telemetry. Fuel and drift systems optimization package:",
+                    text = if (reason == "world4")
+                        "Your chopper went down days ago. Something in the reserve has been pacing you ever since — and it's not done. Continue PRO to find out what's hunting you."
+                    else
+                        "Gain supreme access to unrestricted flight telemetry. Fuel and drift systems optimization package:",
                     color = Color.White,
                     fontSize = 13.sp,
                     lineHeight = 18.sp,
