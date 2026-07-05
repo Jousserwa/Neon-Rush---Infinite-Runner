@@ -33,6 +33,7 @@ import com.neonrush.game.R
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextOverflow
+import kotlinx.coroutines.delay 
 
 
 import androidx.compose.material.icons.Icons
@@ -1310,6 +1311,8 @@ val textMeasurer = rememberTextMeasurer()
     val currentWorld by viewModel.currentWorld.collectAsState()
     LaunchedEffect(currentWorld.id) {
         if (currentWorld.requiresPro && !isPro) {
+            viewModel.triggerPaywallTeaser(currentWorld)
+            delay(2500)
             onShowPaywall()
         }
     }
