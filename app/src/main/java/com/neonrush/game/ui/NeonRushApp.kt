@@ -1256,8 +1256,13 @@ fun SkinsDeckTab(viewModel: NeonRushViewModel, profile: GameProfile) {
 }
 
 @Composable
-fun RacingSimulatorScreen(simState: SimulationState, viewModel: NeonRushViewModel) {
-    var controlOffset by remember { mutableStateOf(50f) }
+
+  fun RacingSimulatorScreen(
+    simState: SimulationState,
+    viewModel: NeonRushViewModel,
+    isPro: Boolean,
+    onShowPaywall: () -> Unit
+) {  var controlOffset by remember { mutableStateOf(50f) }
     var previousUserYPos by remember { mutableStateOf(simState.userYPos) }
     val tiltAngle = (simState.userYPos - previousUserYPos).toFloat().coerceIn(-10f, 10f) * 1.8f
     SideEffect { previousUserYPos = simState.userYPos }
