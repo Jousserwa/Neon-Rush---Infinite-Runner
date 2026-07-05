@@ -175,7 +175,7 @@ var paywallReason by remember { mutableStateOf("generic") }
     simState = simState,
     viewModel = viewModel,
     isPro = isPro,
-    onShowPaywall = { showPaywall = true }
+    onShowPaywall = { showPaywall = true; paywallReason = "world4" }
 )
             } else if (simState.isStarted && simState.isCompleted) {
                 // Dynamic Game Over overlay screen with reward, revive, subscription access point!
