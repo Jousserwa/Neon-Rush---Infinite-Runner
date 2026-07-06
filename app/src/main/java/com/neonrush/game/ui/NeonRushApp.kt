@@ -2797,15 +2797,73 @@ fun PaywallDialog(onDismiss: () -> Unit, reason: String = "generic") {
 
                 Spacer(modifier = Modifier.height(20.dp))
 
-                Text(
-                    text = "Billing: ${RevenueCatManager.SUBSCRIPTION_PRICE_MONTHLY_USD}",
-                    color = CyberSecondary,
-                    
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight.Bold,
-                    fontFamily = FontFamily.Monospace,
-                    modifier = Modifier.align(Alignment.CenterHorizontally)
-                )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { selectedTier = "monthly" }
+                        .background(
+                            if (selectedTier == "monthly") CyberPrimary.copy(alpha = 0.15f) else Color.Transparent,
+                            RoundedCornerShape(8.dp)
+                        )
+                        .border(
+                            1.dp,
+                            if (selectedTier == "monthly") CyberPrimary else Color.White.copy(alpha = 0.2f),
+                            RoundedCornerShape(8.dp)
+                        )
+                        .padding(12.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    RadioButton(
+                        selected = selectedTier == "monthly",
+                        onClick = { selectedTier = "monthly" },
+                        colors = RadioButtonDefaults.colors(selectedColor = CyberPrimary)
+                    )
+                    Text(
+                        text = "Monthly — ${RevenueCatManager.SUBSCRIPTION_PRICE_MONTHLY_USD}",
+                        color = Color.White,
+                        fontSize = 14.sp,
+                        fontFamily = FontFamily.Monospace
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { selectedTier = "annual" }
+                        .background(
+                            if (selectedTier == "annual") CyberPrimary.copy(alpha = 0.15f) else Color.Transparent,
+                            RoundedCornerShape(8.dp)
+                        )
+                        .border(
+                            1.dp,
+                            if (selectedTier == "annual") CyberPrimary else Color.White.copy(alpha = 0.2f),
+                            RoundedCornerShape(8.dp)
+                        )
+                        .padding(12.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    RadioButton(
+                        selected = selectedTier == "annual",
+                        onClick = { selectedTier = "annual" },
+                        colors = RadioButtonDefaults.colors(selectedColor = CyberPrimary)
+                    )
+                    Column {
+                        Text(
+                            text = "Annual — ${RevenueCatManager.SUBSCRIPTION_PRICE_ANNUAL_USD}",
+                            color = Color.White,
+                            fontSize = 14.sp,
+                            fontFamily = FontFamily.Monospace
+                        )
+                        Text(
+                            text = "BEST VALUE — save ~50%",
+                            color = CyberSecondary,
+                            fontSize = 11.sp,
+                            fontFamily = FontFamily.Monospace
+                        )
+                    }
+                }
             }
         },
         confirmButton = {
