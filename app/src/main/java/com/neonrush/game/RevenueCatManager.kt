@@ -13,9 +13,10 @@ import kotlinx.coroutines.flow.StateFlow
 object RevenueCatManager {
     private const val TAG = "RevenueCatManager"
     const val ENTITLEMENT_ID = "pro"
-    const val PRODUCT_ID = "neonrush_pro_monthly"
-    const val SUBSCRIPTION_PRICE_USD = "$4.99/month"
-
+    const val PRODUCT_ID_MONTHLY = "neonrush_pro_monthly"
+    const val PRODUCT_ID_ANNUAL = "neonrush_pro_annual"
+    const val SUBSCRIPTION_PRICE_MONTHLY_USD = "$4.99/month"
+    const val SUBSCRIPTION_PRICE_ANNUAL_USD = "$29.99/year"
     private val _isPro = MutableStateFlow(false)
     val isPro: StateFlow<Boolean> = _isPro
 
