@@ -2870,10 +2870,15 @@ fun PaywallDialog(onDismiss: () -> Unit, reason: String = "generic") {
             Button(
                 onClick = {
                     if (activity != null) {
-                        RevenueCatManager.purchaseProSubscription(activity) { success ->
+                        val onResult: (Boolean) -> Unit = { success ->
                             if (success) {
                                 onDismiss()
                             }
+                        }
+                        if (selectedTier == "annual") {
+                            RevenueCatManager.purchaseProSubscriptionAnnual(activity, onResult)
+                        } else {
+                            RevenueCatManager.purchaseProSubscription(activity, onResult)
                         }
                     } else {
                         onDismiss()
