@@ -2797,8 +2797,9 @@ fun PaywallDialog(onDismiss: () -> Unit, reason: String = "generic") {
                 Spacer(modifier = Modifier.height(20.dp))
 
                 Text(
-                    text = "Billing: ${RevenueCatManager.SUBSCRIPTION_PRICE_USD}",
+                    text = "Billing: ${RevenueCatManager.SUBSCRIPTION_PRICE_MONTHLY_USD}",
                     color = CyberSecondary,
+                    
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Bold,
                     fontFamily = FontFamily.Monospace,
