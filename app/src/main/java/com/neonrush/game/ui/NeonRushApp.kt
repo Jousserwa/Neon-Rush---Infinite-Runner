@@ -2731,6 +2731,7 @@ fun GameOverOverlayScreen(
 fun PaywallDialog(onDismiss: () -> Unit, reason: String = "generic") {
     val context = LocalContext.current
     val activity = context as? Activity
+    var selectedTier by remember { mutableStateOf("monthly") }
 
     AlertDialog(
         onDismissRequest = onDismiss,
