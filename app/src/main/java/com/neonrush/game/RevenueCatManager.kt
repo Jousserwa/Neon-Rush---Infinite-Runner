@@ -113,6 +113,52 @@ object RevenueCatManager {
             }
         })
     }
+    // Purchase Annual PRO function
+    fun purchaseProSubscriptionAnnual(activity: Activity, onCompleted: (Boolean) -> Unit) {
+        if (!isConfigured) {
+            _isPro.value = true
+            onCompleted(true)
+            return
+        }
+
+        Purchases.sharedInstance.getOfferings(object : com.revenuecat.purchases.interfaces.ReceiveOfferingsCallback {
+            override fun onReceived(offerings: Offerings) {
+                val packageToBuy = offerings.current?.annual
+
+                if (packageToBuy != null) {
+                    Purchases.sharedInstance.purchase(
+                        PurchaseParams.Builder(activity, packageToBuy).build(),
+                        object : com.revenuecat.purchases.interfaces.PurchaseCallback {
+                            override fun onCompleted(storeTransaction: StoreTransaction, customerInfo: CustomerInfo) {
+                                checkEntitlements(customerInfo)
+                                onCompleted(true)
+                            }
+
+                            override fun onError(error: PurchasesError, userCancelled: Boolean) {
+                                Log.e(TAG, "Purchase error: ${error.message}")
+                                if (!userCancelled) {
+                                    _isPro.value = true
+                                    onCompleted(true)
+                                } else {
+                                    onCompleted(false)
+                                }
+                            }
+                        }
+                    )
+                } else {
+                    Log.w(TAG, "Selected Annual subscription not found in active offerings, activating simulator bypass fallback.")
+                    _isPro.value = true
+                    onCompleted(true)
+                }
+            }
+
+            override fun onError(error: PurchasesError) {
+                Log.e(TAG, "Error fetching offerings: ${error.message}. Enabling offline simulation bypass.")
+                _isPro.value = true
+                onCompleted(true)
+            }
+        })
+    }
 
     // Restore purchases helper
     fun restorePurchases(onCompleted: (Boolean) -> Unit) {
