@@ -17,6 +17,15 @@ object RevenueCatManager {
     const val PRODUCT_ID_ANNUAL = "neonrush_pro_annual"
     const val SUBSCRIPTION_PRICE_MONTHLY_USD = "$4.99/month"
     const val SUBSCRIPTION_PRICE_ANNUAL_USD = "$29.99/year"
+    const val PRODUCT_ID_GEMS_SMALL = "neonrush_gems_500"
+    const val PRODUCT_ID_GEMS_MEDIUM = "neonrush_gems_1500"
+    const val PRODUCT_ID_GEMS_LARGE = "neonrush_gems_4000"
+    const val GEMS_SMALL_AMOUNT = 500
+    const val GEMS_MEDIUM_AMOUNT = 1500
+    const val GEMS_LARGE_AMOUNT = 4000
+    const val GEMS_SMALL_PRICE_USD = "$1.99"
+    const val GEMS_MEDIUM_PRICE_USD = "$4.99"
+    const val GEMS_LARGE_PRICE_USD = "$9.99"
     private val _isPro = MutableStateFlow(false)
     val isPro: StateFlow<Boolean> = _isPro
 
