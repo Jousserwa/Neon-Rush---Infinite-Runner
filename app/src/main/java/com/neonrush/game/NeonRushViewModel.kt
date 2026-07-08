@@ -828,7 +828,8 @@ class NeonRushViewModel(
             soundEngine.playUnlockSkin()
         }
 
-        val totalGemsEarned = ((finalState.collectedGemsCount + bonusGems + FridayBonus) * valMultiplier)
+         val GEM_ECONOMY_RATE = 0.35f
+        val totalGemsEarned = (((finalState.collectedGemsCount + bonusGems + FridayBonus) * valMultiplier) * GEM_ECONOMY_RATE).toInt()
         
         val updated = prof.copy(
             bestScore = if (isNewPB) finalState.score else prof.bestScore,
