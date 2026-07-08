@@ -200,11 +200,52 @@ object RevenueCatManager {
                     onCompleted(false)
                 }
             }
-
-            override fun onError(error: PurchasesError) {
+override fun onError(error: PurchasesError) {
                 Log.e(TAG, "Error fetching offerings for gem pack: ${error.message}")
                 onCompleted(false)
             }
+        })
+    }
+
+    // Purchase a one-time pilot suit skin (non-consumable)
+            
+    fun purchasePilotSuit(activity: Activity, productId: String, onCompleted: (Boolean) -> Unit) {
+        if (!isConfigured) {
+            Log.w(TAG, "Billing not configured — cannot process real pilot suit purchase in this build.")
+            onCompleted(false)
+            return
+        }
+
+        Purchases.sharedInstance.getOfferings(object : com.revenuecat.purchases.interfaces.ReceiveOfferingsCallback {
+            override fun onReceived(offerings: Offerings) {
+                val pkg = offerings.current?.availablePackages?.firstOrNull { it.product.id == productId }
+
+                if (pkg != null) {
+                    Purchases.sharedInstance.purchase(
+                        PurchaseParams.Builder(activity, pkg).build(),
+                        object : com.revenuecat.purchases.interfaces.PurchaseCallback {
+                            override fun onCompleted(storeTransaction: StoreTransaction, customerInfo: CustomerInfo) {
+                                onCompleted(true)
+                            }
+
+                            override fun onError(error: PurchasesError, userCancelled: Boolean) {
+                                Log.e(TAG, "Pilot suit purchase error: ${error.message}")
+                                onCompleted(false)
+                            }
+                        }
+                    )
+                } else {
+                    Log.w(TAG, "Pilot suit product $productId not found in active offerings.")
+                    onCompleted(false)
+                }
+            }
+
+            override fun onError(error: PurchasesError) {
+                Log.e(TAG, "Error fetching offerings for pilot suit: ${error.message}")
+                onCompleted(false)
+            }
+        
+    
         })
     }
 
