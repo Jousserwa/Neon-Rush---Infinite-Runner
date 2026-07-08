@@ -60,6 +60,8 @@ class GameDao(context: Context) {
             val subIdx = cursor.getColumnIndex("subscriptionPro")
             val dailyIdx = cursor.getColumnIndex("dailyAttemptsToday")
             val dateIdx = cursor.getColumnIndex("lastDailyRushDate")
+            val activePilotSkinIdx = cursor.getColumnIndex("activePilotSkinId")
+            val unlockedPilotSkinsIdx = cursor.getColumnIndex("unlockedPilotSkinsCsv")
 
             val profile = GameProfile(
                 id = 1,
@@ -72,7 +74,9 @@ class GameDao(context: Context) {
                 followedUsersCsv = if (followedIdx != -1) cursor.getString(followedIdx) else "CyberRunner,ZeroGlitch,RetroWave",
                 subscriptionPro = if (subIdx != -1) cursor.getInt(subIdx) == 1 else false,
                 dailyAttemptsToday = if (dailyIdx != -1) cursor.getInt(dailyIdx) else 0,
-                lastDailyRushDate = if (dateIdx != -1) cursor.getString(dateIdx) else ""
+                lastDailyRushDate = if (dateIdx != -1) cursor.getString(dateIdx) else "",
+                activePilotSkinId = if (activePilotSkinIdx != -1) cursor.getString(activePilotSkinIdx) else "default",
+                unlockedPilotSkinsCsv = if (unlockedPilotSkinsIdx != -1) cursor.getString(unlockedPilotSkinsIdx) else "default"
             )
             _profileFlow.value = profile
         } else {
