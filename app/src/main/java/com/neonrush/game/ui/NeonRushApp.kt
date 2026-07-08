@@ -1118,7 +1118,7 @@ fun SkinsDeckTab(viewModel: NeonRushViewModel, profile: GameProfile) {
             )
         }
 
-        
+        if (selectedTab == "ships") {
         Text(
             text = "🎨 SHIP CUSTOMIZATION DECK",
             fontSize = 16.sp,
