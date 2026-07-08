@@ -1075,6 +1075,7 @@ fun SkinsDeckTab(viewModel: NeonRushViewModel, profile: GameProfile) {
         profile.unlockedSkinsCsv.split(",").toSet()
     }
     val activity = LocalContext.current as? Activity
+    var selectedTab by remember { mutableStateOf("pilots") }
 
     Column(
         modifier = Modifier
