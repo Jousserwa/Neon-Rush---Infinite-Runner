@@ -1256,24 +1256,7 @@ viewModel.shopSkins.forEach { (id, name, cost) ->
 
         Spacer(modifier = Modifier.height(20.dp))
         // Transcendence Prestige Container
-        Card(
-            colors = CardDefaults.cardColors(containerColor = CyberSurface.copy(alpha = 0.6f)),
-            modifier = Modifier
-                .fillMaxWidth()
-                .border(1.dp, CyberTertiary, RoundedCornerShape(12.dp))
-        ) {
-            Column(modifier = Modifier.padding(16.dp)) {
-                Text(
-                    text = "🌌 TRANSCENDENCE PROTOCOL",
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = CyberTertiary,
-                    fontFamily = FontFamily.Monospace,
-                    modifier = Modifier.padding(bottom = 4.dp)
-
-        Spacer(modifier = Modifier.height(20.dp))
-
-        // Transcendence Prestige Container
+        
         Card(
             colors = CardDefaults.cardColors(containerColor = CyberSurface.copy(alpha = 0.6f)),
             modifier = Modifier
