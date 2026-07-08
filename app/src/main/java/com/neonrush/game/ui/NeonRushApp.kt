@@ -1117,6 +1117,106 @@ fun SkinsDeckTab(viewModel: NeonRushViewModel, profile: GameProfile) {
                     .padding(vertical = 10.dp)
             )
         }
+        if (selectedTab == "pilots") {
+            val unlockedPilotSkins = remember(profile.unlockedPilotSkinsCsv) {
+                profile.unlockedPilotSkinsCsv.split(",").toSet()
+            }
+
+            Text(
+                text = "🧑‍🚀 PILOT SUITS",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold,
+                color = CyberPrimary,
+                fontFamily = FontFamily.Monospace,
+                modifier = Modifier.padding(bottom = 6.dp)
+            )
+
+            Text(
+                text = "Suit up your pilot. Some are earned by completing Worlds, others can be bought outright.",
+                color = CyberOnSurface.copy(alpha = 0.7f),
+                fontSize = 12.sp,
+                modifier = Modifier.padding(bottom = 12.dp)
+            )
+
+            Skins.ALL.forEach { skin ->
+                val isUnlocked = unlockedPilotSkins.contains(skin.id)
+                val isActive = profile.activePilotSkinId == skin.id
+                val isStorySkin = skin.unlockWorldId != null
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 4.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(if (isActive) CyberPrimary.copy(alpha = 0.15f) else CyberSurface)
+                        .border(
+                            1.dp,
+                            if (isActive) CyberPrimary else Color.Transparent,
+                            RoundedCornerShape(8.dp)
+                        )
+                        .padding(14.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = skin.name,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White
+                        )
+                        Text(
+                            text = skin.description,
+                            fontSize = 11.sp,
+                            color = CyberPrimary.copy(alpha = 0.7f)
+                        )
+                    }
+
+                    if (isActive) {
+                        Box(
+                            modifier = Modifier
+                                .background(CyberPrimary, RoundedCornerShape(4.dp))
+                                .padding(horizontal = 8.dp, vertical = 4.dp)
+                        ) {
+                            Text(
+                                text = "ACTIVE",
+                                color = CyberBackground,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 10.sp,
+                                fontFamily = FontFamily.Monospace
+                            )
+                        }
+                    } else if (isUnlocked) {
+                        Button(
+                            onClick = { viewModel.equipPilotSkin(skin.id) },
+                            colors = ButtonDefaults.buttonColors(containerColor = CyberSurface.copy(alpha = 0.8f)),
+                            shape = RoundedCornerShape(4.dp),
+                            modifier = Modifier.border(1.dp, CyberPrimary, RoundedCornerShape(4.dp))
+                        ) {
+                            Text(text = "EQUIP", color = CyberPrimary, fontFamily = FontFamily.Monospace, fontSize = 11.sp)
+                        }
+                    } else if (isStorySkin) {
+                        Text(
+                            text = "🔒 World ${skin.unlockWorldId}",
+                            fontSize = 11.sp,
+                            color = Color.White.copy(alpha = 0.5f),
+                            fontFamily = FontFamily.Monospace
+                        )
+                    } else {
+                        Button(
+                            onClick = {
+                                activity?.let {
+                                    viewModel.purchasePilotSkin(it, skin.id, "neonrush_skin_${skin.id}")
+                                }
+                            },
+                            colors = ButtonDefaults.buttonColors(containerColor = CyberSecondary),
+                            shape = RoundedCornerShape(4.dp)
+                        ) {
+                            Text(text = "BUY ${skin.priceUsd}", color = Color.White, fontFamily = FontFamily.Monospace, fontSize = 11.sp)
+                        }
+                    }
+                }
+            }
+        }
 
         if (selectedTab == "ships") {
         Text(
