@@ -1256,6 +1256,57 @@ fun SkinsDeckTab(viewModel: NeonRushViewModel, profile: GameProfile) {
                 }
             }
         }
+    
+
+Spacer(modifier = Modifier.height(20.dp))
+
+        Text(
+            text = "💎 GET MORE GEMS",
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Bold,
+            color = CyberPrimary,
+            fontFamily = FontFamily.Monospace,
+            modifier = Modifier.padding(bottom = 6.dp)
+        )
+
+        Text(
+            text = "Skip the grind — top up your gem balance directly.",
+            color = CyberOnSurface.copy(alpha = 0.7f),
+            fontSize = 12.sp,
+            modifier = Modifier.padding(bottom = 12.dp)
+        )
+
+        listOf(
+            Triple(RevenueCatManager.PRODUCT_ID_GEMS_SMALL, RevenueCatManager.GEMS_SMALL_AMOUNT, RevenueCatManager.GEMS_SMALL_PRICE_USD),
+            Triple(RevenueCatManager.PRODUCT_ID_GEMS_MEDIUM, RevenueCatManager.GEMS_MEDIUM_AMOUNT, RevenueCatManager.GEMS_MEDIUM_PRICE_USD),
+            Triple(RevenueCatManager.PRODUCT_ID_GEMS_LARGE, RevenueCatManager.GEMS_LARGE_AMOUNT, RevenueCatManager.GEMS_LARGE_PRICE_USD)
+        ).forEach { (productId, amount, price) ->
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 4.dp)
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(CyberSurface)
+                    .padding(14.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "💎 $amount Gems",
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
+                )
+                Button(
+                    onClick = {
+                        activity?.let { viewModel.purchaseGemPack(it, productId, amount) }
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = CyberSecondary),
+                    shape = RoundedCornerShape(4.dp)
+                ) {
+                    Text(text = "BUY $price", color = Color.White, fontFamily = FontFamily.Monospace, fontSize = 11.sp)
+                }
+            }
+        }
     }
 }
 
