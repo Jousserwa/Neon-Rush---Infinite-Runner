@@ -111,6 +111,8 @@ class GameDao(context: Context) {
             put("subscriptionPro", if (profile.subscriptionPro) 1 else 0)
             put("dailyAttemptsToday", profile.dailyAttemptsToday)
             put("lastDailyRushDate", profile.lastDailyRushDate)
+            put("activePilotSkinId", profile.activePilotSkinId)
+            put("unlockedPilotSkinsCsv", profile.unlockedPilotSkinsCsv)
         }
         db.insertWithOnConflict("game_profile", null, values, SQLiteDatabase.CONFLICT_REPLACE)
         _profileFlow.value = profile
