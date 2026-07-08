@@ -142,7 +142,11 @@ var paywallReason by remember { mutableStateOf("generic") }
                                 unselectedIconColor = CyberOnSurface.copy(alpha = 0.5f),
                                 indicatorColor = CyberPrimary.copy(alpha = 0.1f)
                             ),
-                            icon = { Icon(Icons.Filled.ShoppingCart, contentDescription = "Skins") },
+                            icon = {
+                                BadgedBox(badge = { Badge(containerColor = CyberSecondary) }) {
+                                    Icon(Icons.Filled.ShoppingCart, contentDescription = "Skins")
+                                }
+                            },
                             label = { Text("Skins", fontFamily = FontFamily.Monospace, fontSize = 11.sp) }
                         )
                         NavigationBarItem(
