@@ -1082,6 +1082,43 @@ fun SkinsDeckTab(viewModel: NeonRushViewModel, profile: GameProfile) {
             .fillMaxSize()
             .verticalScroll(androidx.compose.foundation.rememberScrollState())
     ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp)
+                .clip(RoundedCornerShape(8.dp))
+                .background(CyberSurface),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            Text(
+                text = "PILOT SUITS",
+                color = if (selectedTab == "pilots") CyberBackground else CyberPrimary,
+                fontFamily = FontFamily.Monospace,
+                fontWeight = FontWeight.Bold,
+                fontSize = 13.sp,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .weight(1f)
+                    .background(if (selectedTab == "pilots") CyberPrimary else Color.Transparent)
+                    .clickable { selectedTab = "pilots" }
+                    .padding(vertical = 10.dp)
+            )
+            Text(
+                text = "SHIP HULLS",
+                color = if (selectedTab == "ships") CyberBackground else CyberPrimary,
+                fontFamily = FontFamily.Monospace,
+                fontWeight = FontWeight.Bold,
+                fontSize = 13.sp,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .weight(1f)
+                    .background(if (selectedTab == "ships") CyberPrimary else Color.Transparent)
+                    .clickable { selectedTab = "ships" }
+                    .padding(vertical = 10.dp)
+            )
+        }
+
+        
         Text(
             text = "🎨 SHIP CUSTOMIZATION DECK",
             fontSize = 16.sp,
