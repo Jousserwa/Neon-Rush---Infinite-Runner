@@ -123,13 +123,22 @@ class NeonRushViewModel(
 
     private val firedStoryBeats = mutableSetOf<Pair<Int, StoryBeatType>>()
     private var lastWorldIdForStory = -1
-
-    private fun checkWorldEndingBeat(previousZoneNumber: Int, nextZoneNumber: Int) {
+private fun checkWorldEndingBeat(previousZoneNumber: Int, nextZoneNumber: Int) {
         val world = Worlds.worldForZone(previousZoneNumber)
         if (nextZoneNumber > world.endZone && firedStoryBeats.add(world.id to StoryBeatType.ENDING)) {
             _storyEvent.tryEmit(StoryEvent(world, StoryBeatType.ENDING, world.endingText))
+
+            val rewardSkinId = when (world.id) {
+                1 -> "blackout_runner"
+                2 -> "signal_ghost"
+                3 -> "convict_grey"
+                4 -> "apex_predator"
+                else -> null
+            }
+            rewardSkinId?.let { unlockPilotSkinFromStory(it) }
         }
     }
+    
 
     private fun checkStoryBeats(zoneNumber: Int, bossRisingEdge: Boolean) {
         val world = Worlds.worldForZone(zoneNumber)
