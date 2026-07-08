@@ -122,7 +122,7 @@ object RevenueCatManager {
             }
         })
     }
-    // Purchase Annual PRO function
+   // Purchase Annual PRO function
     fun purchaseProSubscriptionAnnual(activity: Activity, onCompleted: (Boolean) -> Unit) {
         if (!isConfigured) {
             _isPro.value = true
@@ -169,6 +169,45 @@ object RevenueCatManager {
         })
     }
 
+    // Purchase a one-time gem pack (consumable) — reusable for all three pack sizes
+    fun purchaseGemPack(activity: Activity, productId: String, onCompleted: (Boolean) -> Unit) {
+        if (!isConfigured) {
+            Log.w(TAG, "Billing not configured — cannot process real gem purchase in this build.")
+            onCompleted(false)
+            return
+        }
+
+        Purchases.sharedInstance.getOfferings(object : com.revenuecat.purchases.interfaces.ReceiveOfferingsCallback {
+            override fun onReceived(offerings: Offerings) {
+                val pkg = offerings.current?.availablePackages?.firstOrNull { it.product.id == productId }
+
+                if (pkg != null) {
+                    Purchases.sharedInstance.purchase(
+                        PurchaseParams.Builder(activity, pkg).build(),
+                        object : com.revenuecat.purchases.interfaces.PurchaseCallback {
+                            override fun onCompleted(storeTransaction: StoreTransaction, customerInfo: CustomerInfo) {
+                                onCompleted(true)
+                            }
+
+                            override fun onError(error: PurchasesError, userCancelled: Boolean) {
+                                Log.e(TAG, "Gem pack purchase error: ${error.message}")
+                                onCompleted(false)
+                            }
+                        }
+                    )
+                } else {
+                    Log.w(TAG, "Gem pack product $productId not found in active offerings.")
+                    onCompleted(false)
+                }
+            }
+
+            override fun onError(error: PurchasesError) {
+                Log.e(TAG, "Error fetching offerings for gem pack: ${error.message}")
+                onCompleted(false)
+            }
+        })
+    }
+
     // Restore purchases helper
     fun restorePurchases(onCompleted: (Boolean) -> Unit) {
         if (!isConfigured) {
@@ -188,6 +227,9 @@ object RevenueCatManager {
             }
         })
     }
+
+    
+    
 
     // Toggle local developer entitlement override (useful for sandbox preview screen)
     fun toggleDevProOverride(enabled: Boolean) {
