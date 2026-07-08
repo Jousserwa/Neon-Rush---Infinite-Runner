@@ -19,8 +19,11 @@ data class GameProfile(
     val followedUsersCsv: String = "CyberRunner,ZeroGlitch,RetroWave",
     val subscriptionPro: Boolean = false,
     val dailyAttemptsToday: Int = 0,
-    val lastDailyRushDate: String = ""
-)
+    val lastDailyRushDate: String = "",
+    val activePilotSkinId: String = "default",
+    val unlockedPilotSkinsCsv: String = "default"
+    )
+
 
 data class GhostChallengeEntity(
     val challengeId: String,
