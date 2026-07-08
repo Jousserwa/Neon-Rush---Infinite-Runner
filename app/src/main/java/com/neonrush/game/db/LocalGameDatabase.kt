@@ -156,7 +156,7 @@ class GameDao(context: Context) {
     }
 }
 
-class GameDbHelper(context: Context) : SQLiteOpenHelper(context, "neon_rush_companion.db", null, 1) {
+class GameDbHelper(context: Context) : SQLiteOpenHelper(context, "neon_rush_companion.db", null, 2) {
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL("""
             CREATE TABLE game_profile (
@@ -170,7 +170,9 @@ class GameDbHelper(context: Context) : SQLiteOpenHelper(context, "neon_rush_comp
                 followedUsersCsv TEXT,
                 subscriptionPro INTEGER,
                 dailyAttemptsToday INTEGER,
-                lastDailyRushDate TEXT
+                lastDailyRushDate TEXT,
+                activePilotSkinId TEXT,
+                unlockedPilotSkinsCsv TEXT
             )
         """)
         db.execSQL("""
@@ -186,8 +188,9 @@ class GameDbHelper(context: Context) : SQLiteOpenHelper(context, "neon_rush_comp
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        db.execSQL("DROP TABLE IF EXISTS game_profile")
-        db.execSQL("DROP TABLE IF EXISTS ghost_challenges")
-        onCreate(db)
+        if (oldVersion < 2) {
+            db.execSQL("ALTER TABLE game_profile ADD COLUMN activePilotSkinId TEXT DEFAULT 'default'")
+            db.execSQL("ALTER TABLE game_profile ADD COLUMN unlockedPilotSkinsCsv TEXT DEFAULT 'default'")
+        }
     }
 }
