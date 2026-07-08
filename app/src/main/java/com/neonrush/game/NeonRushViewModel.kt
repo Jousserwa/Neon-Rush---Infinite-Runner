@@ -176,6 +176,43 @@ class NeonRushViewModel(
             }
         }
     } 
+       // Equip an already-unlocked pilot suit skin
+    fun equipPilotSkin(skinId: String) {
+        viewModelScope.launch {
+            val prof = gameDao.getProfileDirect() ?: GameProfile()
+            val unlocked = prof.unlockedPilotSkinsCsv.split(",").toSet()
+            if (unlocked.contains(skinId)) {
+                val updated = prof.copy(activePilotSkinId = skinId)
+                gameDao.saveProfile(updated)
+                soundEngine.playTone(400f, 100, "sine")
+            }
+        }
+    }
+
+    // Called when a story-reward pilot skin should be unlocked (e.g. on World completion)
+    fun unlockPilotSkinFromStory(skinId: String) {
+        viewModelScope.launch {
+            val prof = gameDao.getProfileDirect() ?: GameProfile()
+            val unlocked = prof.unlockedPilotSkinsCsv.split(",").toMutableList()
+            if (!unlocked.contains(skinId)) {
+                unlocked.add(skinId)
+                val updated = prof.copy(unlockedPilotSkinsCsv = unlocked.joinToString(","))
+                gameDao.saveProfile(updated)
+                soundEngine.playUnlockSkin()
+            }
+        }
+    }
+
+    // Purchase a real-money pilot suit skin
+    fun purchasePilotSkin(activity: Activity, skinId: String, productId: String) {
+        RevenueCatManager.purchasePilotSuit(activity, productId) { success ->
+            if (success) {
+                unlockPilotSkinFromStory(skinId)
+                equipPilotSkin(skinId)
+            }
+        }
+    }
+
     
 
     init {
