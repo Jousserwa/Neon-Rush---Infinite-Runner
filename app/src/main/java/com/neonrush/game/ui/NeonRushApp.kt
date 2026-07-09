@@ -82,6 +82,9 @@ fun NeonRushApp(viewModel: NeonRushViewModel) {
     val isPro by RevenueCatManager.isPro.collectAsState()
     var showPaywall by remember { mutableStateOf(false) }
 var paywallReason by remember { mutableStateOf("generic") }
+LaunchedEffect(Unit) {
+        viewModel.checkDailyStreak()
+    }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
