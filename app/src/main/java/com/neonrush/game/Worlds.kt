@@ -63,6 +63,18 @@ object Worlds {
             bossIntroText = "It finally shows itself — and it's been hunting you since you landed.",
             endingText = "You break the treeline as the jungle goes quiet behind you. You made it. Barely.",
             requiresPro = true
+        ),
+        World(
+            id = 5,
+            title = "RED PROTOCOL",
+            subtitle = "Citywide Manhunt",
+            startZone = 33,
+            endZone = 40,
+            openingText = "Your face just hit every screen in the city. RED PROTOCOL is active — every drone, every camera, every door is against you now.",
+            midRunText = "Command channel, encrypted: \"They've sealed the outer district. You have one route left — through the transit spine.\"",
+            bossIntroText = "A hunter-class enforcer drops from the skyline, already locked onto your signal.",
+            endingText = "You clear the city limits as the alert finally goes dark behind you. For now, Red Protocol is over. For you, it never really ends.",
+            requiresPro = true
         )
     )
 
