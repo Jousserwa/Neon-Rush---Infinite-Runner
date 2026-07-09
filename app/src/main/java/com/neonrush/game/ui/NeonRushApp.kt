@@ -247,7 +247,7 @@ LaunchedEffect(Unit) {
                             "social" -> DailyChallengeTab(viewModel = viewModel, profile = currentProfile)
                             "skins" -> SkinsDeckTab(viewModel = viewModel, profile = currentProfile)
                             "profile" -> ProfileTab(profile = currentProfile, viewModel = viewModel)
-                        }
+                        
                     }
                 }
             }
