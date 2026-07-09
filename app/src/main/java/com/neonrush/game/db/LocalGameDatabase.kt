@@ -21,8 +21,11 @@ data class GameProfile(
     val dailyAttemptsToday: Int = 0,
     val lastDailyRushDate: String = "",
     val activePilotSkinId: String = "default",
-    val unlockedPilotSkinsCsv: String = "default"
-    )
+    val unlockedPilotSkinsCsv: String = "default",
+    val currentStreak: Int = 0,
+    val lastStreakLoginDate: String = ""
+)
+    
 
 
 data class GhostChallengeEntity(
