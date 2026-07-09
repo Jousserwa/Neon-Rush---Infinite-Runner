@@ -80,7 +80,10 @@ class GameDao(context: Context) {
                 dailyAttemptsToday = if (dailyIdx != -1) cursor.getInt(dailyIdx) else 0,
                 lastDailyRushDate = if (dateIdx != -1) cursor.getString(dateIdx) else "",
                 activePilotSkinId = if (activePilotSkinIdx != -1) cursor.getString(activePilotSkinIdx) else "default",
-                unlockedPilotSkinsCsv = if (unlockedPilotSkinsIdx != -1) cursor.getString(unlockedPilotSkinsIdx) else "default"
+                unlockedPilotSkinsCsv = if (unlockedPilotSkinsIdx != -1) cursor.getString(unlockedPilotSkinsIdx) else "default",
+                currentStreak = if (currentStreakIdx != -1) cursor.getInt(currentStreakIdx) else 0,
+                lastStreakLoginDate = if (lastStreakLoginIdx != -1) cursor.getString(lastStreakLoginIdx) else ""
+            
             )
             _profileFlow.value = profile
         } else {
