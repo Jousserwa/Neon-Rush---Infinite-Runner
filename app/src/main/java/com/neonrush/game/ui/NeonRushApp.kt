@@ -1566,8 +1566,32 @@ val textMeasurer = rememberTextMeasurer()
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop
         )
+        2 -> Image(
+            painter = painterResource(id = R.drawable.bg_world2_derelict_signal),
+            contentDescription = null,
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop
+        )
+        3 -> Image(
+            painter = painterResource(id = R.drawable.bg_world3_cell_block_zero),
+            contentDescription = null,
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop
+        )
+        4 -> Image(
+            painter = painterResource(id = R.drawable.bg_world4_green_hell),
+            contentDescription = null,
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop
+        )
+        5 -> Image(
+            painter = painterResource(id = R.drawable.bg_world5_red_protocol),
+            contentDescription = null,
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop
+        )
         else -> {} // no art yet for this World — existing gradient background shows through
-     }
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()
