@@ -65,7 +65,8 @@ class GameDao(context: Context) {
             val dateIdx = cursor.getColumnIndex("lastDailyRushDate")
             val activePilotSkinIdx = cursor.getColumnIndex("activePilotSkinId")
             val unlockedPilotSkinsIdx = cursor.getColumnIndex("unlockedPilotSkinsCsv")
-
+            val currentStreakIdx = cursor.getColumnIndex("currentStreak")
+            val lastStreakLoginIdx = cursor.getColumnIndex("lastStreakLoginDate")
             val profile = GameProfile(
                 id = 1,
                 username = if (usernameIdx != -1) cursor.getString(usernameIdx) else "NeonPilot_99",
