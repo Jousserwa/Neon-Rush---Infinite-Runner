@@ -86,6 +86,15 @@ LaunchedEffect(Unit) {
         viewModel.checkDailyStreak()
     }
 
+    var streakBannerReward by remember { mutableStateOf<StreakReward?>(null) }
+    LaunchedEffect(Unit) {
+        viewModel.streakRewardEvent.collect { reward ->
+            streakBannerReward = reward
+            delay(4000)
+            streakBannerReward = null
+        }
+    }
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         bottomBar = {
