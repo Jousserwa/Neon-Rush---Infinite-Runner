@@ -252,6 +252,35 @@ LaunchedEffect(Unit) {
                 }
             }
         }
+
+        streakBannerReward?.let { reward ->
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.TopCenter)
+                    .padding(top = 24.dp, start = 20.dp, end = 20.dp)
+                    .background(Color(0xE6120324), RoundedCornerShape(12.dp))
+                    .border(1.dp, CyberPrimary.copy(alpha = 0.6f), RoundedCornerShape(12.dp))
+                    .padding(horizontal = 16.dp, vertical = 12.dp)
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
+                    Text(
+                        text = "🔥 ${reward.label}",
+                        color = CyberPrimary,
+                        fontWeight = FontWeight.Bold,
+                        fontFamily = FontFamily.Monospace,
+                        fontSize = 13.sp
+                    )
+                    Text(
+                        text = "+${reward.gems} GEMS",
+                        color = Color.White,
+                        fontWeight = FontWeight.Black,
+                        fontFamily = FontFamily.Monospace,
+                        fontSize = 16.sp
+                    )
+                }
+            }
+        }
     }
 
     // Display billing Subscription Paywall when requested
