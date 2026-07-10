@@ -647,7 +647,7 @@ private fun checkWorldEndingBeat(previousZoneNumber: Int, nextZoneNumber: Int) {
                     val routeTargetY = state.ghostYPath.getOrNull(tick % state.ghostYPath.size.coerceAtLeast(1)) ?: 50
                     
                     // Spawn Gems and Fuel cells along target route
-                    if (random.nextInt(100) < 40) {
+                    if (random.nextInt(100) < 9) {
                         updatedElements.add(VisualTrackElement("gem_${tick}", gridX, routeTargetY + random.nextInt(-8, 8), "gem"))
                     } else if (random.nextInt(100) < 15) {
                         updatedElements.add(VisualTrackElement("fuel_${tick}", gridX, routeTargetY + random.nextInt(-5, 5), "fuel"))
