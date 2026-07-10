@@ -1083,6 +1083,7 @@ private fun checkWorldEndingBeat(previousZoneNumber: Int, nextZoneNumber: Int) {
                 var gemsGathered = state.collectedGemsCount
                 val nextDurationsMap = state.activePowerupDurations.toMutableMap()
                 val finalElements = mutableListOf<VisualTrackElement>()
+                val activeParticles = state.particles.toMutableList()
                 
                 for (key in nextDurationsMap.keys.toList()) {
                     val remaining = nextDurationsMap[key] ?: 0
@@ -1109,14 +1110,56 @@ private fun checkWorldEndingBeat(previousZoneNumber: Int, nextZoneNumber: Int) {
                                     soundEngine.playGemCollect()
                                     val multiFactor = if (isMondayGems) 2 else 1
                                     gemsGathered += multiFactor
+                                    repeat(6) { i ->
+                                        activeParticles.add(
+                                            Particle(
+                                                id = "sp_${tick}_$i",
+                                                x = elem.xOffsetFraction,
+                                                y = elem.yMatchPos.toFloat(),
+                                                vx = random.nextFloat() * 0.02f - 0.01f,
+                                                vy = random.nextFloat() * 6f - 3f,
+                                                maxAge = 12,
+                                                colorArgb = 0xFF00E5FFL,
+                                                kind = "sparkle"
+                                            )
+                                        )
+                                    }
                                 }
                                 "fuel" -> {
                                     soundEngine.playTone(523f, 80, "sine")
                                     fuelLevelState = (fuelLevelState + 18).coerceAtMost(100)
+                                    repeat(6) { i ->
+                                        activeParticles.add(
+                                            Particle(
+                                                id = "sp_${tick}_$i",
+                                                x = elem.xOffsetFraction,
+                                                y = elem.yMatchPos.toFloat(),
+                                                vx = random.nextFloat() * 0.02f - 0.01f,
+                                                vy = random.nextFloat() * 6f - 3f,
+                                                maxAge = 12,
+                                                colorArgb = 0xFF00FF88L,
+                                                kind = "sparkle"
+                                            )
+                                        )
+                                    }
                                 }
                                 "powerup" -> {
                                     soundEngine.playShieldPowerup()
                                     val puId = elem.subType
+                                    repeat(8) { i ->
+                                        activeParticles.add(
+                                            Particle(
+                                                id = "sp_${tick}_$i",
+                                                x = elem.xOffsetFraction,
+                                                y = elem.yMatchPos.toFloat(),
+                                                vx = random.nextFloat() * 0.02f - 0.01f,
+                                                vy = random.nextFloat() * 6f - 3f,
+                                                maxAge = 14,
+                                                colorArgb = 0xFFFF00FFL,
+                                                kind = "sparkle"
+                                            )
+                                        )
+                                    }
                                     if (puId == "PU10") {
                                         val perfectY = state.ghostYPath.getOrNull(tick % state.ghostYPath.size.coerceAtLeast(1)) ?: 50
                                         _simState.value = _simState.value.copy(userYPos = perfectY)
@@ -1143,6 +1186,20 @@ private fun checkWorldEndingBeat(previousZoneNumber: Int, nextZoneNumber: Int) {
                                         soundEngine.playCollision()
                                         fuelLevelState = (fuelLevelState - 20).coerceAtLeast(0)
                                         updatedMsg = "IMPACT IMPACT!"
+                                        repeat(10) { i ->
+                                            activeParticles.add(
+                                                Particle(
+                                                    id = "ex_${tick}_$i",
+                                                    x = elem.xOffsetFraction,
+                                                    y = elem.yMatchPos.toFloat(),
+                                                    vx = random.nextFloat() * 0.04f - 0.02f,
+                                                    vy = random.nextFloat() * 10f - 5f,
+                                                    maxAge = 16,
+                                                    colorArgb = 0xFFFF5500L,
+                                                    kind = "explosion"
+                                                )
+                                            )
+                                        }
                                     }
                                 }
                             }
