@@ -39,6 +39,17 @@ data class VisualTrackElement(
     val subType: String = "", // "PU1".."PU12", "PILLAR", "LASER", "BLADE"
     val isCollected: Boolean = false
 )
+data class Particle(
+    val id: String,
+    val x: Float, // fraction of canvas width, same coordinate space as xOffsetFraction
+    val y: Float, // 0..100 percent, same coordinate space as yMatchPos
+    val vx: Float, // velocity per tick
+    val vy: Float, // velocity per tick
+    val age: Int = 0,
+    val maxAge: Int = 15,
+    val colorArgb: Long, // stored as raw ARGB so this file doesn't need a Compose UI import
+    val kind: String // "sparkle" or "explosion"
+)
 
 // Main active racing simulation state including full procedural and architectural properties
 data class SimulationState(
