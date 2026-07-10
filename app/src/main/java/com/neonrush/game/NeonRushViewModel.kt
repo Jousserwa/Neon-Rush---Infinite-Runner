@@ -84,8 +84,10 @@ data class SimulationState(
     val currentMutationName: String = "",
     val frustrationLevelIndex: Float = 0.5f,
     val obstacleDensityMod: Float = 1.0f, // modified dynamically by AI Adaptation
-    val lastZoneTransitionTick: Int = -999
+    val lastZoneTransitionTick: Int = -999,
+    val particles: List<Particle> = emptyList()
 )
+
 
 class NeonRushViewModel(
     private val gameDao: GameDao,
