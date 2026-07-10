@@ -892,6 +892,7 @@ private fun checkWorldEndingBeat(previousZoneNumber: Int, nextZoneNumber: Int) {
                     bossHealth = bossHealthState.coerceIn(0f, 1f),
                     bossY = bossYState,
                     collectedGemsCount = gemsGathered,
+                    particles = agedParticles,
                     isTranscendenceUnlocked = nextZoneNumber >= 50 || prof.transcendenceCount > 0
                 )
             }
