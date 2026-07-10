@@ -803,7 +803,16 @@ private fun checkWorldEndingBeat(previousZoneNumber: Int, nextZoneNumber: Int) {
                         }
                     }
                     finalElements.add(elem)
+                    
                 }
+
+                // Age, move, and remove expired particles
+                val agedParticles = activeParticles.mapNotNull { p ->
+                    val newAge = p.age + 1
+                    if (newAge >= p.maxAge) null
+                    else p.copy(age = newAge, x = p.x + p.vx, y = (p.y + p.vy).coerceIn(0f, 100f))
+                }
+                
                 if (hitThisTick) {
                     ticksSinceLastHit = 0
                     liveDifficultyMultiplier = (liveDifficultyMultiplier - 0.15f).coerceAtLeast(0.6f)
