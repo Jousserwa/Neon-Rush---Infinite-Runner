@@ -1209,6 +1209,13 @@ private fun checkWorldEndingBeat(previousZoneNumber: Int, nextZoneNumber: Int) {
                     finalElements.add(elem)
                 }
 
+                // Age, move, and remove expired particles
+                val agedParticles = activeParticles.mapNotNull { p ->
+                    val newAge = p.age + 1
+                    if (newAge >= p.maxAge) null
+                    else p.copy(age = newAge, x = p.x + p.vx, y = (p.y + p.vy).coerceIn(0f, 100f))
+                }
+
                 val targetGhostY = state.ghostYPath.getOrNull(tick % state.ghostYPath.size.coerceAtLeast(1)) ?: 50
                 val processedGhostY = if (activeDna.mechanicIds.contains(2)) 100 - targetGhostY else targetGhostY
                 val rawError = Math.abs(userY - processedGhostY)
