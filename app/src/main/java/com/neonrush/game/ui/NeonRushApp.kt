@@ -2023,14 +2023,6 @@ val textMeasurer = rememberTextMeasurer()
         Spacer(modifier = Modifier.height(16.dp))
 
         // Dynamic coordinate sliding panel input
-        Text(
-            text = "🛰️ SHIP POSITION CALIBRATION CONTROLLER",
-            fontSize = 11.sp,
-            color = Color.White.copy(alpha = 0.6f),
-            fontFamily = FontFamily.Monospace,
-            modifier = Modifier.padding(bottom = 4.dp)
-        )
-
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
