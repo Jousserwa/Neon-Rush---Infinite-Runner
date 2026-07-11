@@ -1816,13 +1816,29 @@ val textMeasurer = rememberTextMeasurer()
                                     }
                                 }
                             }
+                            
                             "bullet" -> {
                                 drawCircle(color = Color(0xFFFF00FF), radius = 3.dp.toPx(), center = Offset(x, y))
                             }
                         }
                     }
 
+                    // Render active particles (sparkle bursts, explosion bursts)
+                    for (p in simState.particles) {
+                        val px = cw * p.x
+                        val py = ch * (p.y / 100f)
+                        val lifeFrac = (1f - (p.age.toFloat() / p.maxAge.toFloat())).coerceIn(0f, 1f)
+                        val particleColor = Color(p.colorArgb).copy(alpha = lifeFrac)
+                        val radius = if (p.kind == "explosion") (3f + 4f * lifeFrac).dp.toPx() else (2f + 2f * lifeFrac).dp.toPx()
+                        drawCircle(
+                            color = particleColor,
+                            radius = radius,
+                            center = Offset(px, py)
+                        )
+                    }
+
                     // Ghost vehicle dot (represent pink spaceship)
+                          
                     val ticksCount = simState.ghostYPath.size
                     val userX = cw * 0.2f // Lock user ship coordinates to 20% width for running feel
                     
