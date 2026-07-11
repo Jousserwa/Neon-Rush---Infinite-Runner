@@ -1656,7 +1656,17 @@ val textMeasurer = rememberTextMeasurer()
                 .border(2.dp, CyberPrimary, RoundedCornerShape(12.dp))
         ) {
             // Render active powerup durations or boss labels (Levels 1 - 10)
-            Box(modifier = Modifier.fillMaxSize()) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .pointerInput(Unit) {
+                        detectDragGestures { change, dragAmount ->
+                            change.consume()
+                            val deltaPercent = (dragAmount.y / size.height) * 100f
+                            viewModel.adjustUserY(deltaPercent.toInt())
+                        }
+                    }
+            ) {
                 Canvas(modifier = Modifier.fillMaxSize()) {
                     val cw = size.width
                     val ch = size.height
