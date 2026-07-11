@@ -1974,14 +1974,16 @@ val textMeasurer = rememberTextMeasurer()
                             .padding(8.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Text(
-                            text = "ZONE ADVANCED COMMAND BOSS",
-                            color = Color(0xFFFF0055),
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 10.sp,
-                            fontFamily = FontFamily.Monospace
-                        )
-                        Spacer(modifier = Modifier.height(4.dp))
+                        if (simState.bossHealth > 0.9f) {
+                            Text(
+                                text = "⚠ BOSS INCOMING",
+                                color = Color(0xFFFF0055),
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 10.sp,
+                                fontFamily = FontFamily.Monospace
+                            )
+                            Spacer(modifier = Modifier.height(4.dp))
+                        }
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth(0.7f)
