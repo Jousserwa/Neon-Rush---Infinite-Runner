@@ -697,11 +697,11 @@ private fun checkWorldEndingBeat(previousZoneNumber: Int, nextZoneNumber: Int) {
                     
                     // AI tracks vertically to block corridors
                     val trackingYBias = userY - bossYState
-                    bossYState += (trackingYBias * 0.12f).toInt()
+                    bossYState += (trackingYBias * 0.05f).toInt()
                     
                     // Boss fires bullets (Bullet Hell ZM17)
-                    if (tick % 6 == 0) {
-                        updatedElements.add(VisualTrackElement("bullet_${tick}", 1.15f, bossYState + random.nextInt(-5, 5), "bullet"))
+                    if (tick % 9 == 0) {
+                        updatedElements.add(VisualTrackElement("bullet_${tick}", 1.15f, bossYState + random.nextInt(-18, 18), "bullet"))
                     }
                     
                     // Auto reduce boss health by flying past
