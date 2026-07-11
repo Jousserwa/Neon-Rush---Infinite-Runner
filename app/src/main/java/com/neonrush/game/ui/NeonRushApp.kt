@@ -1621,7 +1621,7 @@ val textMeasurer = rememberTextMeasurer()
                     fontFamily = FontFamily.Monospace
                 )
                 Text(
-                    text = String.format("Telemetry: %.1fm", simState.distanceMeters),
+                    text = "${simState.distanceMeters.toInt()}m",
                     color = Color.White.copy(alpha = 0.7f),
                     fontSize = 11.sp,
                     fontFamily = FontFamily.Monospace
