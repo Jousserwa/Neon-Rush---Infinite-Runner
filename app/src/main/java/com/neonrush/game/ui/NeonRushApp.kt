@@ -1821,17 +1821,77 @@ val textMeasurer = rememberTextMeasurer()
                                             )
                                         }
                                     }
+                                    "BARRIER" -> {
+                                        val baseSize = ch * 0.16f
+                                        val w = baseSize * (barrierImg.width.toFloat() / barrierImg.height.toFloat())
+                                        drawImage(
+                                            image = barrierImg,
+                                            dstOffset = IntOffset((x - w / 2f).roundToInt(), (y - baseSize / 2f).roundToInt()),
+                                            dstSize = IntSize(w.roundToInt(), baseSize.roundToInt())
+                                        )
+                                    }
+                                    "ZAP_FIELD" -> {
+                                        val glowPulse = 0.6f + 0.4f * sin(simState.tickIndex * 0.5f)
+                                        val baseSize = ch * 0.15f
+                                        val w = baseSize * (zapFieldImg.width.toFloat() / zapFieldImg.height.toFloat())
+                                        drawImage(
+                                            image = zapFieldImg,
+                                            dstOffset = IntOffset((x - w / 2f).roundToInt(), (y - baseSize / 2f).roundToInt()),
+                                            dstSize = IntSize(w.roundToInt(), baseSize.roundToInt()),
+                                            alpha = glowPulse
+                                        )
+                                    }
+                                    "PHANTOM" -> {
+                                        val bob = sin(simState.tickIndex * 0.2f) * ch * 0.015f
+                                        val flicker = 0.5f + 0.5f * sin(simState.tickIndex * 0.3f)
+                                        val baseSize = ch * 0.16f
+                                        val w = baseSize * (phantomImg.width.toFloat() / phantomImg.height.toFloat())
+                                        drawImage(
+                                            image = phantomImg,
+                                            dstOffset = IntOffset((x - w / 2f).roundToInt(), (y - baseSize / 2f + bob).roundToInt()),
+                                            dstSize = IntSize(w.roundToInt(), baseSize.roundToInt()),
+                                            alpha = flicker
+                                        )
+                                    }
+                                    "SPLITTER" -> {
+                                        val angle = (simState.tickIndex * 8f) % 360f
+                                        val baseSize = ch * 0.13f
+                                        val w = baseSize * (splitterImg.width.toFloat() / splitterImg.height.toFloat())
+                                        rotate(degrees = angle, pivot = Offset(x, y)) {
+                                            drawImage(
+                                                image = splitterImg,
+                                                dstOffset = IntOffset((x - w / 2f).roundToInt(), (y - baseSize / 2f).roundToInt()),
+                                                dstSize = IntSize(w.roundToInt(), baseSize.roundToInt())
+                                            )
+                                        }
+                                    }
+                                    "TUNNEL_TOP" -> {
+                                        val baseSize = ch * 0.18f
+                                        val w = baseSize * (tunnelTopImg.width.toFloat() / tunnelTopImg.height.toFloat())
+                                        drawImage(
+                                            image = tunnelTopImg,
+                                            dstOffset = IntOffset((x - w / 2f).roundToInt(), 0),
+                                            dstSize = IntSize(w.roundToInt(), baseSize.roundToInt())
+                                        )
+                                    }
+                                    "TUNNEL_BOTTOM" -> {
+                                        val baseSize = ch * 0.18f
+                                        val w = baseSize * (tunnelBottomImg.width.toFloat() / tunnelBottomImg.height.toFloat())
+                                        drawImage(
+                                            image = tunnelBottomImg,
+                                            dstOffset = IntOffset((x - w / 2f).roundToInt(), (ch - baseSize).roundToInt()),
+                                            dstSize = IntSize(w.roundToInt(), baseSize.roundToInt())
+                                        )
+                                    }
                                     else -> {
                                         val bob = sin(simState.tickIndex * 0.2f) * ch * 0.015f
-                                        val size = ch * 0.07f
-                                        val w = size * (droneImg.width.toFloat() / droneImg.height.toFloat())
+                                        val baseSize = ch * 0.14f
+                                        val w = baseSize * (standardImg.width.toFloat() / standardImg.height.toFloat())
                                         drawImage(
-                                            image = droneImg,
-                                            dstOffset = IntOffset((x - w / 2f).roundToInt(), (y - size / 2f + bob).roundToInt()),
-                                            dstSize = IntSize(w.roundToInt(), size.roundToInt())
+                                            image = standardImg,
+                                            dstOffset = IntOffset((x - w / 2f).roundToInt(), (y - baseSize / 2f + bob).roundToInt()),
+                                            dstSize = IntSize(w.roundToInt(), baseSize.roundToInt())
                                         )
-                                    
-                                        
                                     }
                                 }
                             }
