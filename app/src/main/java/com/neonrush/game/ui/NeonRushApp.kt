@@ -1532,6 +1532,13 @@ Spacer(modifier = Modifier.height(20.dp))
     val sawbladeImg = ImageBitmap.imageResource(id = R.drawable.sawblade)
     val droneImg = ImageBitmap.imageResource(id = R.drawable.drone)
     val spikesFlippedImg = ImageBitmap.imageResource(id = R.drawable.spikes_flipped)
+    val barrierImg = ImageBitmap.imageResource(id = R.drawable.obstacle_barrier)
+    val zapFieldImg = ImageBitmap.imageResource(id = R.drawable.obstacle_zap_field)
+    val phantomImg = ImageBitmap.imageResource(id = R.drawable.obstacle_phantom)
+    val splitterImg = ImageBitmap.imageResource(id = R.drawable.obstacle_splitter_v2)
+    val tunnelTopImg = ImageBitmap.imageResource(id = R.drawable.obstacle_tunnel_top)
+    val tunnelBottomImg = ImageBitmap.imageResource(id = R.drawable.obstacle_tunnel_bottom)
+    val standardImg = ImageBitmap.imageResource(id = R.drawable.obstacle_standard)
     
   
 val textMeasurer = rememberTextMeasurer()
