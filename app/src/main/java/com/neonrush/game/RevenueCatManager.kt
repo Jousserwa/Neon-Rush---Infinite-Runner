@@ -5,6 +5,7 @@ import android.content.Context
 import android.util.Log
 import com.revenuecat.purchases.Purchases
 import com.revenuecat.purchases.PurchasesConfiguration
+import com.revenuecat.purchases.models.StoreProduct
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -56,8 +57,8 @@ object RevenueCatManager {
     private fun checkSubscriptionStatus() {
         try {
             Purchases.sharedInstance.getCustomerInfo { customerInfo, error ->
-                if (error == null) {
-                    val hasPro = customerInfo.entitlements["Neon Rush Pro"]?.isActive == true
+                if (error == null && customerInfo != null) {
+                    val hasPro = customerInfo.entitlements.active.containsKey("Neon Rush Pro")
                     _isPro.value = hasPro
                     Log.d(TAG, "Pro status: $hasPro")
                 }
@@ -78,7 +79,9 @@ object RevenueCatManager {
                 
                 val monthlyPackage = offerings.current?.getPackage("monthly")
                 if (monthlyPackage != null) {
-                    Purchases.sharedInstance.purchase(activity, monthlyPackage) { purchaseResult, purchaseError, _ ->
+                    Purchases.sharedInstance.purchase(
+                        com.revenuecat.purchases.PurchaseParams.Builder(activity, monthlyPackage).build()
+                    ) { purchaseResult, purchaseError, _ ->
                         if (purchaseError == null) {
                             _isPro.value = true
                             onResult(true)
@@ -108,7 +111,9 @@ object RevenueCatManager {
                 
                 val annualPackage = offerings.current?.getPackage("annual")
                 if (annualPackage != null) {
-                    Purchases.sharedInstance.purchase(activity, annualPackage) { purchaseResult, purchaseError, _ ->
+                    Purchases.sharedInstance.purchase(
+                        com.revenuecat.purchases.PurchaseParams.Builder(activity, annualPackage).build()
+                    ) { purchaseResult, purchaseError, _ ->
                         if (purchaseError == null) {
                             _isPro.value = true
                             onResult(true)
@@ -125,7 +130,7 @@ object RevenueCatManager {
         }
     }
 
-    fun purchaseGemPack(activity: Activity, productId: String, gemAmount: Int, onResult: (Boolean) -> Unit) {
+    fun purchaseGemPack(activity: Activity, productId: String, onResult: (Boolean) -> Unit) {
         try {
             Purchases.sharedInstance.getOfferings { offerings, error ->
                 if (error != null || offerings == null) {
@@ -139,7 +144,9 @@ object RevenueCatManager {
                     .find { it.product.identifier == productId }
                 
                 if (packageToBuy != null) {
-                    Purchases.sharedInstance.purchase(activity, packageToBuy) { _, purchaseError, _ ->
+                    Purchases.sharedInstance.purchase(
+                        com.revenuecat.purchases.PurchaseParams.Builder(activity, packageToBuy).build()
+                    ) { _, purchaseError, _ ->
                         onResult(purchaseError == null)
                     }
                 } else {
@@ -151,11 +158,16 @@ object RevenueCatManager {
         }
     }
 
+    fun purchasePilotSuit(activity: Activity, productId: String, onResult: (Boolean) -> Unit) {
+        // Pilot suits use the same purchase flow as gem packs
+        purchaseGemPack(activity, productId, onResult)
+    }
+
     fun restorePurchases(onResult: (Boolean) -> Unit) {
         try {
             Purchases.sharedInstance.restorePurchases { customerInfo, error ->
-                if (error == null) {
-                    val hasPro = customerInfo.entitlements["Neon Rush Pro"]?.isActive == true
+                if (error == null && customerInfo != null) {
+                    val hasPro = customerInfo.entitlements.active.containsKey("Neon Rush Pro")
                     _isPro.value = hasPro
                     onResult(true)
                 } else {
