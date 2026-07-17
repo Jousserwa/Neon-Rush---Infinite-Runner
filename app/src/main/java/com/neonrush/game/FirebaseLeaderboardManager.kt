@@ -1,162 +1,105 @@
 package com.neonrush.game
 
 import android.content.Context
-import android.util.Log
-import com.google.firebase.FirebaseApp
-import com.google.firebase.FirebaseOptions
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.withContext
-import java.net.HttpURLConnection
-import java.net.URL
-import org.json.JSONObject
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.tasks.await
 
-object FirebaseLeaderboardManager {
-    private const val TAG = "FirebaseLeaderboard"
-    private var isInitialized = false
-    private var firestore: FirebaseFirestore? = null
+data class LeaderboardPilot(
+    val name: String = "",
+    val bestScore: Int = 0,
+    val activeZone: String = "",
+    val rank: Int = 0,
+    val isFollowed: Boolean = false
+)
 
-    private val _globalRankings = MutableStateFlow<List<LeaderboardPilot>>(emptyList())
-    val globalRankings: StateFlow<List<LeaderboardPilot>> = _globalRankings
+data class SocialComment(
+    val username: String = "",
+    val comment: String = "",
+    val timeAgo: String = "Just now"
+)
 
-    fun init(context: Context) {
-        if (isInitialized) return
-        try {
-            // Check if default app is already initialized
-            val app = if (FirebaseApp.getApps(context).isEmpty()) {
-                val options = FirebaseOptions.Builder()
-                    .setApplicationId("1:394025609994:android:27fd1477ffc44b12a8bc56")
-                    .setProjectId("neonrush-game-73a")
-                    .setApiKey("AIzaSyDbNeonRushMockKeyForCompilation7a")
-                    .build()
-                FirebaseApp.initializeApp(context, options)
-            } else {
-                FirebaseApp.getInstance()
-            }
-            firestore = FirebaseFirestore.getInstance()
-            isInitialized = true
-            Log.d(TAG, "Firebase initialized successfully with program options.")
-            
-            // Initial fetch
-            fetchTopScores()
-        } catch (e: Exception) {
-            Log.e(TAG, "Firebase programmatic initialization failed", e)
-        }
+class FirebaseLeaderboardManager(context: Context) {
+    // Auto-initialized from google-services.json — no manual config needed
+    private val db = FirebaseFirestore.getInstance()
+    private val _leaderboard = MutableStateFlow<List<LeaderboardPilot>>(emptyList())
+    val leaderboard: StateFlow<List<LeaderboardPilot>> = _leaderboard.asStateFlow()
+
+    private val _socialComments = MutableStateFlow<List<SocialComment>>(emptyList())
+    val socialComments: StateFlow<List<SocialComment>> = _socialComments.asStateFlow()
+
+    init {
+        loadMockLeaderboard()
+        loadMockSocialComments()
     }
 
-    fun fetchTopScores() {
-        val db = firestore ?: return
-        db.collection("scores")
-            .orderBy("score", Query.Direction.DESCENDING)
-            .limit(100)
-            .get()
-            .addOnSuccessListener { result ->
-                val list = mutableListOf<LeaderboardPilot>()
-                var currentRank = 1
-                for (doc in result.documents) {
-                    val name = doc.getString("username") ?: "NeonPilot"
-                    val scoreVal = doc.getLong("score")?.toInt() ?: 0
-                    val zone = doc.getString("zone") ?: "Cyber Alley"
-                    val skinId = doc.getString("skinId") ?: "cyan_diamond"
-                    
-                    list.add(
-                        LeaderboardPilot(
-                            rank = currentRank++,
-                            name = name,
-                            bestScore = scoreVal,
-                            activeZone = zone,
-                            activeSkinId = skinId,
-                            isFollowed = false,
-                            isBot = false,
-                            challengeId = "firebase_${doc.id}"
-                        )
-                    )
-                }
-                _globalRankings.value = list
-                Log.d(TAG, "Fetched ${list.size} live global ranking scores from Firestore")
-            }
-            .addOnFailureListener { e ->
-                Log.e(TAG, "Failed to load live rankings from Firestore", e)
-                // Fallback to local list if Firestore is currently offline or unconfigured
-            }
+    private fun loadMockLeaderboard() {
+        _leaderboard.value = listOf(
+            LeaderboardPilot("CyberRunner", 2450, "Golden Age", 1, false),
+            LeaderboardPilot("ZeroGlitch", 1980, "Neon Front", 2, true),
+            LeaderboardPilot("RetroWave", 1540, "Blackout", 3, true),
+            LeaderboardPilot("NeonPilot_99", 1200, "Storm Zone 3", 4, false),
+            LeaderboardPilot("GlitchHunter", 980, "Derelict Signal", 5, false),
+            LeaderboardPilot("VoidWalker", 850, "Cell Block Zero", 6, false),
+            LeaderboardPilot("ChromeReaper", 720, "Green Hell", 7, false),
+            LeaderboardPilot("SignalGhost", 640, "Neon Front", 8, false),
+            LeaderboardPilot("ToxicBloom", 510, "Blackout", 9, false),
+            LeaderboardPilot("CircuitBreaker", 480, "Golden Age", 10, false)
+        )
     }
 
-    suspend fun submitScore(username: String, score: Int, skinId: String): Boolean = withContext(Dispatchers.IO) {
-        val db = firestore ?: return@withContext false
+    private fun loadMockSocialComments() {
+        _socialComments.value = listOf(
+            SocialComment("CyberRunner", "Just hit 2450 on Golden Age! The new update is insane.", "2m ago"),
+            SocialComment("ZeroGlitch", "Anyone else notice the ghost trails are faster now?", "15m ago"),
+            SocialComment("RetroWave", "Finally unlocked Chrome Reaper skin. Worth every gem.", "1h ago"),
+            SocialComment("NeonPilot_99", "Daily challenge is brutal today. Only 2 attempts left!", "2h ago"),
+            SocialComment("GlitchHunter", "Pro tip: save your shield for Zone 5. Trust me.", "3h ago"),
+            SocialComment("VoidWalker", "Just bought the monthly pass. No more ads!", "5h ago"),
+            SocialComment("SignalGhost", "The audio engine in this game is unreal. Haptic feedback on point.", "8h ago"),
+            SocialComment("ToxicBloom", "Anyone want to race ghost telemetry? I'm online now.", "12h ago")
+        )
+    }
 
-        // --- BASIC CLIENT-SIDE ANTI-CHEAT ---
-        // 1. Extreme limit threshold check
-        if (score > 10000 || score <= 0) {
-            Log.e(TAG, "Anti-cheat: Score value out of logical limits")
-            return@withContext false
-        }
-        
-        // 2. Playtime token verification / rapid click validation (Simulated Cryptographic Token)
-        val scoreSignature = (score * 41 + username.hashCode()) xor 0x5EAF
-        Log.d(TAG, "Anti-cheat: Signed play session payload with signature = $scoreSignature")
-
+    suspend fun submitScore(username: String, score: Int, zone: String) {
         try {
-            // Write to Firestore 'users' collection
-            val userRecord = hashMapOf(
+            val data = hashMapOf(
                 "username" to username,
                 "bestScore" to score,
-                "activeSkinId" to skinId,
+                "activeZone" to zone,
                 "timestamp" to System.currentTimeMillis()
             )
-            db.collection("users").document(username).set(userRecord)
-
-            // Write to Firestore 'scores' collection
-            val scoreRecord = hashMapOf(
-                "username" to username,
-                "score" to score,
-                "zone" to ZoneGenerator.getZoneForScore(score).name,
-                "skinId" to skinId,
-                "signature" to scoreSignature,
-                "timestamp" to System.currentTimeMillis()
-            )
-            db.collection("scores").document(username).set(scoreRecord)
-
-            // --- Real submitScore Cloud Function Calling Structure ---
-            // Triggering the Firebase submitScore HTTPS function payload securely
-            try {
-                val url = URL("https://us-central1-neonrush-game-73a.cloudfunctions.net/submitScore")
-                val conn = url.openConnection() as HttpURLConnection
-                conn.requestMethod = "POST"
-                conn.connectTimeout = 3000
-                conn.readTimeout = 3000
-                conn.setRequestProperty("Content-Type", "application/json; utf-8")
-                conn.doOutput = true
-                
-                val jsonInputString = JSONObject().apply {
-                    put("username", username)
-                    put("score", score)
-                    put("skinId", skinId)
-                    put("signature", scoreSignature)
-                }.toString()
-
-                conn.outputStream.use { os ->
-                    val input = jsonInputString.toByteArray(charset("utf-8"))
-                    os.write(input, 0, input.size)
-                }
-                
-                val responseCode = conn.responseCode
-                Log.d(TAG, "submitScore Cloud Function REST verification response: $responseCode")
-            } catch (ex: Exception) {
-                // Ignore call failure if offline/unconfigured - Firestore direct write will load
-                Log.w(TAG, "submitScore Cloud Function endpoint unreachable or pending deployment. Graceful direct Firestore fallback active.")
-            }
-
-            // Reload rankings locally
-            withContext(Dispatchers.Main) {
-                fetchTopScores()
-            }
-            return@withContext true
+            db.collection("leaderboard").document(username).set(data).await()
         } catch (e: Exception) {
-            Log.e(TAG, "Error writing leaderboard score data", e)
-            return@withContext false
+            // Silently fail — leaderboard is non-critical
+        }
+    }
+
+    suspend fun fetchLeaderboard() {
+        try {
+            val snapshot = db.collection("leaderboard")
+                .orderBy("bestScore", Query.Direction.DESCENDING)
+                .limit(50)
+                .get()
+                .await()
+
+            val pilots = snapshot.documents.mapIndexed { index, doc ->
+                LeaderboardPilot(
+                    name = doc.getString("username") ?: "",
+                    bestScore = doc.getLong("bestScore")?.toInt() ?: 0,
+                    activeZone = doc.getString("activeZone") ?: "",
+                    rank = index + 1,
+                    isFollowed = false
+                )
+            }
+            if (pilots.isNotEmpty()) {
+                _leaderboard.value = pilots
+            }
+        } catch (e: Exception) {
+            // Keep mock data if Firebase fails
         }
     }
 }
