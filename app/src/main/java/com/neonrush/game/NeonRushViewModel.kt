@@ -272,7 +272,10 @@ private fun checkWorldEndingBeat(previousZoneNumber: Int, nextZoneNumber: Int) {
     init {
         loadSocialComments()
         prepopulateSampleGhostChallenges()
-        FirebaseLeaderboardManager.fetchTopScores()
+        // FIX: Wrap suspend function in coroutine scope
+        viewModelScope.launch {
+            FirebaseLeaderboardManager.fetchTopScores()
+        }
     }
 
     private fun prepopulateSampleGhostChallenges() {
@@ -309,7 +312,10 @@ private fun checkWorldEndingBeat(previousZoneNumber: Int, nextZoneNumber: Int) {
     }
 
     private fun loadDefaultLeaderboard() {
-        FirebaseLeaderboardManager.fetchTopScores()
+        // FIX: Wrap suspend function in coroutine scope
+        viewModelScope.launch {
+            FirebaseLeaderboardManager.fetchTopScores()
+        }
     }
 
     private fun loadSocialComments() {
@@ -851,7 +857,7 @@ private fun checkWorldEndingBeat(previousZoneNumber: Int, nextZoneNumber: Int) {
                                                     kind = "explosion"
                                                 )
                                             )
-                                        }
+                                        )
                                     }
                                 }
                             }
