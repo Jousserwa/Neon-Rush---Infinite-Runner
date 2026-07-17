@@ -3,277 +3,167 @@ package com.neonrush.game
 import android.app.Activity
 import android.content.Context
 import android.util.Log
-import com.revenuecat.purchases.*
-import com.revenuecat.purchases.interfaces.ReceiveCustomerInfoCallback
-import com.revenuecat.purchases.interfaces.UpdatedCustomerInfoListener
-import com.revenuecat.purchases.models.StoreTransaction
+import com.revenuecat.purchases.Purchases
+import com.revenuecat.purchases.PurchasesConfiguration
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 object RevenueCatManager {
     private const val TAG = "RevenueCatManager"
-    const val ENTITLEMENT_ID = "pro"
-    const val PRODUCT_ID_MONTHLY = "neonrush_pro_monthly"
-    const val PRODUCT_ID_ANNUAL = "neonrush_pro_annual"
-    const val SUBSCRIPTION_PRICE_MONTHLY_USD = "$4.99/month"
-    const val SUBSCRIPTION_PRICE_ANNUAL_USD = "$29.99/year"
-    const val PRODUCT_ID_GEMS_SMALL = "neonrush_gems_500"
-    const val PRODUCT_ID_GEMS_MEDIUM = "neonrush_gems_1500"
-    const val PRODUCT_ID_GEMS_LARGE = "neonrush_gems_4000"
-    const val GEMS_SMALL_AMOUNT = 500
-    const val GEMS_MEDIUM_AMOUNT = 1500
-    const val GEMS_LARGE_AMOUNT = 4000
-    const val GEMS_SMALL_PRICE_USD = "$1.99"
+    
+    // YOUR REAL REVENUECAT API KEY
+    private const val REVENUECAT_API_KEY = "test_xfMauZuucykZLbUkQyBtZriGWEv"
+    
+    // Product IDs
+    const val PRODUCT_ID_PRO_MONTHLY = "neonrush_pro_monthly"
+    const val PRODUCT_ID_PRO_ANNUAL = "neonrush_pro_annual"
+    const val PRODUCT_ID_GEMS_SMALL = "neonrush_gems_small"
+    const val PRODUCT_ID_GEMS_MEDIUM = "neonrush_gems_medium"
+    const val PRODUCT_ID_GEMS_LARGE = "neonrush_gems_large"
+    
+    // Prices (will be fetched from RevenueCat, these are defaults)
+    const val SUBSCRIPTION_PRICE_MONTHLY_USD = "$4.99"
+    const val SUBSCRIPTION_PRICE_ANNUAL_USD = "$29.99"
+    const val GEMS_SMALL_PRICE_USD = "$0.99"
     const val GEMS_MEDIUM_PRICE_USD = "$4.99"
     const val GEMS_LARGE_PRICE_USD = "$9.99"
+    
+    const val GEMS_SMALL_AMOUNT = 100
+    const val GEMS_MEDIUM_AMOUNT = 550
+    const val GEMS_LARGE_AMOUNT = 1200
+
     private val _isPro = MutableStateFlow(false)
-    val isPro: StateFlow<Boolean> = _isPro
+    val isPro: StateFlow<Boolean> = _isPro.asStateFlow()
 
-    private var isConfigured = false
+    private var isInitialized = false
 
-    fun init(context: Context) {
-        if (isConfigured) return
+    fun initialize(context: Context) {
+        if (isInitialized) return
         try {
-            // Programmatically configure RevenueCat Purchases SDK
-            Purchases.configure(
-                PurchasesConfiguration.Builder(context, "goog_neonrushMockApiKeyForRC7112")
-                    .build()
-            )
-            isConfigured = true
-            Log.d(TAG, "RevenueCat configured successfully.")
-
-            // Listen for updated customer info
-            Purchases.sharedInstance.updatedCustomerInfoListener = UpdatedCustomerInfoListener { customerInfo ->
-                checkEntitlements(customerInfo)
-            }
-
-            // Perform initial login fetch
-            fetchCustomerInfo()
-        } catch (e: Exception) {
-            Log.e(TAG, "RevenueCat programmatic configuration failed (Mocking billing bridge gracefully for preview mode)", e)
-        }
-    }
-
-    private fun fetchCustomerInfo() {
-        if (!isConfigured) return
-        Purchases.sharedInstance.getCustomerInfo(object : ReceiveCustomerInfoCallback {
-            override fun onReceived(customerInfo: CustomerInfo) {
-                checkEntitlements(customerInfo)
-            }
-
-            override fun onError(error: PurchasesError) {
-                Log.e(TAG, "Failed to fetch RevenueCat Customer Info: ${error.message}")
-            }
-        })
-    }
-
-    private fun checkEntitlements(customerInfo: CustomerInfo) {
-        val proEntitled = customerInfo.entitlements[ENTITLEMENT_ID]?.isActive == true
-        _isPro.value = proEntitled
-        Log.d(TAG, "RevenueCat: active PRO entitlement status = $proEntitled")
-    }
-
-    // Purchase Monthly PRO function
-    fun purchaseProSubscription(activity: Activity, onCompleted: (Boolean) -> Unit) {
-        // Fallback simulate to ensure preview users can toggle PRO mode immediately if Google Play billing isn't bound on device
-        if (!isConfigured) {
-            _isPro.value = true
-            onCompleted(true)
-            return
-        }
-
-        // Programmatic real billing purchase flow
-        Purchases.sharedInstance.getOfferings(object : com.revenuecat.purchases.interfaces.ReceiveOfferingsCallback {
-            override fun onReceived(offerings: Offerings) {
-                val packageToBuy = offerings.current?.monthly
-                    
-                if (packageToBuy != null) {
-                    Purchases.sharedInstance.purchase(
-                        PurchaseParams.Builder(activity, packageToBuy).build(),
-                        object : com.revenuecat.purchases.interfaces.PurchaseCallback {
-                            override fun onCompleted(storeTransaction: StoreTransaction, customerInfo: CustomerInfo) {
-                                checkEntitlements(customerInfo)
-                                onCompleted(true)
-                            }
-
-                            override fun onError(error: PurchasesError, userCancelled: Boolean) {
-                                Log.e(TAG, "Purchase error: ${error.message}")
-                                if (!userCancelled) {
-                                    // Give client-side debug bypass in simulator view so user can test benefits
-                                    _isPro.value = true
-                                    onCompleted(true)
-                                } else {
-                                    onCompleted(false)
-                                }
-                            }
-                        }
-                    )
-                } else {
-                    Log.w(TAG, "Selected Monthly subscription not found in active offerings, activating simulator bypass fallback.")
-                    _isPro.value = true
-                    onCompleted(true)
-                }
-            }
-
-            override fun onError(error: PurchasesError) {
-                Log.e(TAG, "Error fetching offerings: ${error.message}. Enabling offline simulation bypass.")
-                _isPro.value = true
-                onCompleted(true)
-            }
-        })
-    }
-   // Purchase Annual PRO function
-    fun purchaseProSubscriptionAnnual(activity: Activity, onCompleted: (Boolean) -> Unit) {
-        if (!isConfigured) {
-            _isPro.value = true
-            onCompleted(true)
-            return
-        }
-
-        Purchases.sharedInstance.getOfferings(object : com.revenuecat.purchases.interfaces.ReceiveOfferingsCallback {
-            override fun onReceived(offerings: Offerings) {
-                val packageToBuy = offerings.current?.annual
-
-                if (packageToBuy != null) {
-                    Purchases.sharedInstance.purchase(
-                        PurchaseParams.Builder(activity, packageToBuy).build(),
-                        object : com.revenuecat.purchases.interfaces.PurchaseCallback {
-                            override fun onCompleted(storeTransaction: StoreTransaction, customerInfo: CustomerInfo) {
-                                checkEntitlements(customerInfo)
-                                onCompleted(true)
-                            }
-
-                            override fun onError(error: PurchasesError, userCancelled: Boolean) {
-                                Log.e(TAG, "Purchase error: ${error.message}")
-                                if (!userCancelled) {
-                                    _isPro.value = true
-                                    onCompleted(true)
-                                } else {
-                                    onCompleted(false)
-                                }
-                            }
-                        }
-                    )
-                } else {
-                    Log.w(TAG, "Selected Annual subscription not found in active offerings, activating simulator bypass fallback.")
-                    _isPro.value = true
-                    onCompleted(true)
-                }
-            }
-
-            override fun onError(error: PurchasesError) {
-                Log.e(TAG, "Error fetching offerings: ${error.message}. Enabling offline simulation bypass.")
-                _isPro.value = true
-                onCompleted(true)
-            }
-        })
-    }
-
-    // Purchase a one-time gem pack (consumable) — reusable for all three pack sizes
-    fun purchaseGemPack(activity: Activity, productId: String, onCompleted: (Boolean) -> Unit) {
-        if (!isConfigured) {
-            Log.w(TAG, "Billing not configured — cannot process real gem purchase in this build.")
-            onCompleted(false)
-            return
-        }
-
-        Purchases.sharedInstance.getOfferings(object : com.revenuecat.purchases.interfaces.ReceiveOfferingsCallback {
-            override fun onReceived(offerings: Offerings) {
-                val pkg = offerings.current?.availablePackages?.firstOrNull { it.product.id == productId }
-
-                if (pkg != null) {
-                    Purchases.sharedInstance.purchase(
-                        PurchaseParams.Builder(activity, pkg).build(),
-                        object : com.revenuecat.purchases.interfaces.PurchaseCallback {
-                            override fun onCompleted(storeTransaction: StoreTransaction, customerInfo: CustomerInfo) {
-                                onCompleted(true)
-                            }
-
-                            override fun onError(error: PurchasesError, userCancelled: Boolean) {
-                                Log.e(TAG, "Gem pack purchase error: ${error.message}")
-                                onCompleted(false)
-                            }
-                        }
-                    )
-                } else {
-                    Log.w(TAG, "Gem pack product $productId not found in active offerings.")
-                    onCompleted(false)
-                }
-            }
-override fun onError(error: PurchasesError) {
-                Log.e(TAG, "Error fetching offerings for gem pack: ${error.message}")
-                onCompleted(false)
-            }
-        })
-    }
-
-    // Purchase a one-time pilot suit skin (non-consumable)
+            val configuration = PurchasesConfiguration.Builder(context, REVENUECAT_API_KEY).build()
+            Purchases.configure(configuration)
+            isInitialized = true
+            Log.d(TAG, "RevenueCat initialized successfully")
             
-    fun purchasePilotSuit(activity: Activity, productId: String, onCompleted: (Boolean) -> Unit) {
-        if (!isConfigured) {
-            Log.w(TAG, "Billing not configured — cannot process real pilot suit purchase in this build.")
-            onCompleted(false)
-            return
+            // Check subscription status
+            checkSubscriptionStatus()
+        } catch (e: Exception) {
+            Log.e(TAG, "RevenueCat initialization failed: ${e.message}")
         }
+    }
 
-        Purchases.sharedInstance.getOfferings(object : com.revenuecat.purchases.interfaces.ReceiveOfferingsCallback {
-            override fun onReceived(offerings: Offerings) {
-                val pkg = offerings.current?.availablePackages?.firstOrNull { it.product.id == productId }
-
-                if (pkg != null) {
-                    Purchases.sharedInstance.purchase(
-                        PurchaseParams.Builder(activity, pkg).build(),
-                        object : com.revenuecat.purchases.interfaces.PurchaseCallback {
-                            override fun onCompleted(storeTransaction: StoreTransaction, customerInfo: CustomerInfo) {
-                                onCompleted(true)
-                            }
-
-                            override fun onError(error: PurchasesError, userCancelled: Boolean) {
-                                Log.e(TAG, "Pilot suit purchase error: ${error.message}")
-                                onCompleted(false)
-                            }
-                        }
-                    )
-                } else {
-                    Log.w(TAG, "Pilot suit product $productId not found in active offerings.")
-                    onCompleted(false)
+    private fun checkSubscriptionStatus() {
+        try {
+            Purchases.sharedInstance.getCustomerInfo { customerInfo, error ->
+                if (error == null) {
+                    val hasPro = customerInfo.entitlements["Neon Rush Pro"]?.isActive == true
+                    _isPro.value = hasPro
+                    Log.d(TAG, "Pro status: $hasPro")
                 }
             }
-
-            override fun onError(error: PurchasesError) {
-                Log.e(TAG, "Error fetching offerings for pilot suit: ${error.message}")
-                onCompleted(false)
-            }
-        
-    
-        })
-    }
-
-    // Restore purchases helper
-    fun restorePurchases(onCompleted: (Boolean) -> Unit) {
-        if (!isConfigured) {
-            _isPro.value = true
-            onCompleted(true)
-            return
+        } catch (e: Exception) {
+            Log.e(TAG, "Error checking subscription: ${e.message}")
         }
-        Purchases.sharedInstance.restorePurchases(object : ReceiveCustomerInfoCallback {
-            override fun onReceived(customerInfo: CustomerInfo) {
-                checkEntitlements(customerInfo)
-                onCompleted(true)
-            }
-
-            override fun onError(error: PurchasesError) {
-                Log.e(TAG, "Restore failed: ${error.message}")
-                onCompleted(false)
-            }
-        })
     }
 
-    
-    
+    fun purchaseProSubscription(activity: Activity, onResult: (Boolean) -> Unit) {
+        try {
+            Purchases.sharedInstance.getOfferings { offerings, error ->
+                if (error != null || offerings == null) {
+                    Log.e(TAG, "Error fetching offerings: ${error?.message}")
+                    onResult(false)
+                    return@getOfferings
+                }
+                
+                val monthlyPackage = offerings.current?.getPackage("monthly")
+                if (monthlyPackage != null) {
+                    Purchases.sharedInstance.purchase(activity, monthlyPackage) { purchaseResult, purchaseError, _ ->
+                        if (purchaseError == null) {
+                            _isPro.value = true
+                            onResult(true)
+                        } else {
+                            Log.e(TAG, "Purchase failed: ${purchaseError.message}")
+                            onResult(false)
+                        }
+                    }
+                } else {
+                    Log.e(TAG, "Monthly package not found")
+                    onResult(false)
+                }
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Exception during purchase: ${e.message}")
+            onResult(false)
+        }
+    }
 
-    // Toggle local developer entitlement override (useful for sandbox preview screen)
-    fun toggleDevProOverride(enabled: Boolean) {
-        _isPro.value = enabled
+    fun purchaseProSubscriptionAnnual(activity: Activity, onResult: (Boolean) -> Unit) {
+        try {
+            Purchases.sharedInstance.getOfferings { offerings, error ->
+                if (error != null || offerings == null) {
+                    onResult(false)
+                    return@getOfferings
+                }
+                
+                val annualPackage = offerings.current?.getPackage("annual")
+                if (annualPackage != null) {
+                    Purchases.sharedInstance.purchase(activity, annualPackage) { purchaseResult, purchaseError, _ ->
+                        if (purchaseError == null) {
+                            _isPro.value = true
+                            onResult(true)
+                        } else {
+                            onResult(false)
+                        }
+                    }
+                } else {
+                    onResult(false)
+                }
+            }
+        } catch (e: Exception) {
+            onResult(false)
+        }
+    }
+
+    fun purchaseGemPack(activity: Activity, productId: String, gemAmount: Int, onResult: (Boolean) -> Unit) {
+        try {
+            Purchases.sharedInstance.getOfferings { offerings, error ->
+                if (error != null || offerings == null) {
+                    onResult(false)
+                    return@getOfferings
+                }
+                
+                // Find the package by product ID
+                val packageToBuy = offerings.all.values
+                    .flatMap { it.availablePackages }
+                    .find { it.product.identifier == productId }
+                
+                if (packageToBuy != null) {
+                    Purchases.sharedInstance.purchase(activity, packageToBuy) { _, purchaseError, _ ->
+                        onResult(purchaseError == null)
+                    }
+                } else {
+                    onResult(false)
+                }
+            }
+        } catch (e: Exception) {
+            onResult(false)
+        }
+    }
+
+    fun restorePurchases(onResult: (Boolean) -> Unit) {
+        try {
+            Purchases.sharedInstance.restorePurchases { customerInfo, error ->
+                if (error == null) {
+                    val hasPro = customerInfo.entitlements["Neon Rush Pro"]?.isActive == true
+                    _isPro.value = hasPro
+                    onResult(true)
+                } else {
+                    onResult(false)
+                }
+            }
+        } catch (e: Exception) {
+            onResult(false)
+        }
     }
 }
