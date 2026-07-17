@@ -8,19 +8,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.tasks.await
 
-data class LeaderboardPilot(
-    val name: String = "",
-    val bestScore: Int = 0,
-    val activeZone: String = "",
-    val rank: Int = 0,
-    val isFollowed: Boolean = false
-)
-
-data class SocialComment(
-    val username: String = "",
-    val comment: String = "",
-    val timeAgo: String = "Just now"
-)
+// NOTE: LeaderboardPilot and SocialComment are defined in NeonRushViewModel.kt
+// Do NOT redefine them here to avoid duplicate class errors
 
 class FirebaseLeaderboardManager(context: Context) {
     // Auto-initialized from google-services.json — no manual config needed
@@ -38,38 +27,38 @@ class FirebaseLeaderboardManager(context: Context) {
 
     private fun loadMockLeaderboard() {
         _leaderboard.value = listOf(
-            LeaderboardPilot("CyberRunner", 2450, "Golden Age", 1, false),
-            LeaderboardPilot("ZeroGlitch", 1980, "Neon Front", 2, true),
-            LeaderboardPilot("RetroWave", 1540, "Blackout", 3, true),
-            LeaderboardPilot("NeonPilot_99", 1200, "Storm Zone 3", 4, false),
-            LeaderboardPilot("GlitchHunter", 980, "Derelict Signal", 5, false),
-            LeaderboardPilot("VoidWalker", 850, "Cell Block Zero", 6, false),
-            LeaderboardPilot("ChromeReaper", 720, "Green Hell", 7, false),
-            LeaderboardPilot("SignalGhost", 640, "Neon Front", 8, false),
-            LeaderboardPilot("ToxicBloom", 510, "Blackout", 9, false),
-            LeaderboardPilot("CircuitBreaker", 480, "Golden Age", 10, false)
+            LeaderboardPilot(1, "CyberRunner", 2450, "Golden Age", "cyan_diamond", false, true, "ghost_cyberrunner"),
+            LeaderboardPilot(2, "ZeroGlitch", 1980, "Neon Front", "purple_square", true, true, "ghost_zeroglitch"),
+            LeaderboardPilot(3, "RetroWave", 1540, "Blackout", "green_triangle", true, true, "ghost_retro"),
+            LeaderboardPilot(4, "NeonPilot_99", 1200, "Storm Zone 3", "cyan_diamond", false, false, "ghost_user"),
+            LeaderboardPilot(5, "GlitchHunter", 980, "Derelict Signal", "magenta_pulse", false, true, "ghost_glitch"),
+            LeaderboardPilot(6, "VoidWalker", 850, "Cell Block Zero", "green_triangle", false, true, "ghost_void"),
+            LeaderboardPilot(7, "ChromeReaper", 720, "Green Hell", "purple_square", false, true, "ghost_chrome"),
+            LeaderboardPilot(8, "SignalGhost", 640, "Neon Front", "cyan_diamond", false, true, "ghost_signal"),
+            LeaderboardPilot(9, "ToxicBloom", 510, "Blackout", "magenta_pulse", false, true, "ghost_toxic"),
+            LeaderboardPilot(10, "CircuitBreaker", 480, "Golden Age", "green_triangle", false, true, "ghost_circuit")
         )
     }
 
     private fun loadMockSocialComments() {
         _socialComments.value = listOf(
-            SocialComment("CyberRunner", "Just hit 2450 on Golden Age! The new update is insane.", "2m ago"),
-            SocialComment("ZeroGlitch", "Anyone else notice the ghost trails are faster now?", "15m ago"),
-            SocialComment("RetroWave", "Finally unlocked Chrome Reaper skin. Worth every gem.", "1h ago"),
-            SocialComment("NeonPilot_99", "Daily challenge is brutal today. Only 2 attempts left!", "2h ago"),
-            SocialComment("GlitchHunter", "Pro tip: save your shield for Zone 5. Trust me.", "3h ago"),
-            SocialComment("VoidWalker", "Just bought the monthly pass. No more ads!", "5h ago"),
-            SocialComment("SignalGhost", "The audio engine in this game is unreal. Haptic feedback on point.", "8h ago"),
-            SocialComment("ToxicBloom", "Anyone want to race ghost telemetry? I'm online now.", "12h ago")
+            SocialComment("CyberRunner", "Just hit 2450 on Golden Age! The new update is insane.", "2m ago", "Golden Age"),
+            SocialComment("ZeroGlitch", "Anyone else notice the ghost trails are faster now?", "15m ago", "Neon Front"),
+            SocialComment("RetroWave", "Finally unlocked Chrome Reaper skin. Worth every gem.", "1h ago", "Blackout"),
+            SocialComment("NeonPilot_99", "Daily challenge is brutal today. Only 2 attempts left!", "2h ago", "Storm Zone 3"),
+            SocialComment("GlitchHunter", "Pro tip: save your shield for Zone 5. Trust me.", "3h ago", "Derelict Signal"),
+            SocialComment("VoidWalker", "Just bought the monthly pass. No more ads!", "5h ago", "Cell Block Zero"),
+            SocialComment("SignalGhost", "The audio engine in this game is unreal. Haptic feedback on point.", "8h ago", "Neon Front"),
+            SocialComment("ToxicBloom", "Anyone want to race ghost telemetry? I'm online now.", "12h ago", "Blackout")
         )
     }
 
-    suspend fun submitScore(username: String, score: Int, zone: String) {
+    suspend fun submitScore(username: String, score: Int, activeSkinId: String) {
         try {
             val data = hashMapOf(
                 "username" to username,
                 "bestScore" to score,
-                "activeZone" to zone,
+                "activeSkinId" to activeSkinId,
                 "timestamp" to System.currentTimeMillis()
             )
             db.collection("leaderboard").document(username).set(data).await()
@@ -78,7 +67,7 @@ class FirebaseLeaderboardManager(context: Context) {
         }
     }
 
-    suspend fun fetchLeaderboard() {
+    suspend fun fetchTopScores() {
         try {
             val snapshot = db.collection("leaderboard")
                 .orderBy("bestScore", Query.Direction.DESCENDING)
@@ -88,11 +77,14 @@ class FirebaseLeaderboardManager(context: Context) {
 
             val pilots = snapshot.documents.mapIndexed { index, doc ->
                 LeaderboardPilot(
+                    rank = index + 1,
                     name = doc.getString("username") ?: "",
                     bestScore = doc.getLong("bestScore")?.toInt() ?: 0,
-                    activeZone = doc.getString("activeZone") ?: "",
-                    rank = index + 1,
-                    isFollowed = false
+                    activeZone = "Unknown",
+                    activeSkinId = doc.getString("activeSkinId") ?: "cyan_diamond",
+                    isFollowed = false,
+                    isBot = false,
+                    challengeId = ""
                 )
             }
             if (pilots.isNotEmpty()) {
@@ -102,4 +94,25 @@ class FirebaseLeaderboardManager(context: Context) {
             // Keep mock data if Firebase fails
         }
     }
+
+    companion object {
+        // Singleton instance for ViewModel access
+        private lateinit var instance: FirebaseLeaderboardManager
+        
+        val globalRankings: StateFlow<List<LeaderboardPilot>>
+            get() = instance.leaderboard
+        
+        fun initialize(context: Context) {
+            instance = FirebaseLeaderboardManager(context)
+        }
+        
+        suspend fun submitScore(username: String, score: Int, activeSkinId: String) {
+            instance.submitScore(username, score, activeSkinId)
+        }
+        
+        suspend fun fetchTopScores() {
+            instance.fetchTopScores()
+        }
+    }
 }
+
