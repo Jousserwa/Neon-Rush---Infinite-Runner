@@ -5,7 +5,11 @@ import android.content.Context
 import android.util.Log
 import com.revenuecat.purchases.Purchases
 import com.revenuecat.purchases.PurchasesConfiguration
-import com.revenuecat.purchases.models.StoreProduct
+import com.revenuecat.purchases.PurchasesError
+import com.revenuecat.purchases.interfaces.ReceiveCustomerInfoCallback
+import com.revenuecat.purchases.interfaces.ReceiveOfferingsCallback
+import com.revenuecat.purchases.interfaces.PurchaseCallback
+import com.revenuecat.purchases.models.StoreTransaction
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -56,13 +60,19 @@ object RevenueCatManager {
 
     private fun checkSubscriptionStatus() {
         try {
-            Purchases.sharedInstance.getCustomerInfo { customerInfo, error ->
-                if (error == null && customerInfo != null) {
-                    val hasPro = customerInfo.entitlements.active.containsKey("Neon Rush Pro")
-                    _isPro.value = hasPro
-                    Log.d(TAG, "Pro status: $hasPro")
+            Purchases.sharedInstance.getCustomerInfo(
+                object : ReceiveCustomerInfoCallback {
+                    override fun onReceived(customerInfo: com.revenuecat.purchases.CustomerInfo) {
+                        val hasPro = customerInfo.entitlements.active.containsKey("Neon Rush Pro")
+                        _isPro.value = hasPro
+                        Log.d(TAG, "Pro status: $hasPro")
+                    }
+
+                    override fun onError(error: PurchasesError) {
+                        Log.e(TAG, "Error fetching customer info: ${error.message}")
+                    }
                 }
-            }
+            )
         } catch (e: Exception) {
             Log.e(TAG, "Error checking subscription: ${e.message}")
         }
@@ -70,31 +80,38 @@ object RevenueCatManager {
 
     fun purchaseProSubscription(activity: Activity, onResult: (Boolean) -> Unit) {
         try {
-            Purchases.sharedInstance.getOfferings { offerings, error ->
-                if (error != null || offerings == null) {
-                    Log.e(TAG, "Error fetching offerings: ${error?.message}")
-                    onResult(false)
-                    return@getOfferings
-                }
-                
-                val monthlyPackage = offerings.current?.getPackage("monthly")
-                if (monthlyPackage != null) {
-                    Purchases.sharedInstance.purchase(
-                        com.revenuecat.purchases.PurchaseParams.Builder(activity, monthlyPackage).build()
-                    ) { purchaseResult, purchaseError, _ ->
-                        if (purchaseError == null) {
-                            _isPro.value = true
-                            onResult(true)
+            Purchases.sharedInstance.getOfferings(
+                object : ReceiveOfferingsCallback {
+                    override fun onReceived(offerings: com.revenuecat.purchases.Offerings) {
+                        val monthlyPackage = offerings.current?.getPackage("monthly")
+                        if (monthlyPackage != null) {
+                            val purchaseParams = com.revenuecat.purchases.PurchaseParams.Builder(activity, monthlyPackage).build()
+                            Purchases.sharedInstance.purchase(
+                                purchaseParams,
+                                object : PurchaseCallback {
+                                    override fun onCompleted(storeTransaction: StoreTransaction, customerInfo: com.revenuecat.purchases.CustomerInfo) {
+                                        _isPro.value = true
+                                        onResult(true)
+                                    }
+
+                                    override fun onError(error: PurchasesError, userCancelled: Boolean) {
+                                        Log.e(TAG, "Purchase failed: ${error.message}")
+                                        onResult(false)
+                                    }
+                                }
+                            )
                         } else {
-                            Log.e(TAG, "Purchase failed: ${purchaseError.message}")
+                            Log.e(TAG, "Monthly package not found")
                             onResult(false)
                         }
                     }
-                } else {
-                    Log.e(TAG, "Monthly package not found")
-                    onResult(false)
+
+                    override fun onError(error: PurchasesError) {
+                        Log.e(TAG, "Error fetching offerings: ${error.message}")
+                        onResult(false)
+                    }
                 }
-            }
+            )
         } catch (e: Exception) {
             Log.e(TAG, "Exception during purchase: ${e.message}")
             onResult(false)
@@ -103,28 +120,35 @@ object RevenueCatManager {
 
     fun purchaseProSubscriptionAnnual(activity: Activity, onResult: (Boolean) -> Unit) {
         try {
-            Purchases.sharedInstance.getOfferings { offerings, error ->
-                if (error != null || offerings == null) {
-                    onResult(false)
-                    return@getOfferings
-                }
-                
-                val annualPackage = offerings.current?.getPackage("annual")
-                if (annualPackage != null) {
-                    Purchases.sharedInstance.purchase(
-                        com.revenuecat.purchases.PurchaseParams.Builder(activity, annualPackage).build()
-                    ) { purchaseResult, purchaseError, _ ->
-                        if (purchaseError == null) {
-                            _isPro.value = true
-                            onResult(true)
+            Purchases.sharedInstance.getOfferings(
+                object : ReceiveOfferingsCallback {
+                    override fun onReceived(offerings: com.revenuecat.purchases.Offerings) {
+                        val annualPackage = offerings.current?.getPackage("annual")
+                        if (annualPackage != null) {
+                            val purchaseParams = com.revenuecat.purchases.PurchaseParams.Builder(activity, annualPackage).build()
+                            Purchases.sharedInstance.purchase(
+                                purchaseParams,
+                                object : PurchaseCallback {
+                                    override fun onCompleted(storeTransaction: StoreTransaction, customerInfo: com.revenuecat.purchases.CustomerInfo) {
+                                        _isPro.value = true
+                                        onResult(true)
+                                    }
+
+                                    override fun onError(error: PurchasesError, userCancelled: Boolean) {
+                                        onResult(false)
+                                    }
+                                }
+                            )
                         } else {
                             onResult(false)
                         }
                     }
-                } else {
-                    onResult(false)
+
+                    override fun onError(error: PurchasesError) {
+                        onResult(false)
+                    }
                 }
-            }
+            )
         } catch (e: Exception) {
             onResult(false)
         }
@@ -132,27 +156,38 @@ object RevenueCatManager {
 
     fun purchaseGemPack(activity: Activity, productId: String, onResult: (Boolean) -> Unit) {
         try {
-            Purchases.sharedInstance.getOfferings { offerings, error ->
-                if (error != null || offerings == null) {
-                    onResult(false)
-                    return@getOfferings
-                }
-                
-                // Find the package by product ID
-                val packageToBuy = offerings.all.values
-                    .flatMap { it.availablePackages }
-                    .find { it.product.identifier == productId }
-                
-                if (packageToBuy != null) {
-                    Purchases.sharedInstance.purchase(
-                        com.revenuecat.purchases.PurchaseParams.Builder(activity, packageToBuy).build()
-                    ) { _, purchaseError, _ ->
-                        onResult(purchaseError == null)
+            Purchases.sharedInstance.getOfferings(
+                object : ReceiveOfferingsCallback {
+                    override fun onReceived(offerings: com.revenuecat.purchases.Offerings) {
+                        // Find the package by product ID
+                        val packageToBuy = offerings.all.values
+                            .flatMap { it.availablePackages }
+                            .find { it.product.identifier == productId }
+                        
+                        if (packageToBuy != null) {
+                            val purchaseParams = com.revenuecat.purchases.PurchaseParams.Builder(activity, packageToBuy).build()
+                            Purchases.sharedInstance.purchase(
+                                purchaseParams,
+                                object : PurchaseCallback {
+                                    override fun onCompleted(storeTransaction: StoreTransaction, customerInfo: com.revenuecat.purchases.CustomerInfo) {
+                                        onResult(true)
+                                    }
+
+                                    override fun onError(error: PurchasesError, userCancelled: Boolean) {
+                                        onResult(false)
+                                    }
+                                }
+                            )
+                        } else {
+                            onResult(false)
+                        }
                     }
-                } else {
-                    onResult(false)
+
+                    override fun onError(error: PurchasesError) {
+                        onResult(false)
+                    }
                 }
-            }
+            )
         } catch (e: Exception) {
             onResult(false)
         }
@@ -165,15 +200,19 @@ object RevenueCatManager {
 
     fun restorePurchases(onResult: (Boolean) -> Unit) {
         try {
-            Purchases.sharedInstance.restorePurchases { customerInfo, error ->
-                if (error == null && customerInfo != null) {
-                    val hasPro = customerInfo.entitlements.active.containsKey("Neon Rush Pro")
-                    _isPro.value = hasPro
-                    onResult(true)
-                } else {
-                    onResult(false)
+            Purchases.sharedInstance.restorePurchases(
+                object : ReceiveCustomerInfoCallback {
+                    override fun onReceived(customerInfo: com.revenuecat.purchases.CustomerInfo) {
+                        val hasPro = customerInfo.entitlements.active.containsKey("Neon Rush Pro")
+                        _isPro.value = hasPro
+                        onResult(true)
+                    }
+
+                    override fun onError(error: PurchasesError) {
+                        onResult(false)
+                    }
                 }
-            }
+            )
         } catch (e: Exception) {
             onResult(false)
         }
