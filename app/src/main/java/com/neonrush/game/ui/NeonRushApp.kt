@@ -2102,12 +2102,10 @@ fun GameOverOverlayScreen(
                 Button(
                     onClick = {
                         activity?.let {
-                            AdMobManager.showRewardedAd(it) { rewardEarned ->
-                                if (rewardEarned) {
-                                    viewModel.reviveSimulation()
-                                }
-                            }
-                        }
+    AdMobManager.showRewardedIfReady(it) {
+        viewModel.reviveSimulation()
+    }
+}
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50)),
                     shape = RoundedCornerShape(8.dp),
