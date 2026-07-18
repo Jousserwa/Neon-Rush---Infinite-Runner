@@ -38,7 +38,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import kotlinx.coroutines.delay 
 import com.neonrush.game.StreakReward
 
-
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.FavoriteBorder
@@ -61,8 +60,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.neonrush.game.AdMobManager
-// FIX 1: Removed wrong import com.neonrush.game.AdMobBannerView
-// AdMobBannerView is already in this same package (com.neonrush.game.ui)
 import com.neonrush.game.DailyMutations
 import com.neonrush.game.MutationDay
 import com.neonrush.game.NeonRushViewModel
@@ -85,8 +82,9 @@ fun NeonRushApp(viewModel: NeonRushViewModel) {
     
     val isPro by RevenueCatManager.isPro.collectAsState()
     var showPaywall by remember { mutableStateOf(false) }
-var paywallReason by remember { mutableStateOf("generic") }
-LaunchedEffect(Unit) {
+    var paywallReason by remember { mutableStateOf("generic") }
+    
+    LaunchedEffect(Unit) {
         viewModel.checkDailyStreak()
     }
 
@@ -106,9 +104,8 @@ LaunchedEffect(Unit) {
                 Column {
                     // Show home screen banner if user is NOT PRO
                     if (!isPro) {
-                        // FIX 2: Added required adUnitId parameter
                         AdMobBannerView(
-                            adUnitId = "ca-app-pub-3940256099942544/6300978111", // Test banner ID
+                            adUnitId = "ca-app-pub-3841327492203214/6533049489",
                             modifier = Modifier.fillMaxWidth()
                         )
                     }
@@ -196,15 +193,13 @@ LaunchedEffect(Unit) {
                 .padding(innerPadding)
         ) {
             if (simState.isStarted && !simState.isCompleted) {
-                // Interactive Space Racetrack Simulator Screen!
                 RacingSimulatorScreen(
-    simState = simState,
-    viewModel = viewModel,
-    isPro = isPro,
-    onShowPaywall = { showPaywall = true; paywallReason = "world4" }
-)
+                    simState = simState,
+                    viewModel = viewModel,
+                    isPro = isPro,
+                    onShowPaywall = { showPaywall = true; paywallReason = "world4" }
+                )
             } else if (simState.isStarted && simState.isCompleted) {
-                // Dynamic Game Over overlay screen with reward, revive, subscription access point!
                 GameOverOverlayScreen(
                     simState = simState,
                     viewModel = viewModel,
@@ -246,54 +241,50 @@ LaunchedEffect(Unit) {
                                         onNavigateToGlobal = { activeTab = "rankings" },
                                         onNavigateToSkins = { activeTab = "skins" },
                                         isPro = isPro
-        )
-                                    
+                                    )
                                 }
                             }
                             "rankings" -> LeaderboardsTab(viewModel = viewModel, playerProfile = currentProfile)
                             "social" -> DailyChallengeTab(viewModel = viewModel, profile = currentProfile)
                             "skins" -> SkinsDeckTab(viewModel = viewModel, profile = currentProfile)
                             "profile" -> ProfileTab(profile = currentProfile, viewModel = viewModel)
-                        
+                        }
                     }
                 }
             }
-        }
 
-        streakBannerReward?.let { reward ->
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .align(Alignment.TopCenter)
-                    .padding(top = 24.dp, start = 20.dp, end = 20.dp)
-                    .background(Color(0xE6120324), RoundedCornerShape(12.dp))
-                    .border(1.dp, CyberPrimary.copy(alpha = 0.6f), RoundedCornerShape(12.dp))
-                    .padding(horizontal = 16.dp, vertical = 12.dp)
-            ) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
-                    Text(
-                        text = "🔥 ${reward.label}",
-                        color = CyberPrimary,
-                        fontWeight = FontWeight.Bold,
-                        fontFamily = FontFamily.Monospace,
-                        fontSize = 13.sp
-                    )
-                    Text(
-                        text = "+${reward.gems} GEMS",
-                        color = Color.White,
-                        fontWeight = FontWeight.Black,
-                        fontFamily = FontFamily.Monospace,
-                        fontSize = 16.sp
-                    )
+            streakBannerReward?.let { reward ->
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .align(Alignment.TopCenter)
+                        .padding(top = 24.dp, start = 20.dp, end = 20.dp)
+                        .background(Color(0xE6120324), RoundedCornerShape(12.dp))
+                        .border(1.dp, CyberPrimary.copy(alpha = 0.6f), RoundedCornerShape(12.dp))
+                        .padding(horizontal = 16.dp, vertical = 12.dp)
+                ) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
+                        Text(
+                            text = "🔥 ${reward.label}",
+                            color = CyberPrimary,
+                            fontWeight = FontWeight.Bold,
+                            fontFamily = FontFamily.Monospace,
+                            fontSize = 13.sp
+                        )
+                        Text(
+                            text = "+${reward.gems} GEMS",
+                            color = Color.White,
+                            fontWeight = FontWeight.Black,
+                            fontFamily = FontFamily.Monospace,
+                            fontSize = 16.sp
+                        )
+                    }
                 }
-            }
-        }   
+            }   
         }
     }
 
-    // Display billing Subscription Paywall when requested
     if (showPaywall) {
-        
         PaywallDialog(onDismiss = { showPaywall = false }, reason = paywallReason)
     }
 }
@@ -390,7 +381,7 @@ fun LeaderboardsTab(viewModel: NeonRushViewModel, playerProfile: GameProfile) {
         )
 
         Text(
-            text = "Follow and challenge ghost trails of active pilots sync\'d from the host.",
+            text = "Follow and challenge ghost trails of active pilots sync'd from the host.",
             color = CyberOnSurface.copy(alpha = 0.7f),
             fontSize = 12.sp,
             modifier = Modifier.padding(bottom = 12.dp)
@@ -424,7 +415,6 @@ fun LeaderboardsTab(viewModel: NeonRushViewModel, playerProfile: GameProfile) {
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            // Gold, Silver, Bronze Badge colors
                             val rankColor = when (pilot.rank) {
                                 1 -> GoldAccent
                                 2 -> SilverAccent
@@ -608,7 +598,6 @@ fun GhostRacerTab(viewModel: NeonRushViewModel, onBack: () -> Unit) {
 
         Button(
             onClick = {
-                // Find ghost by selected ID or default to CyberRunner
                 val selectedGhost = when (selectedPlayerId) {
                     "ghost_retro" -> com.neonrush.game.db.GhostChallengeEntity("ghost_retro", "RetroWave", 240, 2, ZoneGenerator.generateTelemetryCsv(240, 42))
                     "ghost_zeroglitch" -> com.neonrush.game.db.GhostChallengeEntity("ghost_zeroglitch", "ZeroGlitch", 480, 3, ZoneGenerator.generateTelemetryCsv(480, 84))
@@ -651,7 +640,6 @@ fun ArcadeHomeView(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
-        // Row 1 - Header bar: height 48dp
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -676,7 +664,6 @@ fun ArcadeHomeView(
             )
         }
 
-        // Row 2 - Daily Mutation banner: height 44dp, cyan border, visible
         val activeMutation = DailyMutations.getActiveMutation()
         Box(
             modifier = Modifier
@@ -714,7 +701,6 @@ fun ArcadeHomeView(
             }
         }
 
-        // Row 3 - NEON RUSH title: height 56dp, stylized glow with tagline below
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -775,7 +761,6 @@ fun ArcadeHomeView(
             )
         }
 
-        // Row 4 - SCREENSAVER CANVAS: fillMaxWidth, height 45% of screen
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -784,7 +769,6 @@ fun ArcadeHomeView(
             NeonPilotScreensaver()
         }
 
-        // Row 5 - TRANSCENDENCE banner (if available): height 44dp, gold
         if (profile.transcendenceCount > 0) {
             Box(
                 modifier = Modifier
@@ -849,7 +833,6 @@ fun ArcadeHomeView(
             }
         }
         
-        // Difficulty selector row
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -886,7 +869,6 @@ fun ArcadeHomeView(
             }
         }
 
-        // Row 6 — START RUSH button: height 52dp, full width, pink gradient
         Button(
             onClick = onStartRush,
             contentPadding = PaddingValues(0.dp),
@@ -923,7 +905,6 @@ fun ArcadeHomeView(
             }
         }
 
-        // Row 7 — GLOBAL + SKINS quick buttons: height 44dp, side by side
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -1317,10 +1298,7 @@ fun SkinsDeckTab(viewModel: NeonRushViewModel, profile: GameProfile) {
             )
         }
 
-
-        
-                        
-viewModel.shopSkins.forEach { (id, name, cost) ->
+        viewModel.shopSkins.forEach { (id, name, cost) ->
             val isUnlocked = unlockedSkins.contains(id)
             val isActive = profile.activeSkinId == id
 
@@ -1337,7 +1315,7 @@ viewModel.shopSkins.forEach { (id, name, cost) ->
                     )
                     .clickable {
                         if (isUnlocked) {
-                            viewModel.purchaseSkin(id, 0) // Equips skin
+                            viewModel.purchaseSkin(id, 0)
                         }
                     }
                     .padding(14.dp),
@@ -1410,7 +1388,6 @@ viewModel.shopSkins.forEach { (id, name, cost) ->
         }
 
         Spacer(modifier = Modifier.height(20.dp))
-        // Transcendence Prestige Container
         
         Card(
             colors = CardDefaults.cardColors(containerColor = CyberSurface.copy(alpha = 0.6f)),
@@ -1456,7 +1433,7 @@ viewModel.shopSkins.forEach { (id, name, cost) ->
         }
     
 
-Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(20.dp))
 
         Text(
             text = "💎 GET MORE GEMS",
@@ -1509,13 +1486,13 @@ Spacer(modifier = Modifier.height(20.dp))
 }
 
 @Composable
-
-  fun RacingSimulatorScreen(
+fun RacingSimulatorScreen(
     simState: SimulationState,
     viewModel: NeonRushViewModel,
     isPro: Boolean,
     onShowPaywall: () -> Unit
-) {  var controlOffset by remember { mutableStateOf(50f) }
+) {
+    var controlOffset by remember { mutableStateOf(50f) }
     var previousUserYPos by remember { mutableStateOf(simState.userYPos) }
     val tiltAngle = (simState.userYPos - previousUserYPos).toFloat().coerceIn(-10f, 10f) * 1.8f
     SideEffect { previousUserYPos = simState.userYPos }
@@ -1545,8 +1522,7 @@ Spacer(modifier = Modifier.height(20.dp))
     val tunnelBottomImg = ImageBitmap.imageResource(id = R.drawable.obstacle_tunnel_bottom)
     val standardImg = ImageBitmap.imageResource(id = R.drawable.obstacle_standard)
     
-  
-val textMeasurer = rememberTextMeasurer()
+    val textMeasurer = rememberTextMeasurer()
     var previousScoreForPopups by remember { mutableStateOf(simState.score) }
     val scorePopups = remember { mutableStateListOf<Triple<Int, Int,Int>>() }
     val scoreDelta = simState.score - previousScoreForPopups
@@ -1564,227 +1540,216 @@ val textMeasurer = rememberTextMeasurer()
     }
     previousShakeMagnitude = currentShakeMagnitude
     
-        Box(modifier = Modifier.fillMaxSize()) {
-    val currentWorld by viewModel.currentWorld.collectAsState()
-    LaunchedEffect(currentWorld.id) {
-        if (currentWorld.requiresPro && !isPro) {
-            viewModel.triggerPaywallTeaser(currentWorld)
-            delay(2500)
-            onShowPaywall()
-        }
-    }
-    when (currentWorld.id) {
-        1 -> Image(
-            painter = painterResource(id = R.drawable.bg_world1_blackout_front),
-            contentDescription = null,
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop
-        )
-        2 -> Image(
-            painter = painterResource(id = R.drawable.bg_world2_derelict_signal),
-            contentDescription = null,
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop
-        )
-        3 -> Image(
-            painter = painterResource(id = R.drawable.bg_world3_cell_block_zero),
-            contentDescription = null,
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop
-        )
-        4 -> Image(
-            painter = painterResource(id = R.drawable.bg_world4_green_hell),
-            contentDescription = null,
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop
-        )
-        5 -> Image(
-            painter = painterResource(id = R.drawable.bg_world5_red_protocol),
-            contentDescription = null,
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop
-        )
-        else -> {} // no art yet for this World — existing gradient background shows through
-    }
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-
-    
-        // Telemetry top panel
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(CyberSurface, RoundedCornerShape(8.dp))
-                .border(1.dp, CyberPrimary.copy(alpha = 0.2f), RoundedCornerShape(8.dp))
-                .padding(12.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column {
-                Text(
-                    text = "STORM ZONE: " + simState.currentZoneName,
-                    color = CyberPrimary,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 12.sp,
-                    fontFamily = FontFamily.Monospace
-                )
-                Text(
-                    text = "${simState.distanceMeters.toInt()}m",
-                    color = Color.White.copy(alpha = 0.7f),
-                    fontSize = 11.sp,
-                    fontFamily = FontFamily.Monospace
-                )
-            }
-
-            Column(horizontalAlignment = Alignment.End) {
-                Text(
-                    text = "${simState.speedKmh} KM/H",
-                    color = CyberSecondary,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 15.sp,
-                    fontFamily = FontFamily.Monospace
-                )
-                Text(
-                    text = "${simState.score} PTS",
-                    color = Color.White,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 12.sp,
-                    fontFamily = FontFamily.Monospace
-                )
+    Box(modifier = Modifier.fillMaxSize()) {
+        val currentWorld by viewModel.currentWorld.collectAsState()
+        LaunchedEffect(currentWorld.id) {
+            if (currentWorld.requiresPro && !isPro) {
+                viewModel.triggerPaywallTeaser(currentWorld)
+                delay(2500)
+                onShowPaywall()
             }
         }
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        // Live Graphic Space Canvas
-        Box(
+        when (currentWorld.id) {
+            1 -> Image(
+                painter = painterResource(id = R.drawable.bg_world1_blackout_front),
+                contentDescription = null,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop
+            )
+            2 -> Image(
+                painter = painterResource(id = R.drawable.bg_world2_derelict_signal),
+                contentDescription = null,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop
+            )
+            3 -> Image(
+                painter = painterResource(id = R.drawable.bg_world3_cell_block_zero),
+                contentDescription = null,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop
+            )
+            4 -> Image(
+                painter = painterResource(id = R.drawable.bg_world4_green_hell),
+                contentDescription = null,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop
+            )
+            5 -> Image(
+                painter = painterResource(id = R.drawable.bg_world5_red_protocol),
+                contentDescription = null,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop
+            )
+            else -> {}
+        }
+        Column(
             modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(12.dp))
-                .background(Color(0xFF020104).copy(alpha = 0.25f))
-                .border(2.dp, CyberPrimary, RoundedCornerShape(12.dp))
+                .fillMaxSize()
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Render active powerup durations or boss labels (Levels 1 - 10)
+            // Telemetry top panel
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(CyberSurface, RoundedCornerShape(8.dp))
+                    .border(1.dp, CyberPrimary.copy(alpha = 0.2f), RoundedCornerShape(8.dp))
+                    .padding(12.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column {
+                    Text(
+                        text = "STORM ZONE: " + simState.currentZoneName,
+                        color = CyberPrimary,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 12.sp,
+                        fontFamily = FontFamily.Monospace
+                    )
+                    Text(
+                        text = "${simState.distanceMeters.toInt()}m",
+                        color = Color.White.copy(alpha = 0.7f),
+                        fontSize = 11.sp,
+                        fontFamily = FontFamily.Monospace
+                    )
+                }
+
+                Column(horizontalAlignment = Alignment.End) {
+                    Text(
+                        text = "${simState.speedKmh} KM/H",
+                        color = CyberSecondary,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 15.sp,
+                        fontFamily = FontFamily.Monospace
+                    )
+                    Text(
+                        text = "${simState.score} PTS",
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 12.sp,
+                        fontFamily = FontFamily.Monospace
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
             Box(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .pointerInput(Unit) {
-                        detectDragGestures { change, dragAmount ->
-                            change.consume()
-                            val deltaPercent = (dragAmount.y / size.height) * 100f
-                            viewModel.adjustUserY(deltaPercent.toInt())
-                        }
-                    }
+                    .weight(1f)
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(Color(0xFF020104).copy(alpha = 0.25f))
+                    .border(2.dp, CyberPrimary, RoundedCornerShape(12.dp))
             ) {
-                Canvas(modifier = Modifier.fillMaxSize()) {
-                    val cw = size.width
-                    val ch = size.height
-
-                    // Screen Shake translate (Level 5 / 9)
-                    drawContext.canvas.translate(simState.screenShakeX, simState.screenShakeY)
-
-                    // Grid cyber line backgrounds
-                    val gridLines = 7
-                    for (i in 1..gridLines) {
-                        val x = cw * i / (gridLines + 1)
-                        drawLine(
-                            color = CyberPrimary.copy(alpha = 0.08f),
-                            start = Offset(x, 0f),
-                            end = Offset(x, ch),
-                            strokeWidth = 1.dp.toPx()
-                        )
-                    }
-
-                    // Draw Racetrack path bounds
-                    val path = Path().apply {
-                        moveTo(0f, ch * 0.5f)
-                        val ticksSize = simState.ghostYPath.size
-                        for (i in 0 until ticksSize) {
-                            val posX = cw * i / (ticksSize - 1).coerceAtLeast(1)
-                            val posY = ch * (simState.ghostYPath[i] / 100f)
-                            lineTo(posX, posY)
-                        }
-                    }
-                    drawPath(
-                        path = path,
-                        color = CyberPrimary.copy(alpha = 0.15f),
-                        style = Stroke(width = 2.dp.toPx())
-                    )
-
-                    // Render Procedural activeTrackElements (Gems, Powerups, Spikes, Pillars, Blades)
-                    for (elem in simState.activeTrackElements) {
-                        val x = cw * elem.xOffsetFraction
-                        val y = ch * (elem.yMatchPos / 100f)
-                        
-                        when (elem.type) {
-                            "gem" -> {
-                                                            
-                                val pulse = 1f + 0.15f * sin(simState.tickIndex * 0.3f)
-                                val baseSize = ch * 0.06f
-                                val w = baseSize * (gemImg.width.toFloat() / gemImg.height.toFloat()) * pulse
-                                val h = baseSize * pulse
-                                drawImage(
-                                    image = gemImg,
-                                    dstOffset = IntOffset((x - w / 2f).roundToInt(), (y - h / 2f).roundToInt()),
-                                    dstSize = IntSize(w.roundToInt(), h.roundToInt())
-                                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .pointerInput(Unit) {
+                            detectDragGestures { change, dragAmount ->
+                                change.consume()
+                                val deltaPercent = (dragAmount.y / size.height) * 100f
+                                viewModel.adjustUserY(deltaPercent.toInt())
                             }
-                            "fuel" -> {
-                                val angle = (simState.tickIndex * 6f) % 360f
-                                val baseSize = ch * 0.055f
-                                val w = baseSize * (coinImg.width.toFloat() / coinImg.height.toFloat())
-                                rotate(degrees = angle, pivot = Offset(x, y)) {
+                        }
+                ) {
+                    Canvas(modifier = Modifier.fillMaxSize()) {
+                        val cw = size.width
+                        val ch = size.height
+
+                        drawContext.canvas.translate(simState.screenShakeX, simState.screenShakeY)
+
+                        val gridLines = 7
+                        for (i in 1..gridLines) {
+                            val x = cw * i / (gridLines + 1)
+                            drawLine(
+                                color = CyberPrimary.copy(alpha = 0.08f),
+                                start = Offset(x, 0f),
+                                end = Offset(x, ch),
+                                strokeWidth = 1.dp.toPx()
+                            )
+                        }
+
+                        val path = Path().apply {
+                            moveTo(0f, ch * 0.5f)
+                            val ticksSize = simState.ghostYPath.size
+                            for (i in 0 until ticksSize) {
+                                val posX = cw * i / (ticksSize - 1).coerceAtLeast(1)
+                                val posY = ch * (simState.ghostYPath[i] / 100f)
+                                lineTo(posX, posY)
+                            }
+                        }
+                        drawPath(
+                            path = path,
+                            color = CyberPrimary.copy(alpha = 0.15f),
+                            style = Stroke(width = 2.dp.toPx())
+                        )
+
+                        for (elem in simState.activeTrackElements) {
+                            val x = cw * elem.xOffsetFraction
+                            val y = ch * (elem.yMatchPos / 100f)
+                            
+                            when (elem.type) {
+                                "gem" -> {
+                                    val pulse = 1f + 0.15f * sin(simState.tickIndex * 0.3f)
+                                    val baseSize = ch * 0.06f
+                                    val w = baseSize * (gemImg.width.toFloat() / gemImg.height.toFloat()) * pulse
+                                    val h = baseSize * pulse
                                     drawImage(
-                                        image = coinImg,
-                                        dstOffset = IntOffset((x - w / 2f).roundToInt(), (y - baseSize / 2f).roundToInt()),
-                                        dstSize = IntSize(w.roundToInt(), baseSize.roundToInt())
+                                        image = gemImg,
+                                        dstOffset = IntOffset((x - w / 2f).roundToInt(), (y - h / 2f).roundToInt()),
+                                        dstSize = IntSize(w.roundToInt(), h.roundToInt())
                                     )
                                 }
-                            }
-                            
-                            "powerup" -> {
-                                drawCircle(color = Color(0xFF8338EC), radius = 9.dp.toPx(), center = Offset(x, y))
-                                drawCircle(color = Color.White, radius = 7.dp.toPx(), center = Offset(x, y), style = Stroke(1.dp.toPx()))
-                            }
-                            "obstacle" -> {
-                                val obsColor = Color(0xFFFF0055)
-                                when (elem.subType) {
-                                    "PILLAR_TOP" -> {
-                                        drawRect(
-                                            color = obsColor,
-                                            topLeft = Offset(x - cw * 0.025f, 0f),
-                                            size = Size(cw * 0.05f, y)
-                                        )
-                                        drawRect(
-                                            color = Color.White.copy(alpha = 0.4f),
-                                            topLeft = Offset(x - cw * 0.025f, 0f),
-                                            size = Size(cw * 0.05f, y),
-                                            style = Stroke(1.dp.toPx())
+                                "fuel" -> {
+                                    val angle = (simState.tickIndex * 6f) % 360f
+                                    val baseSize = ch * 0.055f
+                                    val w = baseSize * (coinImg.width.toFloat() / coinImg.height.toFloat())
+                                    rotate(degrees = angle, pivot = Offset(x, y)) {
+                                        drawImage(
+                                            image = coinImg,
+                                            dstOffset = IntOffset((x - w / 2f).roundToInt(), (y - baseSize / 2f).roundToInt()),
+                                            dstSize = IntSize(w.roundToInt(), baseSize.roundToInt())
                                         )
                                     }
-                                    "PILLAR_BOTTOM" -> {
-                                        drawRect(
-                                            color = obsColor,
-                                            topLeft = Offset(x - cw * 0.025f, y),
-                                            size = Size(cw * 0.05f, ch - y)
-                                        )
-                                        drawRect(
-                                            color = Color.White.copy(alpha = 0.4f),
-                                            topLeft = Offset(x - cw * 0.025f, y),
-                                            size = Size(cw * 0.05f, ch - y),
-                                            style = Stroke(1.dp.toPx())
-                                        )
-                                    }
+                                }
+                                "powerup" -> {
+                                    drawCircle(color = Color(0xFF8338EC), radius = 9.dp.toPx(), center = Offset(x, y))
+                                    drawCircle(color = Color.White, radius = 7.dp.toPx(), center = Offset(x, y), style = Stroke(1.dp.toPx()))
+                                }
+                                "obstacle" -> {
+                                    val obsColor = Color(0xFFFF0055)
+                                    when (elem.subType) {
+                                        "PILLAR_TOP" -> {
+                                            drawRect(
+                                                color = obsColor,
+                                                topLeft = Offset(x - cw * 0.025f, 0f),
+                                                size = Size(cw * 0.05f, y)
+                                            )
+                                            drawRect(
+                                                color = Color.White.copy(alpha = 0.4f),
+                                                topLeft = Offset(x - cw * 0.025f, 0f),
+                                                size = Size(cw * 0.05f, y),
+                                                style = Stroke(1.dp.toPx())
+                                            )
+                                        }
+                                        "PILLAR_BOTTOM" -> {
+                                            drawRect(
+                                                color = obsColor,
+                                                topLeft = Offset(x - cw * 0.025f, y),
+                                                size = Size(cw * 0.05f, ch - y)
+                                            )
+                                            drawRect(
+                                                color = Color.White.copy(alpha = 0.4f),
+                                                topLeft = Offset(x - cw * 0.025f, y),
+                                                size = Size(cw * 0.05f, ch - y),
+                                                style = Stroke(1.dp.toPx())
+                                            )
+                                        }
                                         "STALACTITE" -> {
-                                        val baseSize = ch * 0.09f
-                                        val w = baseSize * (spikesFlippedImg.width.toFloat() / spikesFlippedImg.height.toFloat())
-                                        val glowPulse = 0.7f + 0.3f * sin(simState.tickIndex * 0.4f)
-                                        run {
+                                            val baseSize = ch * 0.09f
+                                            val w = baseSize * (spikesFlippedImg.width.toFloat() / spikesFlippedImg.height.toFloat())
+                                            val glowPulse = 0.7f + 0.3f * sin(simState.tickIndex * 0.4f)
                                             drawImage(
                                                 image = spikesFlippedImg,
                                                 dstOffset = IntOffset((x - w / 2f).roundToInt(), (y - baseSize / 2f).roundToInt()),
@@ -1792,173 +1757,659 @@ val textMeasurer = rememberTextMeasurer()
                                                 alpha = glowPulse
                                             )
                                         }
-                                    }
-                                    "STALAGMITE"  -> {
-                                        val baseSize = ch * 0.09f
-                                        val w = baseSize * (spikesImg.width.toFloat() / spikesImg.height.toFloat())
-                                        val glowPulse = 0.7f + 0.3f * sin(simState.tickIndex * 0.4f)
-                                        drawImage(
-                                            image = spikesImg,
-                                            dstOffset = IntOffset((x - w / 2f).roundToInt(), (y - baseSize / 2f).roundToInt()),
-                                            dstSize = IntSize(w.roundToInt(), baseSize.roundToInt()),
-                                            alpha = glowPulse
-                                        )
-                                    }
-                                    "LASER" -> {
-                                        val glowPulse = 0.6f + 0.4f * sin(simState.tickIndex * 0.5f)
-                                        val h = ch * 0.22f
-                                        val w = h * (laserImg.width.toFloat() / laserImg.height.toFloat())
-                                        drawImage(
-                                            image = laserImg,
-                                            dstOffset = IntOffset((x - w / 2f).roundToInt(), (y - h / 2f).roundToInt()),
-                                            dstSize = IntSize(w.roundToInt(), h.roundToInt()),
-                                            alpha = glowPulse
-                                        )
-                                    }
-                                    "BLADE" -> {
-                                        val angle = (simState.tickIndex * 12f) % 360f
-                                        val size = ch * 0.08f
-                                        rotate(degrees = angle, pivot = Offset(x, y)) {
+                                        "STALAGMITE" -> {
+                                            val baseSize = ch * 0.09f
+                                            val w = baseSize * (spikesImg.width.toFloat() / spikesImg.height.toFloat())
+                                            val glowPulse = 0.7f + 0.3f * sin(simState.tickIndex * 0.4f)
                                             drawImage(
-                                                image = sawbladeImg,
-                                                dstOffset = IntOffset((x - size / 2f).roundToInt(), (y - size / 2f).roundToInt()),
-                                                dstSize = IntSize(size.roundToInt(), size.roundToInt())
+                                                image = spikesImg,
+                                                dstOffset = IntOffset((x - w / 2f).roundToInt(), (y - baseSize / 2f).roundToInt()),
+                                                dstSize = IntSize(w.roundToInt(), baseSize.roundToInt()),
+                                                alpha = glowPulse
                                             )
                                         }
-                                    }
-                                    "BARRIER" -> {
-                                        val baseSize = ch * 0.16f
-                                        val w = baseSize * (barrierImg.width.toFloat() / barrierImg.height.toFloat())
-                                        drawImage(
-                                            image = barrierImg,
-                                            dstOffset = IntOffset((x - w / 2f).roundToInt(), (y - baseSize / 2f).roundToInt()),
-                                            dstSize = IntSize(w.roundToInt(), baseSize.roundToInt())
-                                        )
-                                    }
-                                    "ZAP_FIELD" -> {
-                                        val glowPulse = 0.6f + 0.4f * sin(simState.tickIndex * 0.5f)
-                                        val baseSize = ch * 0.15f
-                                        val w = baseSize * (zapFieldImg.width.toFloat() / zapFieldImg.height.toFloat())
-                                        drawImage(
-                                            image = zapFieldImg,
-                                            dstOffset = IntOffset((x - w / 2f).roundToInt(), (y - baseSize / 2f).roundToInt()),
-                                            dstSize = IntSize(w.roundToInt(), baseSize.roundToInt()),
-                                            alpha = glowPulse
-                                        )
-                                    }
-                                    "PHANTOM" -> {
-                                        val bob = sin(simState.tickIndex * 0.2f) * ch * 0.015f
-                                        val flicker = 0.5f + 0.5f * sin(simState.tickIndex * 0.3f)
-                                        val baseSize = ch * 0.16f
-                                        val w = baseSize * (phantomImg.width.toFloat() / phantomImg.height.toFloat())
-                                        drawImage(
-                                            image = phantomImg,
-                                            dstOffset = IntOffset((x - w / 2f).roundToInt(), (y - baseSize / 2f + bob).roundToInt()),
-                                            dstSize = IntSize(w.roundToInt(), baseSize.roundToInt()),
-                                            alpha = flicker
-                                        )
-                                    }
-                                    "SPLITTER" -> {
-                                        val angle = (simState.tickIndex * 8f) % 360f
-                                        val baseSize = ch * 0.13f
-                                        val w = baseSize * (splitterImg.width.toFloat() / splitterImg.height.toFloat())
-                                        rotate(degrees = angle, pivot = Offset(x, y)) {
+                                        "LASER" -> {
+                                            val glowPulse = 0.6f + 0.4f * sin(simState.tickIndex * 0.5f)
+                                            val h = ch * 0.22f
+                                            val w = h * (laserImg.width.toFloat() / laserImg.height.toFloat())
                                             drawImage(
-                                                image = splitterImg,
+                                                image = laserImg,
+                                                dstOffset = IntOffset((x - w / 2f).roundToInt(), (y - h / 2f).roundToInt()),
+                                                dstSize = IntSize(w.roundToInt(), h.roundToInt()),
+                                                alpha = glowPulse
+                                            )
+                                        }
+                                        "BLADE" -> {
+                                            val angle = (simState.tickIndex * 12f) % 360f
+                                            val size = ch * 0.08f
+                                            rotate(degrees = angle, pivot = Offset(x, y)) {
+                                                drawImage(
+                                                    image = sawbladeImg,
+                                                    dstOffset = IntOffset((x - size / 2f).roundToInt(), (y - size / 2f).roundToInt()),
+                                                    dstSize = IntSize(size.roundToInt(), size.roundToInt())
+                                                )
+                                            }
+                                        }
+                                        "BARRIER" -> {
+                                            val baseSize = ch * 0.16f
+                                            val w = baseSize * (barrierImg.width.toFloat() / barrierImg.height.toFloat())
+                                            drawImage(
+                                                image = barrierImg,
                                                 dstOffset = IntOffset((x - w / 2f).roundToInt(), (y - baseSize / 2f).roundToInt()),
                                                 dstSize = IntSize(w.roundToInt(), baseSize.roundToInt())
                                             )
                                         }
-                                    }
-                                    "TUNNEL_TOP" -> {
-                                        val baseSize = ch * 0.18f
-                                        val w = baseSize * (tunnelTopImg.width.toFloat() / tunnelTopImg.height.toFloat())
-                                        drawImage(
-                                            image = tunnelTopImg,
-                                            dstOffset = IntOffset((x - w / 2f).roundToInt(), 0),
-                                            dstSize = IntSize(w.roundToInt(), baseSize.roundToInt())
-                                        )
-                                    }
-                                    "TUNNEL_BOTTOM" -> {
-                                        val baseSize = ch * 0.18f
-                                        val w = baseSize * (tunnelBottomImg.width.toFloat() / tunnelBottomImg.height.toFloat())
-                                        drawImage(
-                                            image = tunnelBottomImg,
-                                            dstOffset = IntOffset((x - w / 2f).roundToInt(), (ch - baseSize).roundToInt()),
-                                            dstSize = IntSize(w.roundToInt(), baseSize.roundToInt())
-                                        )
-                                    }
-                                    else -> {
-                                        val bob = sin(simState.tickIndex * 0.2f) * ch * 0.015f
-                                        val baseSize = ch * 0.14f
-                                        val w = baseSize * (standardImg.width.toFloat() / standardImg.height.toFloat())
-                                        drawImage(
-                                            image = standardImg,
-                                            dstOffset = IntOffset((x - w / 2f).roundToInt(), (y - baseSize / 2f + bob).roundToInt()),
-                                            dstSize = IntSize(w.roundToInt(), baseSize.roundToInt())
-                                        )
+                                        "ZAP_FIELD" -> {
+                                            val glowPulse = 0.6f + 0.4f * sin(simState.tickIndex * 0.5f)
+                                            val baseSize = ch * 0.15f
+                                            val w = baseSize * (zapFieldImg.width.toFloat() / zapFieldImg.height.toFloat())
+                                            drawImage(
+                                                image = zapFieldImg,
+                                                dstOffset = IntOffset((x - w / 2f).roundToInt(), (y - baseSize / 2f).roundToInt()),
+                                                dstSize = IntSize(w.roundToInt(), baseSize.roundToInt()),
+                                                alpha = glowPulse
+                                            )
+                                        }
+                                        "PHANTOM" -> {
+                                            val bob = sin(simState.tickIndex * 0.2f) * ch * 0.015f
+                                            val flicker = 0.5f + 0.5f * sin(simState.tickIndex * 0.3f)
+                                            val baseSize = ch * 0.16f
+                                            val w = baseSize * (phantomImg.width.toFloat() / phantomImg.height.toFloat())
+                                            drawImage(
+                                                image = phantomImg,
+                                                dstOffset = IntOffset((x - w / 2f).roundToInt(), (y - baseSize / 2f + bob).roundToInt()),
+                                                dstSize = IntSize(w.roundToInt(), baseSize.roundToInt()),
+                                                alpha = flicker
+                                            )
+                                        }
+                                        "SPLITTER" -> {
+                                            val angle = (simState.tickIndex * 8f) % 360f
+                                            val baseSize = ch * 0.13f
+                                            val w = baseSize * (splitterImg.width.toFloat() / splitterImg.height.toFloat())
+                                            rotate(degrees = angle, pivot = Offset(x, y)) {
+                                                drawImage(
+                                                    image = splitterImg,
+                                                    dstOffset = IntOffset((x - w / 2f).roundToInt(), (y - baseSize / 2f).roundToInt()),
+                                                    dstSize = IntSize(w.roundToInt(), baseSize.roundToInt())
+                                                )
+                                            }
+                                        }
+                                        "TUNNEL_TOP" -> {
+                                            val baseSize = ch * 0.18f
+                                            val w = baseSize * (tunnelTopImg.width.toFloat() / tunnelTopImg.height.toFloat())
+                                            drawImage(
+                                                image = tunnelTopImg,
+                                                dstOffset = IntOffset((x - w / 2f).roundToInt(), 0),
+                                                dstSize = IntSize(w.roundToInt(), baseSize.roundToInt())
+                                            )
+                                        }
+                                        "TUNNEL_BOTTOM" -> {
+                                            val baseSize = ch * 0.18f
+                                            val w = baseSize * (tunnelBottomImg.width.toFloat() / tunnelBottomImg.height.toFloat())
+                                            drawImage(
+                                                image = tunnelBottomImg,
+                                                dstOffset = IntOffset((x - w / 2f).roundToInt(), (ch - baseSize).roundToInt()),
+                                                dstSize = IntSize(w.roundToInt(), baseSize.roundToInt())
+                                            )
+                                        }
+                                        else -> {
+                                            val bob = sin(simState.tickIndex * 0.2f) * ch * 0.015f
+                                            val baseSize = ch * 0.14f
+                                            val w = baseSize * (standardImg.width.toFloat() / standardImg.height.toFloat())
+                                            drawImage(
+                                                image = standardImg,
+                                                dstOffset = IntOffset((x - w / 2f).roundToInt(), (y - baseSize / 2f + bob).roundToInt()),
+                                                dstSize = IntSize(w.roundToInt(), baseSize.roundToInt())
+                                            )
+                                        }
                                     }
                                 }
-                            }
-                            
-                            "bullet" -> {
-                                drawCircle(color = Color(0xFFFF00FF), radius = 3.dp.toPx(), center = Offset(x, y))
+                                "bullet" -> {
+                                    drawCircle(color = Color(0xFFFF00FF), radius = 3.dp.toPx(), center = Offset(x, y))
+                                }
                             }
                         }
-                    }
 
-                    // Render active particles (sparkle bursts, explosion bursts)
-                    for (p in simState.particles) {
-                        val px = cw * p.x
-                        val py = ch * (p.y / 100f)
-                        val lifeFrac = (1f - (p.age.toFloat() / p.maxAge.toFloat())).coerceIn(0f, 1f)
-                        val particleColor = Color(p.colorArgb).copy(alpha = lifeFrac)
-                        val radius = if (p.kind == "explosion") (3f + 4f * lifeFrac).dp.toPx() else (2f + 2f * lifeFrac).dp.toPx()
-                        drawCircle(
-                            color = particleColor,
-                            radius = radius,
-                            center = Offset(px, py)
+                        for (p in simState.particles) {
+                            val px = cw * p.x
+                            val py = ch * (p.y / 100f)
+                            val lifeFrac = (1f - (p.age.toFloat() / p.maxAge.toFloat())).coerceIn(0f, 1f)
+                            val particleColor = Color(p.colorArgb).copy(alpha = lifeFrac)
+                            val radius = if (p.kind == "explosion") (3f + 4f * lifeFrac).dp.toPx() else (2f + 2f * lifeFrac).dp.toPx()
+                            drawCircle(
+                                color = particleColor,
+                                radius = radius,
+                                center = Offset(px, py)
+                            )
+                        }
+
+                        val ticksCount = simState.ghostYPath.size
+                        val userX = cw * 0.2f
+                        
+                        if (ticksCount > 0) {
+                            val ghostY = ch * (simState.ghostYPos / 100f)
+                            val ghostX = cw * 0.2f
+
+                            drawCircle(
+                                color = CyberSecondary.copy(alpha = 0.5f),
+                                radius = 8.dp.toPx(),
+                                center = Offset(ghostX, ghostY)
+                            )
+                        }
+
+                        val userY = ch * (simState.userYPos / 100f)
+
+                        if (simState.activePowerupDurations.containsKey("PU1")) {
+                            drawCircle(
+                                color = Color(0xFF3A86FF),
+                                radius = 26.dp.toPx(),
+                                center = Offset(userX, userY),
+                                style = Stroke(width = 2.dp.toPx())
+                            )
+                        }
+                        if (simState.activePowerupDurations.containsKey("PU7")) {
+                            drawCircle(
+                                color = Color(0xFFF72585),
+                                radius = 28.dp.toPx(),
+                                center = Offset(userX, userY),
+                                style = Stroke(width = 2.dp.toPx())
+                            )
+                        }
+
+                        val frameIdx = (simState.tickIndex / 3) % pilotFrames.size
+                        val currentFrameImg = pilotFrames[frameIdx]
+
+                        val displayHeight = ch * 0.20f
+                        val aspect = currentFrameImg.width.toFloat() / currentFrameImg.height.toFloat()
+                        val displayWidth = displayHeight * aspect
+
+                        rotate(degrees = tiltAngle, pivot = Offset(userX, userY)) {
+                            drawImage(
+                                image = currentFrameImg,
+                                dstOffset = IntOffset((userX - displayWidth / 2f).roundToInt(), (userY - displayHeight / 2f).roundToInt()),
+                                dstSize = IntSize(displayWidth.roundToInt(), displayHeight.roundToInt())
+                            )
+                        }
+
+                        for ((scoreDelta, spawnTick, spawnY) in scorePopups) {
+                            val popupAge = simState.tickIndex - spawnTick
+                            val popupAlpha = 1f - (popupAge / 25f)
+                            val popupY = ch * (spawnY / 100f) - (popupAge * 2f)
+                            val textLayout = textMeasurer.measure(
+                                "+$scoreDelta",
+                                style = TextStyle(
+                                    color = CyberPrimary.copy(alpha = popupAlpha),
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            )
+                            drawText(
+                                textLayoutResult = textLayout,
+                                topLeft = Offset(userX + 20f, popupY)
+                            )
+                        }
+
+                        if (simState.tickIndex - flashStartTick < 5) {
+                            drawRect(
+                                color = Color.White.copy(alpha = 0.3f),
+                                size = Size(cw, ch)
+                            )
+                        }
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            if (!isPro) {
+                AdMobBannerView(
+                    adUnitId = "ca-app-pub-3841327492203214/6533049489",
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+
+                        Spacer(modifier = Modifier.height(8.dp))
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(48.dp),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                Button(
+                    onClick = { viewModel.resetSimulation() },
+                    colors = ButtonDefaults.buttonColors(containerColor = CyberSurface),
+                    shape = RoundedCornerShape(8.dp),
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
+                        .border(1.dp, CyberPrimary.copy(alpha = 0.4f), RoundedCornerShape(8.dp))
+                ) {
+                    Text("QUIT", color = Color.White, fontFamily = FontFamily.Monospace, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                }
+
+                Spacer(modifier = Modifier.width(8.dp))
+
+                Button(
+                    onClick = { viewModel.reviveSimulation() },
+                    colors = ButtonDefaults.buttonColors(containerColor = CyberSecondary),
+                    shape = RoundedCornerShape(8.dp),
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
+                ) {
+                    Text("REVIVE", color = Color.White, fontFamily = FontFamily.Monospace, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun GameOverOverlayScreen(
+    simState: SimulationState,
+    viewModel: NeonRushViewModel,
+    isPro: Boolean,
+    onShowPaywall: () -> Unit
+) {
+    val activity = LocalContext.current as? Activity
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xE6000000))
+            .padding(24.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            Text(
+                text = "GAME OVER",
+                fontSize = 32.sp,
+                fontWeight = FontWeight.Black,
+                color = CyberPrimary,
+                fontFamily = FontFamily.Monospace
+            )
+
+            Text(
+                text = "FINAL SCORE: ${simState.score}",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.White,
+                fontFamily = FontFamily.Monospace
+            )
+
+            Text(
+                text = "DISTANCE: ${simState.distanceMeters.toInt()}m",
+                fontSize = 14.sp,
+                color = CyberSecondary,
+                fontFamily = FontFamily.Monospace
+            )
+
+            Text(
+                text = "ZONE REACHED: ${simState.currentZoneName}",
+                fontSize = 14.sp,
+                color = CyberSecondary,
+                fontFamily = FontFamily.Monospace
+            )
+
+            if (!isPro) {
+                Card(
+                    colors = CardDefaults.cardColors(containerColor = CyberSurface),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .border(1.dp, CyberPrimary, RoundedCornerShape(12.dp))
+                ) {
+                    Column(
+                        modifier = Modifier.padding(16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = "⚡ GO PRO",
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = CyberPrimary,
+                            fontFamily = FontFamily.Monospace
                         )
-                    }
-
-                    // Ghost vehicle dot (represent pink spaceship)
-                          
-                    val ticksCount = simState.ghostYPath.size
-                    val userX = cw * 0.2f // Lock user ship coordinates to 20% width for running feel
-                    
-                    if (ticksCount > 0) {
-                        val ghostY = ch * (simState.ghostYPos / 100f)
-                        val ghostX = cw * 0.2f
-
-                        drawCircle(
-                            color = CyberSecondary.copy(alpha = 0.5f),
-                            radius = 8.dp.toPx(),
-                            center = Offset(ghostX, ghostY)
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = "Remove ads, unlock Legendary difficulty, and access all Worlds!",
+                            fontSize = 12.sp,
+                            color = CyberOnSurface.copy(alpha = 0.8f),
+                            textAlign = TextAlign.Center
                         )
+                        Spacer(modifier = Modifier.height(12.dp))
+                        Button(
+                            onClick = onShowPaywall,
+                            colors = ButtonDefaults.buttonColors(containerColor = CyberPrimary),
+                            shape = RoundedCornerShape(8.dp),
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(
+                                text = "UPGRADE TO PRO",
+                                color = CyberBackground,
+                                fontFamily = FontFamily.Monospace,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
                     }
-// Draw User Pilot Character using real sprite art
-                    val userY = ch * (simState.userYPos / 100f)
+                }
 
-                    // Draw protective shields or active powerup halo visual hints
-                    if (simState.activePowerupDurations.containsKey("PU1")) {
-                        drawCircle(
-                            color = Color(0xFF3A86FF),
-                            radius = 26.dp.toPx(),
-                            center = Offset(userX, userY),
-                            style = Stroke(width = 2.dp.toPx())
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Button(
+                    onClick = {
+                        activity?.let {
+                            AdMobManager.showRewardedAd(it) { rewardEarned ->
+                                if (rewardEarned) {
+                                    viewModel.reviveSimulation()
+                                }
+                            }
+                        }
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50)),
+                    shape = RoundedCornerShape(8.dp),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = "WATCH AD TO REVIVE",
+                        color = Color.White,
+                        fontFamily = FontFamily.Monospace,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Button(
+                onClick = { viewModel.resetSimulation() },
+                colors = ButtonDefaults.buttonColors(containerColor = CyberSurface),
+                shape = RoundedCornerShape(8.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .border(1.dp, CyberPrimary.copy(alpha = 0.4f), RoundedCornerShape(8.dp))
+            ) {
+                Text(
+                    text = "BACK TO MENU",
+                    color = Color.White,
+                    fontFamily = FontFamily.Monospace,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun ProfileTab(profile: GameProfile, viewModel: NeonRushViewModel) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        HeaderProfileDeck(profile = profile, viewModel = viewModel)
+
+        Card(
+            colors = CardDefaults.cardColors(containerColor = CyberSurface),
+            modifier = Modifier
+                .fillMaxWidth()
+                .border(1.dp, CyberPrimary.copy(alpha = 0.2f), RoundedCornerShape(12.dp))
+        ) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text(
+                    text = "📊 STATISTICS",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = CyberPrimary,
+                    fontFamily = FontFamily.Monospace,
+                    modifier = Modifier.padding(bottom = 12.dp)
+                )
+
+                StatRow("Total Runs", "${profile.totalRuns}")
+                StatRow("Average Score", "${profile.averageScore}")
+                StatRow("Total Gems Earned", "${profile.totalGemsEarned}")
+                StatRow("Favorite Skin", profile.activeSkinId.replace("_", " ").capitalize())
+                StatRow("Transcendence Level", "${profile.transcendenceCount}")
+            }
+        }
+
+        Card(
+            colors = CardDefaults.cardColors(containerColor = CyberSurface),
+            modifier = Modifier
+                .fillMaxWidth()
+                .border(1.dp, CyberSecondary.copy(alpha = 0.2f), RoundedCornerShape(12.dp))
+        ) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text(
+                    text = "⚙️ SETTINGS",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = CyberSecondary,
+                    fontFamily = FontFamily.Monospace,
+                    modifier = Modifier.padding(bottom = 12.dp)
+                )
+
+                var soundEnabled by remember { mutableStateOf(true) }
+                var musicEnabled by remember { mutableStateOf(true) }
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text("Sound Effects", color = Color.White, fontFamily = FontFamily.Monospace)
+                    Switch(
+                        checked = soundEnabled,
+                        onCheckedChange = { soundEnabled = it },
+                        colors = SwitchDefaults.colors(
+                            checkedThumbColor = CyberPrimary,
+                            checkedTrackColor = CyberPrimary.copy(alpha = 0.5f)
                         )
-                    }
-                    if (simState.activePowerupDurations.containsKey("PU7")) {
-                        drawCircle(
-                            color = Color(0xFFF72585),
-                            radius = 28.dp.toPx(),
-                            center = Offset(userX, userY),
-                            style = Stroke(width = 2.dp.toPx())
+                    )
+                }
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text("Music", color = Color.White, fontFamily = FontFamily.Monospace)
+                    Switch(
+                        checked = musicEnabled,
+                        onCheckedChange = { musicEnabled = it },
+                        colors = SwitchDefaults.colors(
+                            checkedThumbColor = CyberPrimary,
+                            checkedTrackColor = CyberPrimary.copy(alpha = 0.5f)
                         )
+                    )
+                }
+            }
+        }
+
+        Button(
+            onClick = { RevenueCatManager.restorePurchases {} },
+            colors = ButtonDefaults.buttonColors(containerColor = CyberSurface),
+            shape = RoundedCornerShape(8.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .border(1.dp, CyberPrimary.copy(alpha = 0.4f), RoundedCornerShape(8.dp))
+        ) {
+            Text(
+                text = "RESTORE PURCHASES",
+                color = CyberPrimary,
+                fontFamily = FontFamily.Monospace,
+                fontWeight = FontWeight.Bold
+            )
+        }
+    }
+}
+
+@Composable
+fun StatRow(label: String, value: String) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(
+            text = label,
+            color = CyberOnSurface.copy(alpha = 0.7f),
+            fontFamily = FontFamily.Monospace,
+            fontSize = 12.sp
+        )
+        Text(
+            text = value,
+            color = Color.White,
+            fontFamily = FontFamily.Monospace,
+            fontWeight = FontWeight.Bold,
+            fontSize = 12.sp
+        )
+    }
+}
+
+@Composable
+fun PaywallDialog(onDismiss: () -> Unit, reason: String) {
+    val activity = LocalContext.current as? Activity
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(
+                text = "⚡ NEON RUSH PRO",
+                color = CyberPrimary,
+                fontFamily = FontFamily.Monospace,
+                fontWeight = FontWeight.Bold
+            )
+        },
+        text = {
+            Column {
+                Text(
+                    text = when (reason) {
+                        "world4" -> "World 4: Green Hell requires Pro subscription. Unlock all Worlds, remove ads, and get Legendary difficulty!"
+                        else -> "Upgrade to Pro to unlock all features: remove ads, access all Worlds, Legendary difficulty, and exclusive skins!"
+                    },
+                    color = Color.White,
+                    fontFamily = FontFamily.Monospace,
+                    fontSize = 13.sp
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+                Text(
+                    text = "Monthly: ${RevenueCatManager.SUBSCRIPTION_PRICE_MONTHLY_USD}",
+                    color = CyberSecondary,
+                    fontFamily = FontFamily.Monospace,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    text = "Annual: ${RevenueCatManager.SUBSCRIPTION_PRICE_ANNUAL_USD} (Save 50%)",
+                    color = CyberSecondary,
+                    fontFamily = FontFamily.Monospace,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = {
+                    activity?.let {
+                        RevenueCatManager.purchaseProSubscription(it) { success ->
+                            if (success) onDismiss()
+                        }
                     }
+                },
+                colors = ButtonDefaults.buttonColors(containerColor = CyberPrimary)
+            ) {
+                Text("SUBSCRIBE", color = CyberBackground, fontFamily = FontFamily.Monospace)
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("MAYBE LATER", color = CyberOnSurface, fontFamily = FontFamily.Monospace)
+            }
+        },
+        containerColor = CyberSurface,
+        shape = RoundedCornerShape(16.dp)
+    )
+}
 
-                    val frameIdx = (simState.tickIndex / 3) % pilotFrames.size
-                    val currentFrameImg = pilotFrames[frameIdx]
+@Composable
+fun NeonPilotScreensaver() {
+    val infiniteTransition = rememberInfiniteTransition(label = "screensaver")
+    val offsetX by infiniteTransition.animateFloat(
+        initialValue = -50f,
+        targetValue = 50f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(3000, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "offsetX"
+    )
+    val offsetY by infiniteTransition.animateFloat(
+        initialValue = -20f,
+        targetValue = 20f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(2000, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "offsetY"
+    )
 
-                    val displayHeight = ch * 0.20f
-                    val aspect = currentFrameImg.width.toFloat() / current
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Canvas(modifier = Modifier.fillMaxSize()) {
+            val cw = size.width
+            val ch = size.height
+
+            // Draw stars
+            for (i in 0..50) {
+                val x = (i * 73 % 100) / 100f * cw
+                val y = (i * 37 % 100) / 100f * ch
+                val alpha = 0.3f + 0.7f * ((i * 13 % 10) / 10f)
+                drawCircle(
+                    color = Color.White.copy(alpha = alpha),
+                    radius = (1f + (i % 3)).dp.toPx(),
+                    center = Offset(x, y)
+                )
+            }
+
+            // Draw pilot silhouette
+            val pilotX = cw / 2f + offsetX
+            val pilotY = ch / 2f + offsetY
+
+            drawCircle(
+                color = CyberPrimary.copy(alpha = 0.3f),
+                radius = 40.dp.toPx(),
+                center = Offset(pilotX, pilotY)
+            )
+
+            // Draw trail
+            val trailPath = Path().apply {
+                moveTo(pilotX - 60, pilotY)
+                for (i in 1..5) {
+                    val tx = pilotX - 60 - i * 30
+                    val ty = pilotY + kotlin.math.sin(i * 0.5f) * 10
+                    lineTo(tx, ty)
+                }
+            }
+            drawPath(
+                path = trailPath,
+                color = CyberPrimary.copy(alpha = 0.5f),
+                style = Stroke(width = 3.dp.toPx())
+            )
+        }
+
+        Text(
+            text = "👾",
+            fontSize = 48.sp,
+            modifier = Modifier.offset { IntOffset(offsetX.roundToInt(), offsetY.roundToInt()) }
+        )
+    }
+}
+
