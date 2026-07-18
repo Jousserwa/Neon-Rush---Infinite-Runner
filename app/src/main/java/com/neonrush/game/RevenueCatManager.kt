@@ -162,7 +162,7 @@ object RevenueCatManager {
                         // Find the package by product ID
                         val packageToBuy = offerings.all.values
                             .flatMap { it.availablePackages }
-                            .find { it.product.identifier == productId }
+                            .find { it.product.id == productId }
                         
                         if (packageToBuy != null) {
                             val purchaseParams = com.revenuecat.purchases.PurchaseParams.Builder(activity, packageToBuy).build()
