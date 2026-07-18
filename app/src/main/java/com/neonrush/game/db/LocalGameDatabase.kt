@@ -23,7 +23,10 @@ data class GameProfile(
     val activePilotSkinId: String = "default",
     val unlockedPilotSkinsCsv: String = "default",
     val currentStreak: Int = 0,
-    val lastStreakLoginDate: String = ""
+    val lastStreakLoginDate: String = "",
+    val totalRuns: Int = 0,
+    val averageScore: Int = 0,
+    val totalGemsEarned: Int = 0
 )
     
 
