@@ -70,6 +70,9 @@ class GameDao(context: Context) {
             val unlockedPilotSkinsIdx = cursor.getColumnIndex("unlockedPilotSkinsCsv")
             val currentStreakIdx = cursor.getColumnIndex("currentStreak")
             val lastStreakLoginIdx = cursor.getColumnIndex("lastStreakLoginDate")
+            val totalRunsIdx = cursor.getColumnIndex("totalRuns")
+            val averageScoreIdx = cursor.getColumnIndex("averageScore")
+            val totalGemsEarnedIdx = cursor.getColumnIndex("totalGemsEarned")
             val profile = GameProfile(
                 id = 1,
                 username = if (usernameIdx != -1) cursor.getString(usernameIdx) else "NeonPilot_99",
@@ -85,8 +88,10 @@ class GameDao(context: Context) {
                 activePilotSkinId = if (activePilotSkinIdx != -1) cursor.getString(activePilotSkinIdx) else "default",
                 unlockedPilotSkinsCsv = if (unlockedPilotSkinsIdx != -1) cursor.getString(unlockedPilotSkinsIdx) else "default",
                 currentStreak = if (currentStreakIdx != -1) cursor.getInt(currentStreakIdx) else 0,
-                lastStreakLoginDate = if (lastStreakLoginIdx != -1) cursor.getString(lastStreakLoginIdx) else ""
-            
+                lastStreakLoginDate = if (lastStreakLoginIdx != -1) cursor.getString(lastStreakLoginIdx) else "",
+                totalRuns = if (totalRunsIdx != -1) cursor.getInt(totalRunsIdx) else 0,
+                averageScore = if (averageScoreIdx != -1) cursor.getInt(averageScoreIdx) else 0,
+                totalGemsEarned = if (totalGemsEarnedIdx != -1) cursor.getInt(totalGemsEarnedIdx) else 0
             )
             _profileFlow.value = profile
         } else {
