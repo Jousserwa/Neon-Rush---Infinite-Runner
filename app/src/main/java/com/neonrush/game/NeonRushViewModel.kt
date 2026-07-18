@@ -832,12 +832,19 @@ class NeonRushViewModel(
             soundEngine.playUnlockSkin()
         }
         val GEM_ECONOMY_RATE = 0.35f
-        val totalGemsEarned = (((finalState.collectedGemsCount + bonusGems + FridayBonus) * valMultiplier) * GEM_ECONOMY_RATE).toInt()
-        val updated = prof.copy(
-            bestScore = if (isNewPB) finalState.score else prof.bestScore,
-            gems = prof.gems + totalGemsEarned
-        )
-        gameDao.saveProfile(updated)
+val gemsEarnedThisRun = (((finalState.collectedGemsCount + bonusGems + FridayBonus) * valMultiplier) * GEM_ECONOMY_RATE).toInt()
+
+val newTotalRuns = prof.totalRuns + 1
+val newAverageScore = ((prof.averageScore * prof.totalRuns) + finalState.score) / newTotalRuns
+
+val updated = prof.copy(
+    bestScore = if (isNewPB) finalState.score else prof.bestScore,
+    gems = prof.gems + gemsEarnedThisRun,
+    totalRuns = newTotalRuns,
+    averageScore = newAverageScore,
+    totalGemsEarned = prof.totalGemsEarned + gemsEarnedThisRun
+)
+gameDao.saveProfile(updated)
         if (isNewPB) {
             soundEngine.playPersonalBestBroken()
             FirebaseLeaderboardManager.submitScore(prof.username, finalState.score, prof.activeSkinId)
