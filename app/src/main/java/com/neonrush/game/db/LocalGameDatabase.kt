@@ -208,13 +208,18 @@ class GameDbHelper(context: Context) : SQLiteOpenHelper(context, "neon_rush_comp
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        if (oldVersion < 2) {
-            db.execSQL("ALTER TABLE game_profile ADD COLUMN activePilotSkinId TEXT DEFAULT 'default'")
-            db.execSQL("ALTER TABLE game_profile ADD COLUMN unlockedPilotSkinsCsv TEXT DEFAULT 'default'")
-        }
-        if (oldVersion < 3) {
-            db.execSQL("ALTER TABLE game_profile ADD COLUMN currentStreak INTEGER DEFAULT 0")
-            db.execSQL("ALTER TABLE game_profile ADD COLUMN lastStreakLoginDate TEXT DEFAULT ''")
-        }
+    if (oldVersion < 2) {
+        db.execSQL("ALTER TABLE game_profile ADD COLUMN activePilotSkinId TEXT DEFAULT 'default'")
+        db.execSQL("ALTER TABLE game_profile ADD COLUMN unlockedPilotSkinsCsv TEXT DEFAULT 'default'")
     }
+    if (oldVersion < 3) {
+        db.execSQL("ALTER TABLE game_profile ADD COLUMN currentStreak INTEGER DEFAULT 0")
+        db.execSQL("ALTER TABLE game_profile ADD COLUMN lastStreakLoginDate TEXT DEFAULT ''")
+    }
+    if (oldVersion < 4) {
+        db.execSQL("ALTER TABLE game_profile ADD COLUMN totalRuns INTEGER DEFAULT 0")
+        db.execSQL("ALTER TABLE game_profile ADD COLUMN averageScore INTEGER DEFAULT 0")
+        db.execSQL("ALTER TABLE game_profile ADD COLUMN totalGemsEarned INTEGER DEFAULT 0")
+    }
+}
 }
