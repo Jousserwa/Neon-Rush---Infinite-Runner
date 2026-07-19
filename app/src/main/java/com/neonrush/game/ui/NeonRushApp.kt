@@ -2397,17 +2397,33 @@ val scrollX by infiniteTransition.animateFloat(
             val cw = size.width
             val ch = size.height
 
-            // Draw stars
-            for (i in 0..50) {
-                val x = (i * 73 % 100) / 100f * cw
-                val y = (i * 37 % 100) / 100f * ch
-                val alpha = 0.3f + 0.7f * ((i * 13 % 10) / 10f)
-                drawCircle(
-                    color = Color.White.copy(alpha = alpha),
-                    radius = (1f + (i % 3)).dp.toPx(),
-                    center = Offset(x, y)
-                )
-            }
+           // Draw scrolling stars, two layers for a parallax depth effect
+for (i in 0..50) {
+    val baseX = (i * 73 % 100) / 100f * cw
+    val y = (i * 37 % 100) / 100f * ch
+    val alpha = 0.3f + 0.7f * ((i * 13 % 10) / 10f)
+    val speed = 0.4f + (i % 3) * 0.3f // varying speeds = parallax depth
+    val x = (baseX - scrollX * speed).mod(cw)
+    drawCircle(
+        color = Color.White.copy(alpha = alpha),
+        radius = (1f + (i % 3)).dp.toPx(),
+        center = Offset(x, y)
+    )
+}
+
+// Scrolling speed-lines to sell velocity
+for (i in 0..8) {
+    val baseX = (i * 137 % 100) / 100f * cw
+    val y = ch * 0.15f + (i * 91 % 100) / 100f * ch * 0.7f
+    val lineSpeed = 1.6f
+    val x = (baseX - scrollX * lineSpeed).mod(cw)
+    drawLine(
+        color = CyberPrimary.copy(alpha = 0.25f),
+        start = Offset(x, y),
+        end = Offset(x + 24f, y),
+        strokeWidth = 2.dp.toPx()
+    )
+} 
 
             // Draw pilot silhouette
             val pilotX = cw / 2f + offsetX
