@@ -845,6 +845,11 @@ val updated = prof.copy(
     totalGemsEarned = prof.totalGemsEarned + gemsEarnedThisRun
 )
 gameDao.saveProfile(updated)
+AnalyticsManager.logGameOver(
+    score = finalState.score,
+    isNewPB = isNewPB,
+    zoneReached = finalState.currentZoneNumber
+)
         if (isNewPB) {
             soundEngine.playPersonalBestBroken()
             FirebaseLeaderboardManager.submitScore(prof.username, finalState.score, prof.activeSkinId)
