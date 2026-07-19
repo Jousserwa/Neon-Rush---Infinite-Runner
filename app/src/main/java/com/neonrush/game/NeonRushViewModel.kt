@@ -1117,6 +1117,7 @@ AnalyticsManager.logGameOver(
                     if (nextScore >= ms && !milestonesTriggered.contains(ms)) {
                         milestonesTriggered.add(ms)
                         soundEngine.playSpeedMilestone(ms)
+                        AnalyticsManager.logScoreMilestone(ms)
                     }
                 }
                 fuelLevelState = (fuelLevelState - 1)
