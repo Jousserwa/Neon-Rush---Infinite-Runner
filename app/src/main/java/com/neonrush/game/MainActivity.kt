@@ -46,6 +46,7 @@ class MainActivity : ComponentActivity() {
         NeonSoundEngine.init(applicationContext)
         NeonSoundEngine.setHomeActive(false)
         AnalyticsManager.initialize(applicationContext)
+        FirebaseLeaderboardManager.initialize(applicationContext)
 
         val defaultHandler = Thread.getDefaultUncaughtExceptionHandler()
         Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->
