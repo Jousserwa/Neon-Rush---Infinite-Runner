@@ -2377,6 +2377,16 @@ LaunchedEffect(Unit) {
 }
 val frameIdx = frameTick % pilotFrames.size
 val currentFrameImg = pilotFrames[frameIdx]
+   // Continuously scrolling background — sells the sense of forward motion
+val scrollX by infiniteTransition.animateFloat(
+    initialValue = 0f,
+    targetValue = 1000f,
+    animationSpec = infiniteRepeatable(
+        animation = tween(6000, easing = LinearEasing),
+        repeatMode = RepeatMode.Restart
+    ),
+    label = "scrollX"
+) 
 
 
     Box(
