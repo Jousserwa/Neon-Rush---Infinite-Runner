@@ -165,7 +165,8 @@ object RevenueCatManager {
                             .find { it.product.id == productId }
                         
                         if (packageToBuy != null) {
-                            val purchaseParams = com.revenuecat.purchases.PurchaseParams.Builder(activity, packageToBuy).build()
+              AnalyticsManager.logPurchaseAttempted(productId)
+             val purchaseParams = com.revenuecat.purchases.PurchaseParams.Builder(activity, packageToBuy).build()
                             Purchases.sharedInstance.purchase(
                                 purchaseParams,
                                 object : PurchaseCallback {
