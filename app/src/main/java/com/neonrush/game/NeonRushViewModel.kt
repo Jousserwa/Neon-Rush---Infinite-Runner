@@ -499,6 +499,7 @@ class NeonRushViewModel(
         )
         soundEngine.setHomeScreenActiveState(false)
         soundEngine.playThrusterCharge()
+        AnalyticsManager.logGameStart()
         simJob = viewModelScope.launch {
             val milestonesTriggered = mutableSetOf<Int>()
             val prof = gameDao.getProfileDirect() ?: GameProfile()
