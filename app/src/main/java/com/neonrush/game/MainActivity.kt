@@ -45,6 +45,7 @@ class MainActivity : ComponentActivity() {
         // Without this call, sound/vibration silently do nothing.
         NeonSoundEngine.init(applicationContext)
         NeonSoundEngine.setHomeActive(false)
+        AnalyticsManager.initialize(applicationContext)
 
         val defaultHandler = Thread.getDefaultUncaughtExceptionHandler()
         Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->
