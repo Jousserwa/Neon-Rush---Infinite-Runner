@@ -2425,11 +2425,16 @@ val currentFrameImg = pilotFrames[frameIdx]
             )
         }
 
-        Text(
-            text = "👾",
-            fontSize = 48.sp,
-            modifier = Modifier.offset { IntOffset(offsetX.roundToInt(), offsetY.roundToInt()) }
+        val displayHeight = 90.dp
+        val aspect = currentFrameImg.width.toFloat() / currentFrameImg.height.toFloat()
+        val displayWidth = displayHeight * aspect
+
+        Image(
+            bitmap = currentFrameImg,
+            contentDescription = "Pilot running",
+            modifier = Modifier
+                .size(width = displayWidth, height = displayHeight)
+                .offset { IntOffset(offsetX.roundToInt(), offsetY.roundToInt()) }
         )
     }
 }
-
