@@ -2356,6 +2356,28 @@ fun NeonPilotScreensaver() {
         ),
         label = "offsetY"
     )
+    // Load the same running-pilot animation frames used in the real game
+val pf1 = ImageBitmap.imageResource(id = R.drawable.pilot_run_1)
+val pf2 = ImageBitmap.imageResource(id = R.drawable.pilot_run_2)
+val pf3 = ImageBitmap.imageResource(id = R.drawable.pilot_run_3)
+val pf4 = ImageBitmap.imageResource(id = R.drawable.pilot_run_4)
+val pf5 = ImageBitmap.imageResource(id = R.drawable.pilot_run_5)
+val pf6 = ImageBitmap.imageResource(id = R.drawable.pilot_run_6)
+val pilotFrames = remember(pf1, pf2, pf3, pf4, pf5, pf6) {
+    listOf(pf1, pf2, pf3, pf4, pf5, pf6)
+}
+
+// Drives the run-cycle animation, independent of offsetX/offsetY drifting
+var frameTick by remember { mutableStateOf(0) }
+LaunchedEffect(Unit) {
+    while (true) {
+        delay(80)
+        frameTick++
+    }
+}
+val frameIdx = frameTick % pilotFrames.size
+val currentFrameImg = pilotFrames[frameIdx]
+
 
     Box(
         modifier = Modifier.fillMaxSize(),
