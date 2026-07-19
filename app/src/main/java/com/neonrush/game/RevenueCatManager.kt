@@ -171,6 +171,7 @@ object RevenueCatManager {
                                 purchaseParams,
                                 object : PurchaseCallback {
                                     override fun onCompleted(storeTransaction: StoreTransaction, customerInfo: com.revenuecat.purchases.CustomerInfo) {
+                                        AnalyticsManager.logPurchaseCompleted(productId)
                                         onResult(true)
                                     }
 
