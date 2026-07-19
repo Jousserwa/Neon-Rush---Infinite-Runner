@@ -128,6 +128,7 @@ object AdMobManager {
             }
             ad.show(activity) { rewardItem ->
                 Log.d(TAG, "User earned reward: ${rewardItem.amount} ${rewardItem.type}")
+                AnalyticsManager.logAdViewed("rewarded")
                 onRewarded()
             }
         } else {
