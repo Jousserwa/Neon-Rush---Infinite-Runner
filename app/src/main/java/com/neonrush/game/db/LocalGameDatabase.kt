@@ -93,7 +93,8 @@ class GameDao(context: Context) {
                 lastStreakLoginDate = if (lastStreakLoginIdx != -1) cursor.getString(lastStreakLoginIdx) else "",
                 totalRuns = if (totalRunsIdx != -1) cursor.getInt(totalRunsIdx) else 0,
                 averageScore = if (averageScoreIdx != -1) cursor.getInt(averageScoreIdx) else 0,
-                totalGemsEarned = if (totalGemsEarnedIdx != -1) cursor.getInt(totalGemsEarnedIdx) else 0
+                totalGemsEarned = if (totalGemsEarnedIdx != -1) cursor.getInt(totalGemsEarnedIdx) else 0,
+                adsRemoved = if (adsRemovedIdx != -1)cursor.getInt(adsRemovedIdx) == 1 else false
             )
             _profileFlow.value = profile
         } else {
