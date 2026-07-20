@@ -224,9 +224,11 @@ class GameDbHelper(context: Context) : SQLiteOpenHelper(context, "neon_rush_comp
         db.execSQL("ALTER TABLE game_profile ADD COLUMN lastStreakLoginDate TEXT DEFAULT ''")
     }
     if (oldVersion < 4) {
-        db.execSQL("ALTER TABLE game_profile ADD COLUMN totalRuns INTEGER DEFAULT 0")
-        db.execSQL("ALTER TABLE game_profile ADD COLUMN averageScore INTEGER DEFAULT 0")
-        db.execSQL("ALTER TABLE game_profile ADD COLUMN totalGemsEarned INTEGER DEFAULT 0")
-    }
+    db.execSQL("ALTER TABLE game_profile ADD COLUMN totalRuns INTEGER DEFAULT 0")
+    db.execSQL("ALTER TABLE game_profile ADD COLUMN averageScore INTEGER DEFAULT 0")
+    db.execSQL("ALTER TABLE game_profile ADD COLUMN totalGemsEarned INTEGER DEFAULT 0")
+}
+if (oldVersion < 5) {
+    db.execSQL("ALTER TABLE game_profile ADD COLUMN adsRemoved INTEGER DEFAULT 0")
 }
 }
