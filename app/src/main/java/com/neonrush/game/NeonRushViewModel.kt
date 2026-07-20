@@ -187,6 +187,31 @@ class NeonRushViewModel(
             }
         }
     }
+    fun purchaseStarterPack(activity: Activity) {
+    RevenueCatManager.purchaseStarterPack(activity) { success ->
+        if (success) {
+            viewModelScope.launch {
+                val prof = gameDao.getProfileDirect() ?: GameProfile()
+                val updated = prof.copy(gems = prof.gems + RevenueCatManager.STARTER_PACK_GEMS_AMOUNT)
+                gameDao.saveProfile(updated)
+                soundEngine.playUnlockSkin()
+            }
+        }
+    }
+}
+
+fun purchaseRemoveAds(activity: Activity) {
+    RevenueCatManager.purchaseRemoveAds(activity) { success ->
+        if (success) {
+            viewModelScope.launch {
+                val prof = gameDao.getProfileDirect() ?: GameProfile()
+                val updated = prof.copy(subscriptionPro = true)
+                gameDao.saveProfile(updated)
+                soundEngine.playUnlockSkin()
+            }
+        }
+    }
+}
 
     fun equipPilotSkin(skinId: String) {
         viewModelScope.launch {
