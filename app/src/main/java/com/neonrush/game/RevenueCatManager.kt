@@ -204,6 +204,15 @@ const val STARTER_PACK_GEMS_AMOUNT = 250
         // Pilot suits use the same purchase flow as gem packs
         purchaseGemPack(activity, productId, onResult)
     }
+    fun purchaseRemoveAds(activity: Activity, onResult: (Boolean) -> Unit) {
+    // Remove Ads uses the same generic purchase flow
+    purchaseGemPack(activity, PRODUCT_ID_REMOVE_ADS, onResult)
+}
+
+fun purchaseStarterPack(activity: Activity, onResult: (Boolean) -> Unit) {
+    // Starter Pack uses the same generic purchase flow
+    purchaseGemPack(activity, PRODUCT_ID_STARTER_PACK, onResult)
+}
 
     fun restorePurchases(onResult: (Boolean) -> Unit) {
         try {
