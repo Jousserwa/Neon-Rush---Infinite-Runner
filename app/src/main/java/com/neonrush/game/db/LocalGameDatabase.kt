@@ -177,7 +177,7 @@ class GameDao(context: Context) {
     }
 }
 
-class GameDbHelper(context: Context) : SQLiteOpenHelper(context, "neon_rush_companion.db", null, 4) {
+class GameDbHelper(context: Context) : SQLiteOpenHelper(context, "neon_rush_companion.db", null, 5) {
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL("""
             CREATE TABLE game_profile (
