@@ -2123,8 +2123,18 @@ fun GameOverOverlayScreen(
             Spacer(modifier = Modifier.height(8.dp))
 
             Button(
-                onClick = { viewModel.resetSimulation() },
-                colors = ButtonDefaults.buttonColors(containerColor = CyberSurface),
+    onClick = {
+        if (!profile.adsRemoved && AdMobManager.isInterstitialDue()) {
+            activity?.let {
+                AdMobManager.showInterstitialIfReady(it) {
+                    viewModel.resetSimulation()
+                }
+            }
+        } else {
+            viewModel.resetSimulation()
+        }
+    },
+    colors = ButtonDefaults.buttonColors(containerColor = CyberSurface),
                 shape = RoundedCornerShape(8.dp),
                 modifier = Modifier
                     .fillMaxWidth()
