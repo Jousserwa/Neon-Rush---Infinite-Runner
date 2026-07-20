@@ -876,6 +876,9 @@ AnalyticsManager.logGameOver(
     isNewPB = isNewPB,
     zoneReached = finalState.currentZoneNumber
 )
+if (!updated.adsRemoved) {
+    AdMobManager.incrementGameOver()
+}
         if (isNewPB) {
             soundEngine.playPersonalBestBroken()
             FirebaseLeaderboardManager.submitScore(prof.username, finalState.score, prof.activeSkinId)
