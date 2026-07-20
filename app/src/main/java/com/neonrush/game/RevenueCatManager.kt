@@ -21,22 +21,27 @@ object RevenueCatManager {
     private const val REVENUECAT_API_KEY = "test_xfMauZuucykZLbUkQyBtZriGWEv"
     
     // Product IDs
-    const val PRODUCT_ID_PRO_MONTHLY = "neonrush_pro_monthly"
-    const val PRODUCT_ID_PRO_ANNUAL = "neonrush_pro_annual"
-    const val PRODUCT_ID_GEMS_SMALL = "neonrush_gems_small"
-    const val PRODUCT_ID_GEMS_MEDIUM = "neonrush_gems_medium"
-    const val PRODUCT_ID_GEMS_LARGE = "neonrush_gems_large"
-    
-    // Prices (will be fetched from RevenueCat, these are defaults)
-    const val SUBSCRIPTION_PRICE_MONTHLY_USD = "$4.99"
-    const val SUBSCRIPTION_PRICE_ANNUAL_USD = "$29.99"
-    const val GEMS_SMALL_PRICE_USD = "$0.99"
-    const val GEMS_MEDIUM_PRICE_USD = "$4.99"
-    const val GEMS_LARGE_PRICE_USD = "$9.99"
-    
-    const val GEMS_SMALL_AMOUNT = 100
-    const val GEMS_MEDIUM_AMOUNT = 550
-    const val GEMS_LARGE_AMOUNT = 1200
+const val PRODUCT_ID_PRO_MONTHLY = "neon_rush_pro:monthly"
+const val PRODUCT_ID_PRO_ANNUAL = "neon_rush_pro:annual"
+const val PRODUCT_ID_GEMS_SMALL = "neonrush_gems_small"
+const val PRODUCT_ID_GEMS_MEDIUM = "neonrush_gems_medium"
+const val PRODUCT_ID_GEMS_LARGE = "neonrush_gems_large"
+const val PRODUCT_ID_REMOVE_ADS = "remove_ads"
+const val PRODUCT_ID_STARTER_PACK = "starter_pack_24h"
+
+// Prices (defaults shown before RevenueCat fetches real store prices)
+const val SUBSCRIPTION_PRICE_MONTHLY_USD = "$2.99"
+const val SUBSCRIPTION_PRICE_ANNUAL_USD = "$24.00"
+const val GEMS_SMALL_PRICE_USD = "$0.99"
+const val GEMS_MEDIUM_PRICE_USD = "$4.99"
+const val GEMS_LARGE_PRICE_USD = "$9.99"
+const val REMOVE_ADS_PRICE_USD = "$2.99"
+const val STARTER_PACK_PRICE_USD = "$0.99"
+
+const val GEMS_SMALL_AMOUNT = 100
+const val GEMS_MEDIUM_AMOUNT = 550
+const val GEMS_LARGE_AMOUNT = 1200
+const val STARTER_PACK_GEMS_AMOUNT = 250
 
     private val _isPro = MutableStateFlow(false)
     val isPro: StateFlow<Boolean> = _isPro.asStateFlow()
