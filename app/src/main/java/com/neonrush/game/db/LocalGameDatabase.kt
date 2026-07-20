@@ -26,7 +26,8 @@ data class GameProfile(
     val lastStreakLoginDate: String = "",
     val totalRuns: Int = 0,
     val averageScore: Int = 0,
-    val totalGemsEarned: Int = 0
+    val totalGemsEarned: Int = 0,
+    val adsRemoved: Boolean = false
 )
     
 
