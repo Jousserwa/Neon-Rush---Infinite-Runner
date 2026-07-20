@@ -204,6 +204,7 @@ fun NeonRushApp(viewModel: NeonRushViewModel) {
                     simState = simState,
                     viewModel = viewModel,
                     isPro = isPro,
+                    profile = currentProfile,
                     onShowPaywall = { showPaywall = true }
                 )
             } else {
