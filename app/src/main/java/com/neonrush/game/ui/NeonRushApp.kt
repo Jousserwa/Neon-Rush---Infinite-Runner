@@ -2011,6 +2011,7 @@ fun GameOverOverlayScreen(
     simState: SimulationState,
     viewModel: NeonRushViewModel,
     isPro: Boolean,
+    profile: GameProfile,
     onShowPaywall: () -> Unit
 ) {
     val activity = LocalContext.current as? Activity
