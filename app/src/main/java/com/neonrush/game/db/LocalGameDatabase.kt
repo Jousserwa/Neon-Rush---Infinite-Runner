@@ -134,6 +134,7 @@ class GameDao(context: Context) {
             put("totalRuns", profile.totalRuns)
             put("averageScore", profile.averageScore)
             put("totalGemsEarned", profile.totalGemsEarned)
+            put("adsRemoved", if (profile.adsRemoved) 1 else 0)
         }
         db.insertWithOnConflict("game_profile", null, values, SQLiteDatabase.CONFLICT_REPLACE)
         _profileFlow.value = profile
