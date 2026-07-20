@@ -74,6 +74,7 @@ class GameDao(context: Context) {
             val totalRunsIdx = cursor.getColumnIndex("totalRuns")
             val averageScoreIdx = cursor.getColumnIndex("averageScore")
             val totalGemsEarnedIdx = cursor.getColumnIndex("totalGemsEarned")
+            val adsRemovedIdx = cursor.getColumnIndex("adsRemoved")
             val profile = GameProfile(
                 id = 1,
                 username = if (usernameIdx != -1) cursor.getString(usernameIdx) else "NeonPilot_99",
