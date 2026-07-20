@@ -205,7 +205,7 @@ fun purchaseRemoveAds(activity: Activity) {
         if (success) {
             viewModelScope.launch {
                 val prof = gameDao.getProfileDirect() ?: GameProfile()
-                val updated = prof.copy(subscriptionPro = true)
+                val updated = prof.copy(adsRemoved = true)
                 gameDao.saveProfile(updated)
                 soundEngine.playUnlockSkin()
             }
