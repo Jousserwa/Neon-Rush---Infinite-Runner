@@ -235,3 +235,5 @@ if (oldVersion < 5) {
     db.execSQL("ALTER TABLE game_profile ADD COLUMN adsRemoved INTEGER DEFAULT 0")
 }
 }
+}
+    
