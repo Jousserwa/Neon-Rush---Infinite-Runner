@@ -72,7 +72,7 @@ object ZoneGenerator {
 
     fun calculateSpeed(zone: Int): Float {
         // Grace period: zones 1-3 stay flat so new players get their bearings
-        val effectiveZone = (zone - 3).coerceAtLeast(0)
+        val effectiveZone = (zone - 3).coerceIn(0, 100) // cap growth so speed plateaus instead of declining
         val speed = 3.0f + (effectiveZone * 0.3f) - (effectiveZone * effectiveZone * 0.0015f)
         return speed.coerceAtMost(22.0f)
     }
