@@ -105,7 +105,7 @@ fun NeonRushApp(viewModel: NeonRushViewModel) {
                     // Show home screen banner if user is NOT PRO
                     if (!isPro) {
                         AdMobBannerView(
-                            adUnitId = "ca-app-pub-3841327492203214/6533049489",
+                            adUnitId = "ca-app-pub-3940256099942544/6300978111",
                             modifier = Modifier.fillMaxWidth()
                         )
                     }
