@@ -78,10 +78,14 @@ object ZoneGenerator {
     }
 
     fun selectEnvironment(zone: Int): Int {
-        if (zone >= 100) return 15 // Transcendent is ENV16 (0-indexed 15)
-        return (zone * 7 + 13) % 15 // avoid ENV16 until zone 100
+    if (zone >= 100) return 15 // Transcendent is ENV16 (0-indexed 15)
+    val world = Worlds.worldForZone(zone)
+    return if (world.environmentIds.isNotEmpty()) {
+        world.environmentIds[zone % world.environmentIds.size]
+    } else {
+        (zone * 7 + 13) % 15 // fallback, shouldn't normally trigger
     }
-
+}
     fun selectMechanics(zone: Int, random: Random): List<Int> {
         val count = when {
             zone >= 100 -> 3
