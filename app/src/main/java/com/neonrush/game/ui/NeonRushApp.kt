@@ -1434,16 +1434,103 @@ fun SkinsDeckTab(viewModel: NeonRushViewModel, profile: GameProfile) {
         }
     
 
-        Spacer(modifier = Modifier.height(20.dp))
+        
+Spacer(modifier = Modifier.height(20.dp))
+        if (!profile.adsRemoved) {
+    Text(
+        text = "🚫 REMOVE ADS",
+        fontSize = 16.sp,
+        fontWeight = FontWeight.Bold,
+        color = CyberPrimary,
+        fontFamily = FontFamily.Monospace,
+        modifier = Modifier.padding(bottom = 6.dp)
+    )
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp)
+            .clip(RoundedCornerShape(8.dp))
+            .background(CyberSurface)
+            .padding(14.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Column {
+            Text(
+                text = "Remove all ads",
+                fontWeight = FontWeight.Bold,
+                color = Color.White
+            )
+            Text(
+                text = "One-time purchase, forever",
+                color = CyberOnSurface.copy(alpha = 0.65f),
+                fontSize = 11.sp
+            )
+        }
+        Button(
+            onClick = {
+                activity?.let { viewModel.purchaseRemoveAds(it) }
+            },
+            colors = ButtonDefaults.buttonColors(containerColor = CyberSecondary),
+            shape = RoundedCornerShape(4.dp)
+        ) {
+            Text(text = "BUY ${RevenueCatManager.REMOVE_ADS_PRICE_USD}", color = Color.White, fontFamily = FontFamily.Monospace, fontSize = 11.sp)
+        }
+    }
+    Spacer(modifier = Modifier.height(16.dp))
+}
 
+Text(
+    text = "⚡ STARTER PACK",
+    fontSize = 16.sp,
+    fontWeight = FontWeight.Bold,
+    color = CyberPrimary,
+    fontFamily = FontFamily.Monospace,
+    modifier = Modifier.padding(bottom = 6.dp)
+)
+Row(
+    modifier = Modifier
+        .fillMaxWidth()
+        .padding(vertical = 4.dp)
+        .clip(RoundedCornerShape(8.dp))
+        .background(CyberSurface)
+        .padding(14.dp),
+    horizontalArrangement = Arrangement.SpaceBetween,
+    verticalAlignment = Alignment.CenterVertically
+) {
+    Column {
         Text(
-            text = "💎 GET MORE GEMS",
-            fontSize = 16.sp,
+            text = "💎 ${RevenueCatManager.STARTER_PACK_GEMS_AMOUNT} Gems",
             fontWeight = FontWeight.Bold,
-            color = CyberPrimary,
-            fontFamily = FontFamily.Monospace,
-            modifier = Modifier.padding(bottom = 6.dp)
+            color = Color.White
         )
+        Text(
+            text = "Limited-time offer for new pilots",
+            color = CyberOnSurface.copy(alpha = 0.65f),
+            fontSize = 11.sp
+        )
+    }
+    Button(
+        onClick = {
+            activity?.let { viewModel.purchaseStarterPack(it) }
+        },
+        colors = ButtonDefaults.buttonColors(containerColor = CyberSecondary),
+        shape = RoundedCornerShape(4.dp)
+    ) {
+        Text(text = "BUY ${RevenueCatManager.STARTER_PACK_PRICE_USD}", color = Color.White, fontFamily = FontFamily.Monospace, fontSize = 11.sp)
+    }
+}
+Spacer(modifier = Modifier.height(16.dp))
+
+Text(
+    text = "💎 GET MORE GEMS",
+    fontSize = 16.sp,    fontWeight = FontWeight.Bold,
+    color = CyberPrimary,
+    fontFamily = FontFamily.Monospace,
+    modifier = Modifier.padding(bottom = 6.dp)
+)
+
+        
 
         Text(
             text = "Skip the grind — top up your gem balance directly.",
