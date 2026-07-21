@@ -10,9 +10,9 @@ data class World(
     val midRunText: String,
     val bossIntroText: String,
     val endingText: String,
-    val requiresPro: Boolean
+    val requiresPro: Boolean,
+    val environmentIds: List<Int> // indices into ZoneGenerator.ENVIRONMENTS matching this world's theme
 )
-
 object Worlds {
 
     val ALL: List<World> = listOf(
