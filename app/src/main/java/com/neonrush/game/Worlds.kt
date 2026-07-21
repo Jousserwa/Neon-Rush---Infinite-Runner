@@ -26,8 +26,10 @@ object Worlds {
             midRunText = "Radio crackles: \"Runner, they've got armor inbound. Don't stop for anything.\"",
             bossIntroText = "A war-drone locks onto your heat signature — built to hunt stragglers.",
             endingText = "You clear the front line as the sky lights up behind you. Command's already got your next job queued.",
-            requiresPro = false
+            requiresPro = false,
+            environmentIds = listOf(0, 5, 7) // Neon City, Electric Storm, Ancient Ruins
         ),
+        
         World(
             id = 2,
             title = "DERELICT SIGNAL",
@@ -38,7 +40,9 @@ object Worlds {
             midRunText = "The station's AI whispers through the comms: \"You should not have come back.\"",
             bossIntroText = "Whatever's guarding the core isn't human anymore — and it's fast.",
             endingText = "The station goes dark behind you for good. What you're carrying... you're not sure you want to know.",
-            requiresPro = false
+            requiresPro = false,
+            environmentIds = listOf(1, 4, 14) // Deep Space, Void Realm, Dimensional Rift
+        
         ),
         World(
             id = 3,
@@ -50,7 +54,9 @@ object Worlds {
             midRunText = "Guards seal the east wing. \"Runner's loose! Lock it down!\"",
             bossIntroText = "The warden himself blocks the final gate — and he's not going down easy.",
             endingText = "You clear the wall as sirens fade behind you. Free — for now.",
-            requiresPro = false
+            requiresPro = false,
+            environmentIds = listOf(10, 2, 12) // Shadow World, Crystal Cave, Frozen Tundra
+        
         ),
         World(
             id = 4,
@@ -62,7 +68,8 @@ object Worlds {
             midRunText = "Something's pacing you through the trees — matching your speed, staying just out of sight.",
             bossIntroText = "It finally shows itself — and it's been hunting you since you landed.",
             endingText = "You break the treeline as the jungle goes quiet behind you. You made it. Barely.",
-            requiresPro = true
+            requiresPro = true,
+            environmentIds = listOf(8, 6, 3) // Cyber Garden, Ocean Deep, Lava Forge
         ),
         World(
             id = 5,
@@ -74,7 +81,8 @@ object Worlds {
             midRunText = "Command channel, encrypted: \"They've sealed the outer district. You have one route left — through the transit spine.\"",
             bossIntroText = "A hunter-class enforcer drops from the skyline, already locked onto your signal.",
             endingText = "You clear the city limits as the alert finally goes dark behind you. For now, Red Protocol is over. For you, it never really ends.",
-            requiresPro = true
+            requiresPro = true,
+            environmentIds = listOf(0, 13, 9) // Neon City, Plasma Field, Prismatic
         )
     )
 
