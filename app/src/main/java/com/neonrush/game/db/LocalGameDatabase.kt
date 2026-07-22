@@ -112,8 +112,18 @@ class GameDao(context: Context) {
                 totalRuns = if (totalRunsIdx != -1) cursor.getInt(totalRunsIdx) else 0,
                 averageScore = if (averageScoreIdx != -1) cursor.getInt(averageScoreIdx) else 0,
                 totalGemsEarned = if (totalGemsEarnedIdx != -1) cursor.getInt(totalGemsEarnedIdx) else 0,
-                adsRemoved = if (adsRemovedIdx != -1)cursor.getInt(adsRemovedIdx) == 1 else false
+                adsRemoved = if (adsRemovedIdx != -1)cursor.getInt(adsRemovedIdx) == 1 else false,
+                dailyMissionProgressCsv = if (dailyMissionProgressIdx != -1) cursor.getString(dailyMissionProgressIdx) else "",
+                dailyMissionsClaimedCsv = if (dailyMissionsClaimedIdx != -1) cursor.getString(dailyMissionsClaimedIdx) else "",
+                lastDailyMissionDate = if (lastDailyMissionDateIdx != -1) cursor.getString(lastDailyMissionDateIdx) else "",
+                weeklyMissionProgressCsv = if (weeklyMissionProgressIdx != -1) cursor.getString(weeklyMissionProgressIdx) else "",
+                weeklyMissionsClaimedCsv = if (weeklyMissionsClaimedIdx != -1) cursor.getString(weeklyMissionsClaimedIdx) else "",
+                lastWeeklyMissionDate = if (lastWeeklyMissionDateIdx != -1) cursor.getString(lastWeeklyMissionDateIdx) else "",
+                monthlyMissionProgressCsv = if (monthlyMissionProgressIdx != -1) cursor.getString(monthlyMissionProgressIdx) else "",
+                monthlyMissionsClaimedCsv = if (monthlyMissionsClaimedIdx != -1) cursor.getString(monthlyMissionsClaimedIdx) else "",
+                lastMonthlyMissionDate = if (lastMonthlyMissionDateIdx != -1) cursor.getString(lastMonthlyMissionDateIdx) else ""
             )
+            
             _profileFlow.value = profile
         } else {
             // Save initial profile
