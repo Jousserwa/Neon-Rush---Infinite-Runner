@@ -84,6 +84,15 @@ class GameDao(context: Context) {
             val averageScoreIdx = cursor.getColumnIndex("averageScore")
             val totalGemsEarnedIdx = cursor.getColumnIndex("totalGemsEarned")
             val adsRemovedIdx = cursor.getColumnIndex("adsRemoved")
+            val dailyMissionProgressIdx = cursor.getColumnIndex("dailyMissionProgressCsv")
+            val dailyMissionsClaimedIdx = cursor.getColumnIndex("dailyMissionsClaimedCsv")
+            val lastDailyMissionDateIdx = cursor.getColumnIndex("lastDailyMissionDate")
+            val weeklyMissionProgressIdx = cursor.getColumnIndex("weeklyMissionProgressCsv")
+            val weeklyMissionsClaimedIdx = cursor.getColumnIndex("weeklyMissionsClaimedCsv")
+            val lastWeeklyMissionDateIdx = cursor.getColumnIndex("lastWeeklyMissionDate")
+            val monthlyMissionProgressIdx = cursor.getColumnIndex("monthlyMissionProgressCsv")
+            val monthlyMissionsClaimedIdx = cursor.getColumnIndex("monthlyMissionsClaimedCsv")
+            val lastMonthlyMissionDateIdx = cursor.getColumnIndex("lastMonthlyMissionDate")
             val profile = GameProfile(
                 id = 1,
                 username = if (usernameIdx != -1) cursor.getString(usernameIdx) else "NeonPilot_99",
