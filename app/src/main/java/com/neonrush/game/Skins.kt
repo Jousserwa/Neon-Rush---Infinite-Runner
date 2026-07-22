@@ -7,8 +7,9 @@ data class Skin(
     val previewImageRes: Int,
     val priceUsd: String,
     val requiresPro: Boolean,
-    val unlockWorldId: Int?, // null = no story unlock requirement, purchasable anytime
-    val pilotFrameOverrides: List<Int>? = null // null = uses default pilot_run_1..6 frames
+    val unlockWorldId: Int?,
+    val pilotFrameOverrides: List<Int>? = null,
+    val purchasable: Boolean = true // false = can only be earned (mission reward), never bought
 )
 
 object Skins {
@@ -120,7 +121,53 @@ object Skins {
             priceUsd = "$3.99",
             requiresPro = false,
             unlockWorldId = null
-        )
+        ),
+        Skin(
+    id = "prism_vanguard",
+    name = "Prism Vanguard",
+    description = "Refracts every light source into a walking rainbow. Not subtle.",
+    previewImageRes = R.drawable.pilot_run_1, // placeholder — swap when art exists
+    priceUsd = "$2.99",
+    requiresPro = false,
+    unlockWorldId = null
+),
+Skin(
+    id = "iron_wraith",
+    name = "Iron Wraith",
+    description = "Salvaged battle-plate, dented but unbroken.",
+    previewImageRes = R.drawable.pilot_run_1, // placeholder — swap when art exists
+    priceUsd = "$1.99",
+    requiresPro = false,
+    unlockWorldId = null
+),
+Skin(
+    id = "nova_sprint",
+    name = "Nova Sprint",
+    description = "Built for speed. Leaves a trail even standing still.",
+    previewImageRes = R.drawable.pilot_run_1, // placeholder — swap when art exists
+    priceUsd = "$2.99",
+    requiresPro = false,
+    unlockWorldId = null
+),
+Skin(
+    id = "obsidian_pulse",
+    name = "Obsidian Pulse",
+    description = "Black glass plating with a heartbeat of light beneath it.",
+    previewImageRes = R.drawable.pilot_run_1, // placeholder — swap when art exists
+    priceUsd = "$3.99",
+    requiresPro = false,
+    unlockWorldId = null
+),
+Skin(
+    id = "zenith_circuit",
+    name = "Zenith Circuit",
+    description = "Worn only by pilots who cleared every objective this month. Not for sale.",
+    previewImageRes = R.drawable.pilot_run_1, // placeholder — swap when art exists
+    priceUsd = "🏆 Monthly Mission Reward",
+    requiresPro = false,
+    unlockWorldId = null,
+    purchasable = false
+)
     )
 
     fun isUnlocked(skin: Skin, isPro: Boolean, worldsCompleted: Set<Int>): Boolean {
