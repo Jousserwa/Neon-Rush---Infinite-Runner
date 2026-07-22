@@ -251,6 +251,17 @@ class GameDbHelper(context: Context) : SQLiteOpenHelper(context, "neon_rush_comp
 }
 if (oldVersion < 5) {
     db.execSQL("ALTER TABLE game_profile ADD COLUMN adsRemoved INTEGER DEFAULT 0")
+    }
+if (oldVersion < 6) {
+    db.execSQL("ALTER TABLE game_profile ADD COLUMN dailyMissionProgressCsv TEXT DEFAULT ''")
+    db.execSQL("ALTER TABLE game_profile ADD COLUMN dailyMissionsClaimedCsv TEXT DEFAULT ''")
+    db.execSQL("ALTER TABLE game_profile ADD COLUMN lastDailyMissionDate TEXT DEFAULT ''")
+    db.execSQL("ALTER TABLE game_profile ADD COLUMN weeklyMissionProgressCsv TEXT DEFAULT ''")
+    db.execSQL("ALTER TABLE game_profile ADD COLUMN weeklyMissionsClaimedCsv TEXT DEFAULT ''")
+    db.execSQL("ALTER TABLE game_profile ADD COLUMN lastWeeklyMissionDate TEXT DEFAULT ''")
+    db.execSQL("ALTER TABLE game_profile ADD COLUMN monthlyMissionProgressCsv TEXT DEFAULT ''")
+    db.execSQL("ALTER TABLE game_profile ADD COLUMN monthlyMissionsClaimedCsv TEXT DEFAULT ''")
+    db.execSQL("ALTER TABLE game_profile ADD COLUMN lastMonthlyMissionDate TEXT DEFAULT ''")
 }
 }
 }
