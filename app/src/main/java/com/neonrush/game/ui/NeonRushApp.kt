@@ -1579,6 +1579,7 @@ fun RacingSimulatorScreen(
     simState: SimulationState,
     viewModel: NeonRushViewModel,
     isPro: Boolean,
+    profile: GameProfile,
     onShowPaywall: () -> Unit
 ) {
     var controlOffset by remember { mutableStateOf(50f) }
@@ -1586,15 +1587,25 @@ fun RacingSimulatorScreen(
     val tiltAngle = (simState.userYPos - previousUserYPos).toFloat().coerceIn(-10f, 10f) * 1.8f
     SideEffect { previousUserYPos = simState.userYPos }
 
+    // Default running frames (used when the equipped skin has no custom frames yet)
     val pf1 = ImageBitmap.imageResource(id = R.drawable.pilot_run_1)
     val pf2 = ImageBitmap.imageResource(id = R.drawable.pilot_run_2)
     val pf3 = ImageBitmap.imageResource(id = R.drawable.pilot_run_3)
     val pf4 = ImageBitmap.imageResource(id = R.drawable.pilot_run_4)
     val pf5 = ImageBitmap.imageResource(id = R.drawable.pilot_run_5)
     val pf6 = ImageBitmap.imageResource(id = R.drawable.pilot_run_6)
-    val pilotFrames = remember(pf1, pf2, pf3, pf4, pf5, pf6) {
-        listOf(pf1, pf2, pf3, pf4, pf5, pf6)
-    }  
+    val defaultFrameIds = listOf(pf1, pf2, pf3, pf4, pf5, pf6)
+
+    // Look up the equipped skin's custom running frames, if it has any
+    val equippedSkin = remember(profile.activePilotSkinId) {
+        Skins.ALL.find { it.id == profile.activePilotSkinId }
+    }
+    val overrideIds = equippedSkin?.pilotFrameOverrides
+    val pilotFrames = if (overrideIds != null && overrideIds.size == 6) {
+        overrideIds.map { resId -> ImageBitmap.imageResource(id = resId) }
+    } else {
+        defaultFrameIds
+    }
         
     val gemImg = ImageBitmap.imageResource(id = R.drawable.gem)
     val coinImg = ImageBitmap.imageResource(id = R.drawable.coin)
