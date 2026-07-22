@@ -27,7 +27,16 @@ data class GameProfile(
     val totalRuns: Int = 0,
     val averageScore: Int = 0,
     val totalGemsEarned: Int = 0,
-    val adsRemoved: Boolean = false
+    val adsRemoved: Boolean = false,
+    val dailyMissionProgressCsv: String = "",
+    val dailyMissionsClaimedCsv: String = "",
+    val lastDailyMissionDate: String = "",
+    val weeklyMissionProgressCsv: String = "",
+    val weeklyMissionsClaimedCsv: String = "",
+    val lastWeeklyMissionDate: String = "",
+    val monthlyMissionProgressCsv: String = "",
+    val monthlyMissionsClaimedCsv: String = "",
+    val lastMonthlyMissionDate: String = ""
 )
     
 
