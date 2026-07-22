@@ -1239,6 +1239,13 @@ fun SkinsDeckTab(viewModel: NeonRushViewModel, profile: GameProfile) {
                             color = Color.White.copy(alpha = 0.5f),
                             fontFamily = FontFamily.Monospace
                         )
+                        } else if (!skin.purchasable) {
+    Text(
+        text = "🏆 Mission Reward",
+        fontSize = 11.sp,
+        color = Color(0xFFD4AF37),
+        fontFamily = FontFamily.Monospace
+    )
                     } else {
                         Button(
                             onClick = {
