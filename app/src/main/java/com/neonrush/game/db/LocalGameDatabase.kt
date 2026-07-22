@@ -211,7 +211,16 @@ class GameDbHelper(context: Context) : SQLiteOpenHelper(context, "neon_rush_comp
                 totalRuns INTEGER,
                 averageScore INTEGER,
                 totalGemsEarned INTEGER,
-                adsRemoved INTEGER
+                adsRemoved INTEGER,
+                dailyMissionProgressCsv TEXT,
+                dailyMissionsClaimedCsv TEXT,
+                lastDailyMissionDate TEXT,
+                weeklyMissionProgressCsv TEXT,
+                weeklyMissionsClaimedCsv TEXT,
+                lastWeeklyMissionDate TEXT,
+                monthlyMissionProgressCsv TEXT,
+                monthlyMissionsClaimedCsv TEXT,
+                lastMonthlyMissionDate TEXT
             )
         """)
         db.execSQL("""
