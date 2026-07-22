@@ -146,6 +146,15 @@ class GameDao(context: Context) {
             put("averageScore", profile.averageScore)
             put("totalGemsEarned", profile.totalGemsEarned)
             put("adsRemoved", if (profile.adsRemoved) 1 else 0)
+            put("dailyMissionProgressCsv", profile.dailyMissionProgressCsv)
+            put("dailyMissionsClaimedCsv", profile.dailyMissionsClaimedCsv)
+            put("lastDailyMissionDate", profile.lastDailyMissionDate)
+            put("weeklyMissionProgressCsv", profile.weeklyMissionProgressCsv)
+            put("weeklyMissionsClaimedCsv", profile.weeklyMissionsClaimedCsv)
+            put("lastWeeklyMissionDate", profile.lastWeeklyMissionDate)
+            put("monthlyMissionProgressCsv", profile.monthlyMissionProgressCsv)
+            put("monthlyMissionsClaimedCsv", profile.monthlyMissionsClaimedCsv)
+            put("lastMonthlyMissionDate", profile.lastMonthlyMissionDate)
         }
         db.insertWithOnConflict("game_profile", null, values, SQLiteDatabase.CONFLICT_REPLACE)
         _profileFlow.value = profile
