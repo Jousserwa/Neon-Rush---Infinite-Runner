@@ -194,11 +194,12 @@ fun NeonRushApp(viewModel: NeonRushViewModel) {
         ) {
             if (simState.isStarted && !simState.isCompleted) {
                 RacingSimulatorScreen(
-                    simState = simState,
-                    viewModel = viewModel,
-                    isPro = isPro,
-                    onShowPaywall = { showPaywall = true; paywallReason = "world4" }
-                )
+    simState = simState,
+    viewModel = viewModel,
+    isPro = isPro,
+    profile = currentProfile,
+    onShowPaywall = { showPaywall = true; paywallReason = "world4" }
+)
             } else if (simState.isStarted && simState.isCompleted) {
                 GameOverOverlayScreen(
                     simState = simState,
