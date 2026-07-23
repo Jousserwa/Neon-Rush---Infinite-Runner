@@ -93,6 +93,7 @@ class GameDao(context: Context) {
             val monthlyMissionProgressIdx = cursor.getColumnIndex("monthlyMissionProgressCsv")
             val monthlyMissionsClaimedIdx = cursor.getColumnIndex("monthlyMissionsClaimedCsv")
             val lastMonthlyMissionDateIdx = cursor.getColumnIndex("lastMonthlyMissionDate")
+            val bestZoneReachedIdx = cursor.getColumnIndex("bestZoneReached")
             val profile = GameProfile(
                 id = 1,
                 username = if (usernameIdx != -1) cursor.getString(usernameIdx) else "NeonPilot_99",
@@ -121,8 +122,9 @@ class GameDao(context: Context) {
                 lastWeeklyMissionDate = if (lastWeeklyMissionDateIdx != -1) cursor.getString(lastWeeklyMissionDateIdx) else "",
                 monthlyMissionProgressCsv = if (monthlyMissionProgressIdx != -1) cursor.getString(monthlyMissionProgressIdx) else "",
                 monthlyMissionsClaimedCsv = if (monthlyMissionsClaimedIdx != -1) cursor.getString(monthlyMissionsClaimedIdx) else "",
-                lastMonthlyMissionDate = if (lastMonthlyMissionDateIdx != -1) cursor.getString(lastMonthlyMissionDateIdx) else ""
-            )
+               lastMonthlyMissionDate = if (lastMonthlyMissionDateIdx != -1) cursor.getString(lastMonthlyMissionDateIdx) else "",
+                bestZoneReached = if (bestZoneReachedIdx != -1) cursor.getInt(bestZoneReachedIdx) else 0
+            ) 
             
             _profileFlow.value = profile
         } else {
