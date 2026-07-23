@@ -174,6 +174,8 @@ class GameDao(context: Context) {
             put("monthlyMissionProgressCsv", profile.monthlyMissionProgressCsv)
             put("monthlyMissionsClaimedCsv", profile.monthlyMissionsClaimedCsv)
             put("lastMonthlyMissionDate", profile.lastMonthlyMissionDate)
+            put("bestZoneReached", profile.bestZoneReached)
+        
         }
         db.insertWithOnConflict("game_profile", null, values, SQLiteDatabase.CONFLICT_REPLACE)
         _profileFlow.value = profile
@@ -217,7 +219,7 @@ class GameDao(context: Context) {
     }
 }
 
-class GameDbHelper(context: Context) : SQLiteOpenHelper(context, "neon_rush_companion.db", null, 6) {
+class GameDbHelper(context: Context) : SQLiteOpenHelper(context, "neon_rush_companion.db", null, 7) {
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL("""
             CREATE TABLE game_profile (
