@@ -291,6 +291,9 @@ if (oldVersion < 6) {
     db.execSQL("ALTER TABLE game_profile ADD COLUMN monthlyMissionProgressCsv TEXT DEFAULT ''")
     db.execSQL("ALTER TABLE game_profile ADD COLUMN monthlyMissionsClaimedCsv TEXT DEFAULT ''")
     db.execSQL("ALTER TABLE game_profile ADD COLUMN lastMonthlyMissionDate TEXT DEFAULT ''")
+    if (oldVersion < 7) {
+    db.execSQL("ALTER TABLE game_profile ADD COLUMN bestZoneReached INTEGER DEFAULT 0")
+    }
 }
 }
 }
