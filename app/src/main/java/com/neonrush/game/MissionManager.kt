@@ -1,5 +1,6 @@
 package com.neonrush.game
 
+import com.neonrush.game.db.GameProfile
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -17,7 +18,7 @@ enum class MissionMetric {
     ADS_WATCHED_PERIOD,     // rewarded ads watched within the period
     STREAK_LENGTH,          // current login streak
     ZONE_REACHED_LIFETIME   // best zone ever reached, lifetime
-)
+}
 
 data class MissionTemplate(
     val id: String,
