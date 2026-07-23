@@ -36,9 +36,9 @@ data class GameProfile(
     val lastWeeklyMissionDate: String = "",
     val monthlyMissionProgressCsv: String = "",
     val monthlyMissionsClaimedCsv: String = "",
-    val lastMonthlyMissionDate: String = ""
+    val lastMonthlyMissionDate: String = "",
+    val bestZoneReached: Int = 0
 )
-    
 
 
 data class GhostChallengeEntity(
@@ -248,7 +248,8 @@ class GameDbHelper(context: Context) : SQLiteOpenHelper(context, "neon_rush_comp
                 lastWeeklyMissionDate TEXT,
                 monthlyMissionProgressCsv TEXT,
                 monthlyMissionsClaimedCsv TEXT,
-                lastMonthlyMissionDate TEXT
+                lastMonthlyMissionDate TEXT,
+                bestZoneReached INTEGER
             )
         """)
         db.execSQL("""
