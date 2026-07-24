@@ -955,7 +955,88 @@ fun ArcadeHomeView(
         }
     }
 }
+@Composable
+fun MissionsSection(viewModel: NeonRushViewModel, profile: GameProfile) {
+    Column(modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)) {
+        MissionTierBlock("📅 DAILY MISSIONS", MissionTier.DAILY, MissionManager.currentDailyMissions(), profile.dailyMissionProgressCsv, profile.dailyMissionsClaimedCsv, viewModel)
+        Spacer(modifier = Modifier.height(12.dp))
+        MissionTierBlock("🗓️ WEEKLY MISSIONS", MissionTier.WEEKLY, MissionManager.currentWeeklyMissions(), profile.weeklyMissionProgressCsv, profile.weeklyMissionsClaimedCsv, viewModel)
+        Spacer(modifier = Modifier.height(12.dp))
+        MissionTierBlock("🏆 MONTHLY MISSIONS", MissionTier.MONTHLY, MissionManager.currentMonthlyMissions(), profile.monthlyMissionProgressCsv, profile.monthlyMissionsClaimedCsv, viewModel)
+    }
+}
 
+@Composable
+fun MissionTierBlock(
+    title: String,
+    tier: MissionTier,
+    missions: List<MissionTemplate>,
+    progressCsv: String,
+    claimedCsv: String,
+    viewModel: NeonRushViewModel
+) {
+    val progress = remember(progressCsv) { MissionManager.parseProgressCsv(progressCsv) }
+    val claimed = remember(claimedCsv) { MissionManager.parseClaimedCsv(claimedCsv) }
+
+    Text(
+        text = title,
+        fontSize = 14.sp,
+        fontWeight = FontWeight.Bold,
+        color = CyberPrimary,
+        fontFamily = FontFamily.Monospace,
+        modifier = Modifier.padding(bottom = 6.dp)
+    )
+
+    missions.forEach { mission ->
+        val current = (progress[mission.id] ?: 0).coerceAtMost(mission.target)
+        val isClaimed = claimed.contains(mission.id)
+        val isComplete = current >= mission.target
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 4.dp)
+                .clip(RoundedCornerShape(8.dp))
+                .background(CyberSurface)
+                .padding(12.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(text = mission.description, color = Color.White, fontSize = 12.sp, fontFamily = FontFamily.Monospace)
+                Spacer(modifier = Modifier.height(4.dp))
+                LinearProgressIndicator(
+                    progress = current.toFloat() / mission.target.toFloat(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(6.dp)
+                        .clip(RoundedCornerShape(3.dp)),
+                    color = if (isComplete) Color(0xFF4CAF50) else CyberPrimary,
+                    trackColor = Color.White.copy(alpha = 0.1f)
+                )
+                Text(
+                    text = "$current / ${mission.target}  •  💎${mission.rewardGems}",
+                    color = CyberOnSurface.copy(alpha = 0.7f),
+                    fontSize = 10.sp,
+                    fontFamily = FontFamily.Monospace,
+                    modifier = Modifier.padding(top = 2.dp)
+                )
+            }
+            Spacer(modifier = Modifier.width(8.dp))
+            if (isClaimed) {
+                Text(text = "✓", color = Color(0xFF4CAF50), fontWeight = FontWeight.Bold, fontSize = 16.sp)
+            } else if (isComplete) {
+                Button(
+                    onClick = { viewModel.claimMission(tier, mission.id) },
+                    colors = ButtonDefaults.buttonColors(containerColor = CyberSecondary),
+                    shape = RoundedCornerShape(4.dp)
+                ) {
+                    Text(text = "CLAIM", color = Color.White, fontFamily = FontFamily.Monospace, fontSize = 10.sp)
+                }
+            }
+        }
+    }
+}
 @Composable
 fun DailyChallengeTab(viewModel: NeonRushViewModel, profile: GameProfile) {
     val comments by viewModel.socialComments.collectAsState()
