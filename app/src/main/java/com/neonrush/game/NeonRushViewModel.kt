@@ -863,14 +863,23 @@ val gemsEarnedThisRun = (((finalState.collectedGemsCount + bonusGems + FridayBon
 val newTotalRuns = prof.totalRuns + 1
 val newAverageScore = ((prof.averageScore * prof.totalRuns) + finalState.score) / newTotalRuns
 
+val bestZoneLifetime = maxOf(prof.bestZoneReached, finalState.currentZoneNumber)
 val updated = prof.copy(
     bestScore = if (isNewPB) finalState.score else prof.bestScore,
     gems = prof.gems + gemsEarnedThisRun,
     totalRuns = newTotalRuns,
     averageScore = newAverageScore,
-    totalGemsEarned = prof.totalGemsEarned + gemsEarnedThisRun
+    totalGemsEarned = prof.totalGemsEarned + gemsEarnedThisRun,
+    bestZoneReached = bestZoneLifetime
 )
-gameDao.saveProfile(updated)
+val missionUpdated = MissionManager.recordRunResult(
+    updated,
+    zoneReached = finalState.currentZoneNumber,
+    score = finalState.score,
+    gemsThisRun = gemsEarnedThisRun,
+    bestZoneLifetime = bestZoneLifetime
+)
+gameDao.saveProfile(missionUpdated)
 AnalyticsManager.logGameOver(
     score = finalState.score,
     isNewPB = isNewPB,
