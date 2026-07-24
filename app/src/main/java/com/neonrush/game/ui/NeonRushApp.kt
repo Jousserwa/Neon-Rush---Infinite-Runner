@@ -2212,6 +2212,7 @@ fun GameOverOverlayScreen(
                         activity?.let {
     AdMobManager.showRewardedIfReady(it) {
         viewModel.reviveSimulation()
+        viewModel.recordAdWatched()
     }
 }
                     },
