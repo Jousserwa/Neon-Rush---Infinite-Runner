@@ -1043,11 +1043,13 @@ fun DailyChallengeTab(viewModel: NeonRushViewModel, profile: GameProfile) {
     var alertMsg by remember { mutableStateOf("") }
 
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(androidx.compose.foundation.rememberScrollState())
-    ) {
-        Card(
+    modifier = Modifier
+        .fillMaxSize()
+        .verticalScroll(androidx.compose.foundation.rememberScrollState())
+) {
+    MissionsSection(viewModel = viewModel, profile = profile)
+
+    Card(
             colors = CardDefaults.cardColors(containerColor = CyberSurface),
             modifier = Modifier
                 .fillMaxWidth()
