@@ -187,6 +187,13 @@ class NeonRushViewModel(
             }
         }
     }
+    fun recordAdWatched() {
+    viewModelScope.launch {
+        val prof = gameDao.getProfileDirect() ?: GameProfile()
+        val updated = MissionManager.recordAdWatched(prof)
+        gameDao.saveProfile(updated)
+    }
+}
     fun purchaseStarterPack(activity: Activity) {
     RevenueCatManager.purchaseStarterPack(activity) { success ->
         if (success) {
