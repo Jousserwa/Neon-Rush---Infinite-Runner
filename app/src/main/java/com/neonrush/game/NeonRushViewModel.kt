@@ -219,7 +219,19 @@ fun purchaseRemoveAds(activity: Activity) {
         }
     }
 }
-
+fun claimMission(tier: MissionTier, missionId: String) {
+    viewModelScope.launch {
+        val prof = gameDao.getProfileDirect() ?: GameProfile()
+        val result = MissionManager.claimMission(prof, tier, missionId)
+        if (result != null) {
+            val (updatedProfile, rewardGems) = result
+            val finalProfile = updatedProfile.copy(gems = updatedProfile.gems + rewardGems)
+            gameDao.saveProfile(finalProfile)
+            soundEngine.playUnlockSkin()
+            AnalyticsManager.logScoreMilestone(rewardGems) // reuse as a generic "reward granted" event, or add a dedicated one later
+        }
+    }
+}
     fun equipPilotSkin(skinId: String) {
         viewModelScope.launch {
             val prof = gameDao.getProfileDirect() ?: GameProfile()
