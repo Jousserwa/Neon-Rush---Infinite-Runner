@@ -1114,13 +1114,13 @@ fun DailyChallengeTab(viewModel: NeonRushViewModel, profile: GameProfile) {
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Button(
-                    onClick = {
-                        viewModel.runDailyRushChallenge { success, attempt ->
-                            if (!success) {
-                                alertMsg = "Maximum of 3 Daily Rush attempts reached. Play regular Ghost trails or wait till tomorrow!"
-                            }
-                        }
-                    },
+    onClick = {
+        viewModel.runDailyRushChallenge { success, attempt ->
+            if (!success) {
+                alertMsg = "Maximum of 3 Daily Rush attempts reached. Buy an extra attempt below, or wait till tomorrow!"
+            }
+        }
+    },
                     colors = ButtonDefaults.buttonColors(containerColor = CyberSecondary),
                     shape = RoundedCornerShape(8.dp),
                     modifier = Modifier
@@ -1136,14 +1136,33 @@ fun DailyChallengeTab(viewModel: NeonRushViewModel, profile: GameProfile) {
                 }
 
                 if (alertMsg.isNotEmpty()) {
-                    Text(
-                        text = alertMsg,
-                        color = CyberSecondary,
-                        fontSize = 11.sp,
-                        fontFamily = FontFamily.Monospace,
-                        modifier = Modifier.padding(top = 8.dp)
-                    )
-                }
+    Text(
+        text = alertMsg,
+        color = CyberSecondary,
+        fontSize = 11.sp,
+        fontFamily = FontFamily.Monospace,
+        modifier = Modifier.padding(top = 8.dp)
+    )
+}
+
+if (profile.dailyAttemptsToday >= 3) {
+    Spacer(modifier = Modifier.height(8.dp))
+    Button(
+        onClick = { viewModel.buyExtraAttempt() },
+        enabled = profile.gems >= 25,
+        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF9C27B0)),
+        shape = RoundedCornerShape(8.dp),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Text(
+            text = "💎 BUY EXTRA ATTEMPT (25 GEMS)",
+            color = Color.White,
+            fontFamily = FontFamily.Monospace,
+            fontSize = 12.sp,
+            fontWeight = FontWeight.Bold
+        )
+    }
+}
             }
         }
 
