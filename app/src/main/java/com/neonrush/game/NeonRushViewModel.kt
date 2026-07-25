@@ -330,11 +330,15 @@ fun streakDaysMissed(prof: GameProfile): Int {
     val todayDate = fmt.parse(today)
     return ((todayDate.time - lastDate.time) / (1000 * 60 * 60 * 24)).toInt()
 }
+suspend fun isStreakFreezeEligible(): Boolean {
+    val prof = gameDao.getProfileDirect() ?: GameProfile()
+    return streakDaysMissed(prof) == 2 && prof.currentStreak > 0
+}
 
 fun freezeStreak() {
     viewModelScope.launch {
         val prof = gameDao.getProfileDirect() ?: GameProfile()
-        val cost = 15
+        val cost = 25
         val missed = streakDaysMissed(prof)
         if (missed == 2 && prof.gems >= cost) {
             val fmt = SimpleDateFormat("yyyy-MM-dd", Locale.US)
