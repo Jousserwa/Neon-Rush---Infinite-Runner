@@ -86,9 +86,38 @@ fun NeonRushApp(viewModel: NeonRushViewModel) {
     var showPaywall by remember { mutableStateOf(false) }
     var paywallReason by remember { mutableStateOf("generic") }
     
-    LaunchedEffect(Unit) {
+    var showStreakFreezeOffer by remember { mutableStateOf(false) }
+LaunchedEffect(Unit) {
+    if (viewModel.isStreakFreezeEligible()) {
+        showStreakFreezeOffer = true
+    } else {
         viewModel.checkDailyStreak()
     }
+}
+
+if (showStreakFreezeOffer) {
+    AlertDialog(
+        onDismissRequest = { },
+        title = { Text("🔥 Streak at risk!", fontFamily = FontFamily.Monospace) },
+        text = { Text("You missed a day. Spend 15 gems to freeze your streak and keep it going?") },
+        confirmButton = {
+            Button(onClick = {
+                viewModel.freezeStreak()
+                showStreakFreezeOffer = false
+            }) {
+                Text("💎 FREEZE (15 GEMS)")
+            }
+        },
+        dismissButton = {
+            Button(onClick = {
+                viewModel.checkDailyStreak()
+                showStreakFreezeOffer = false
+            }) {
+                Text("No thanks")
+            }
+        }
+    )
+}
 
     var streakBannerReward by remember { mutableStateOf<StreakReward?>(null) }
     LaunchedEffect(Unit) {
