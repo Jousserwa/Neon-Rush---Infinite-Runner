@@ -2314,19 +2314,36 @@ fun GameOverOverlayScreen(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(
-                        text = "WATCH AD TO REVIVE",
-                        color = Color.White,
-                        fontFamily = FontFamily.Monospace,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
+    text = "WATCH AD TO REVIVE",
+    color = Color.White,
+    fontFamily = FontFamily.Monospace,
+    fontWeight = FontWeight.Bold
+)
             }
+        }
 
-            Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
-            Button(
-    onClick = {
-        if (!profile.adsRemoved && AdMobManager.isInterstitialDue()) {
+        Button(
+            onClick = { viewModel.reviveWithGems() },
+            enabled = profile.gems >= 30,
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF9C27B0)),
+            shape = RoundedCornerShape(8.dp),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(
+                text = "💎 REVIVE FOR 30 GEMS",
+                color = Color.White,
+                fontFamily = FontFamily.Monospace,
+                fontWeight = FontWeight.Bold
+            )
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Button(
+onClick = {
+    if (!profile.adsRemoved && AdMobManager.isInterstitialDue()) {
             activity?.let {
                 AdMobManager.showInterstitialIfReady(it) {
                     viewModel.resetSimulation()
