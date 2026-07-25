@@ -294,13 +294,60 @@ fun buyExtraAttempt() {
     val streakRewardEvent: SharedFlow<StreakReward> = _streakRewardEvent.asSharedFlow()
 
     fun checkDailyStreak() {
-        viewModelScope.launch {
-            val prof = gameDao.getProfileDirect() ?: GameProfile()
+    viewModelScope.launch {
+        val prof = gameDao.getProfileDirect() ?: GameProfile()
+        val fmt = SimpleDateFormat("yyyy-MM-dd", Locale.US)
+        val today = fmt.format(Date())
+        if (prof.lastStreakLoginDate == today) {
+            return@launch
+        }
+        val newStreak = if (prof.lastStreakLoginDate.isEmpty()) {
+            1
+        } else {
+            val lastDate = fmt.parse(prof.lastStreakLoginDate)
+            val todayDate = fmt.parse(today)
+            val diffDays = ((todayDate.time - lastDate.time) / (1000 * 60 * 60 * 24)).toInt()
+            if (diffDays == 1) prof.currentStreak + 1 else 1
+        }
+        val reward = StreakRewards.rewardForDay(newStreak)
+        val updated = prof.copy(
+            currentStreak = newStreak,
+            lastStreakLoginDate = today,
+            gems = prof.gems + reward.gems
+        )
+        gameDao.saveProfile(updated)
+        soundEngine.playUnlockSkin()
+        _streakRewardEvent.tryEmit(reward)
+    }
+}
+
+fun streakDaysMissed(prof: GameProfile): Int {
+    if (prof.lastStreakLoginDate.isEmpty()) return 0
+    val fmt = SimpleDateFormat("yyyy-MM-dd", Locale.US)
+    val today = fmt.format(Date())
+    if (prof.lastStreakLoginDate == today) return 0
+    val lastDate = fmt.parse(prof.lastStreakLoginDate)
+    val todayDate = fmt.parse(today)
+    return ((todayDate.time - lastDate.time) / (1000 * 60 * 60 * 24)).toInt()
+}
+
+fun freezeStreak() {
+    viewModelScope.launch {
+        val prof = gameDao.getProfileDirect() ?: GameProfile()
+        val cost = 15
+        val missed = streakDaysMissed(prof)
+        if (missed == 2 && prof.gems >= cost) {
             val fmt = SimpleDateFormat("yyyy-MM-dd", Locale.US)
-            val today = fmt.format(Date())
-            if (prof.lastStreakLoginDate == today) {
-                return@launch
-            }
+            val cal = Calendar.getInstance()
+            cal.add(Calendar.DAY_OF_YEAR, -1)
+            val yesterday = fmt.format(cal.time)
+            val updated = prof.copy(gems = prof.gems - cost, lastStreakLoginDate = yesterday)
+            gameDao.saveProfile(updated)
+            soundEngine.playUnlockSkin()
+            checkDailyStreak()
+        }
+    }
+}
             val newStreak = if (prof.lastStreakLoginDate.isEmpty()) {
                 1
             } else {
