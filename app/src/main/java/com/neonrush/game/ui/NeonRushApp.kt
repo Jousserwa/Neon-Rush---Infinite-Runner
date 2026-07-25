@@ -244,7 +244,10 @@ fun NeonRushApp(viewModel: NeonRushViewModel) {
                                         onShowGhostSelection = { showGhostSelection = true },
                                         onNavigateToGlobal = { activeTab = "rankings" },
                                         onNavigateToSkins = { activeTab = "skins" },
+                                        onNavigateToSocial = { activeTab = "social" },
                                         isPro = isPro
+                                    
+                                
                                     )
                                 }
                             }
