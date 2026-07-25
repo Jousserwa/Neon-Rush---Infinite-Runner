@@ -276,6 +276,20 @@ fun reviveWithGems() {
         }
     }
 }
+fun buyExtraAttempt() {
+    viewModelScope.launch {
+        val prof = gameDao.getProfileDirect() ?: GameProfile()
+        val cost = 25
+        if (prof.gems >= cost) {
+            val updated = prof.copy(
+                gems = prof.gems - cost,
+                dailyAttemptsToday = (prof.dailyAttemptsToday - 1).coerceAtLeast(0)
+            )
+            gameDao.saveProfile(updated)
+            soundEngine.playUnlockSkin()
+        }
+    }
+}
     private val _streakRewardEvent = MutableSharedFlow<StreakReward>(extraBufferCapacity = 2)
     val streakRewardEvent: SharedFlow<StreakReward> = _streakRewardEvent.asSharedFlow()
 
