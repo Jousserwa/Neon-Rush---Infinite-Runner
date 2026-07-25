@@ -645,10 +645,14 @@ fun ArcadeHomeView(
     isPro: Boolean
 ) {
     Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.SpaceBetween
-    ) {
-        Row(
+    modifier = Modifier.fillMaxSize(),
+    verticalArrangement = Arrangement.SpaceBetween
+) {
+    PromoPopup(onNavigate = { tab ->
+        if (tab == "skins") onNavigateToSkins() else onNavigateToSocial()
+    })
+
+    Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(48.dp)
