@@ -265,7 +265,17 @@ fun claimMission(tier: MissionTier, missionId: String) {
             }
         }
     }
-
+fun reviveWithGems() {
+    viewModelScope.launch {
+        val prof = gameDao.getProfileDirect() ?: GameProfile()
+        val cost = 20
+        if (prof.gems >= cost) {
+            val updated = prof.copy(gems = prof.gems - cost)
+            gameDao.saveProfile(updated)
+            reviveSimulation()
+        }
+    }
+}
     private val _streakRewardEvent = MutableSharedFlow<StreakReward>(extraBufferCapacity = 2)
     val streakRewardEvent: SharedFlow<StreakReward> = _streakRewardEvent.asSharedFlow()
 
