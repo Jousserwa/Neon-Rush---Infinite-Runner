@@ -38,25 +38,25 @@ data class MissionProgress(
 object MissionManager {
 
     private val DAILY_POOL = listOf(
-        MissionTemplate("d_zone5", MissionTier.DAILY, MissionMetric.ZONE_REACHED_RUN, 5, "Reach Zone 5 in a single run", 15),
-        MissionTemplate("d_score1000", MissionTier.DAILY, MissionMetric.SCORE_RUN, 1000, "Score 1000+ in a single run", 15),
-        MissionTemplate("d_gems30", MissionTier.DAILY, MissionMetric.GEMS_COLLECTED_RUN, 30, "Collect 30 gems in a single run", 15),
-        MissionTemplate("d_runs3", MissionTier.DAILY, MissionMetric.RUNS_COMPLETED_PERIOD, 3, "Complete 3 runs today", 20),
-        MissionTemplate("d_ads2", MissionTier.DAILY, MissionMetric.ADS_WATCHED_PERIOD, 2, "Watch 2 rewarded ads", 20)
+        MissionTemplate("d_zone5", MissionTier.DAILY, MissionMetric.ZONE_REACHED_RUN, 5, "Reach Zone 5 in a single run", 2),
+        MissionTemplate("d_score1000", MissionTier.DAILY, MissionMetric.SCORE_RUN, 1000, "Score 1000+ in a single run", 2),
+        MissionTemplate("d_gems30", MissionTier.DAILY, MissionMetric.GEMS_COLLECTED_RUN, 30, "Collect 30 gems in a single run", 2),
+        MissionTemplate("d_runs3", MissionTier.DAILY, MissionMetric.RUNS_COMPLETED_PERIOD, 3, "Complete 3 runs today", 2),
+        MissionTemplate("d_ads2", MissionTier.DAILY, MissionMetric.ADS_WATCHED_PERIOD, 2, "Watch 2 rewarded ads", 2)
     )
 
     private val WEEKLY_POOL = listOf(
-        MissionTemplate("w_zones50", MissionTier.WEEKLY, MissionMetric.ZONES_TOTAL_PERIOD, 50, "Reach 50 total zones this week", 60),
-        MissionTemplate("w_score5000", MissionTier.WEEKLY, MissionMetric.SCORE_RUN, 5000, "Score 5000+ in a single run", 70),
-        MissionTemplate("w_runs15", MissionTier.WEEKLY, MissionMetric.RUNS_COMPLETED_PERIOD, 15, "Complete 15 runs this week", 60),
-        MissionTemplate("w_gems300", MissionTier.WEEKLY, MissionMetric.GEMS_EARNED_PERIOD, 300, "Collect 300 gems this week", 65)
+        MissionTemplate("w_zones50", MissionTier.WEEKLY, MissionMetric.ZONES_TOTAL_PERIOD, 50, "Reach 50 total zones this week", 7),
+        MissionTemplate("w_score5000", MissionTier.WEEKLY, MissionMetric.SCORE_RUN, 5000, "Score 5000+ in a single run", 7),
+        MissionTemplate("w_runs15", MissionTier.WEEKLY, MissionMetric.RUNS_COMPLETED_PERIOD, 15, "Complete 15 runs this week", 7),
+        MissionTemplate("w_gems300", MissionTier.WEEKLY, MissionMetric.GEMS_EARNED_PERIOD, 300, "Collect 300 gems this week", 7)
     )
 
     private val MONTHLY_POOL = listOf(
-        MissionTemplate("m_zone300", MissionTier.MONTHLY, MissionMetric.ZONE_REACHED_LIFETIME, 300, "Reach Zone 300 (lifetime)", 200),
-        MissionTemplate("m_gems1000", MissionTier.MONTHLY, MissionMetric.GEMS_EARNED_PERIOD, 1000, "Earn 1000 gems this month", 220),
-        MissionTemplate("m_streak7", MissionTier.MONTHLY, MissionMetric.STREAK_LENGTH, 7, "Reach a 7-day login streak", 200),
-        MissionTemplate("m_runs60", MissionTier.MONTHLY, MissionMetric.RUNS_COMPLETED_PERIOD, 60, "Complete 60 runs this month", 220)
+        MissionTemplate("m_zone300", MissionTier.MONTHLY, MissionMetric.ZONE_REACHED_LIFETIME, 300, "Reach Zone 300 (lifetime)", 10),
+        MissionTemplate("m_gems1000", MissionTier.MONTHLY, MissionMetric.GEMS_EARNED_PERIOD, 1000, "Earn 1000 gems this month", 10),
+        MissionTemplate("m_streak7", MissionTier.MONTHLY, MissionMetric.STREAK_LENGTH, 7, "Reach a 7-day login streak", 10),
+        MissionTemplate("m_runs60", MissionTier.MONTHLY, MissionMetric.RUNS_COMPLETED_PERIOD, 60, "Complete 60 runs this month", 10)
     )
 
     private fun dateKey(): String = SimpleDateFormat("yyyy-MM-dd", Locale.US).format(Date())
