@@ -41,7 +41,7 @@ object PromoMessages {
 fun PromoPopup(
     onNavigate: (String) -> Unit,
     intervalMillis: Long = 25000L,
-    visibleMillis: Long = 2500L
+    visibleMillis: Long = 4500L
 ) {
     var currentPromo by remember { mutableStateOf<PromoMessage?>(null) }
     var promoIndex by remember { mutableStateOf(0) }
