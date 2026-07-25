@@ -108,18 +108,18 @@ fun currentMonthlyMissions(rerollCount: Int = 0): List<MissionTemplate> = select
 
     // Resets progress/claimed CSVs whenever the period key has changed since last recorded.
     private fun rolledOver(profile: GameProfile): GameProfile {
-        var p = profile
-        if (p.lastDailyMissionDate != dateKey()) {
-            p = p.copy(dailyMissionProgressCsv = "", dailyMissionsClaimedCsv = "", lastDailyMissionDate = dateKey())
-        }
-        if (p.lastWeeklyMissionDate != weekKey()) {
-            p = p.copy(weeklyMissionProgressCsv = "", weeklyMissionsClaimedCsv = "", lastWeeklyMissionDate = weekKey())
-        }
-        if (p.lastMonthlyMissionDate != monthKey()) {
-            p = p.copy(monthlyMissionProgressCsv = "", monthlyMissionsClaimedCsv = "", lastMonthlyMissionDate = monthKey())
-        }
-        return p
+    var p = profile
+    if (p.lastDailyMissionDate != dateKey()) {
+        p = p.copy(dailyMissionProgressCsv = "", dailyMissionsClaimedCsv = "", lastDailyMissionDate = dateKey(), dailyRerollCount = 0)
     }
+    if (p.lastWeeklyMissionDate != weekKey()) {
+        p = p.copy(weeklyMissionProgressCsv = "", weeklyMissionsClaimedCsv = "", lastWeeklyMissionDate = weekKey(), weeklyRerollCount = 0)
+    }
+    if (p.lastMonthlyMissionDate != monthKey()) {
+        p = p.copy(monthlyMissionProgressCsv = "", monthlyMissionsClaimedCsv = "", lastMonthlyMissionDate = monthKey(), monthlyRerollCount = 0)
+    }
+    return p
+}
 
     private fun applyMetric(
         progress: MutableMap<String, Int>,
