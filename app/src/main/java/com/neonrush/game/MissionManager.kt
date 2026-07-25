@@ -77,9 +77,9 @@ object MissionManager {
         return pool.shuffled(rnd).take(3)
     }
 
-    fun currentDailyMissions(): List<MissionTemplate> = selectThree(DAILY_POOL, dateKey())
-    fun currentWeeklyMissions(): List<MissionTemplate> = selectThree(WEEKLY_POOL, weekKey())
-    fun currentMonthlyMissions(): List<MissionTemplate> = selectThree(MONTHLY_POOL, monthKey())
+    fun currentDailyMissions(rerollCount: Int = 0): List<MissionTemplate> = selectThree(DAILY_POOL, dateKey() + "-r$rerollCount")
+fun currentWeeklyMissions(rerollCount: Int = 0): List<MissionTemplate> = selectThree(WEEKLY_POOL, weekKey() + "-r$rerollCount")
+fun currentMonthlyMissions(rerollCount: Int = 0): List<MissionTemplate> = selectThree(MONTHLY_POOL, monthKey() + "-r$rerollCount")
 
     fun currentDailyKey(): String = dateKey()
     fun currentWeekKey(): String = weekKey()
