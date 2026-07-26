@@ -334,7 +334,6 @@ suspend fun isStreakFreezeEligible(): Boolean {
     val prof = gameDao.getProfileDirect() ?: GameProfile()
     return streakDaysMissed(prof) == 2 && prof.currentStreak > 0
 }
-
 fun freezeStreak() {
     viewModelScope.launch {
         val prof = gameDao.getProfileDirect() ?: GameProfile()
@@ -352,25 +351,7 @@ fun freezeStreak() {
         }
     }
 }
-            val newStreak = if (prof.lastStreakLoginDate.isEmpty()) {
-                1
-            } else {
-                val lastDate = fmt.parse(prof.lastStreakLoginDate)
-                val todayDate = fmt.parse(today)
-                val diffDays = ((todayDate.time - lastDate.time) / (1000 * 60 * 60 * 24)).toInt()
-                if (diffDays == 1) prof.currentStreak + 1 else 1
-            }
-            val reward = StreakRewards.rewardForDay(newStreak)
-            val updated = prof.copy(
-                currentStreak = newStreak,
-                lastStreakLoginDate = today,
-                gems = prof.gems + reward.gems
-            )
-            gameDao.saveProfile(updated)
-            soundEngine.playUnlockSkin()
-            _streakRewardEvent.tryEmit(reward)
-        }
-    }
+
 
     init {
         loadSocialComments()
