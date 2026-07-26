@@ -179,6 +179,9 @@ class GameDao(context: Context) {
             put("monthlyMissionsClaimedCsv", profile.monthlyMissionsClaimedCsv)
             put("lastMonthlyMissionDate", profile.lastMonthlyMissionDate)
             put("bestZoneReached", profile.bestZoneReached)
+            put("dailyRerollCount", profile.dailyRerollCount)
+            put("weeklyRerollCount", profile.weeklyRerollCount)
+            put("monthlyRerollCount", profile.monthlyRerollCount)
         
         }
         db.insertWithOnConflict("game_profile", null, values, SQLiteDatabase.CONFLICT_REPLACE)
