@@ -128,8 +128,11 @@ class GameDao(context: Context) {
                 monthlyMissionProgressCsv = if (monthlyMissionProgressIdx != -1) cursor.getString(monthlyMissionProgressIdx) else "",
                 monthlyMissionsClaimedCsv = if (monthlyMissionsClaimedIdx != -1) cursor.getString(monthlyMissionsClaimedIdx) else "",
                lastMonthlyMissionDate = if (lastMonthlyMissionDateIdx != -1) cursor.getString(lastMonthlyMissionDateIdx) else "",
-                bestZoneReached = if (bestZoneReachedIdx != -1) cursor.getInt(bestZoneReachedIdx) else 0
-            ) 
+                bestZoneReached = if (bestZoneReachedIdx != -1) cursor.getInt(bestZoneReachedIdx) else 0,
+                dailyRerollCount = if (dailyRerollCountIdx != -1) cursor.getInt(dailyRerollCountIdx) else 0,
+                weeklyRerollCount = if (weeklyRerollCountIdx != -1) cursor.getInt(weeklyRerollCountIdx) else 0,
+                monthlyRerollCount = if (monthlyRerollCountIdx != -1) cursor.getInt(monthlyRerollCountIdx) else 0
+            )
             
             _profileFlow.value = profile
         } else {
