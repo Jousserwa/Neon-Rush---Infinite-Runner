@@ -96,6 +96,9 @@ class GameDao(context: Context) {
             val monthlyMissionsClaimedIdx = cursor.getColumnIndex("monthlyMissionsClaimedCsv")
             val lastMonthlyMissionDateIdx = cursor.getColumnIndex("lastMonthlyMissionDate")
             val bestZoneReachedIdx = cursor.getColumnIndex("bestZoneReached")
+            val dailyRerollCountIdx = cursor.getColumnIndex("dailyRerollCount")
+            val weeklyRerollCountIdx = cursor.getColumnIndex("weeklyRerollCount")
+            val monthlyRerollCountIdx = cursor.getColumnIndex("monthlyRerollCount")
             val profile = GameProfile(
                 id = 1,
                 username = if (usernameIdx != -1) cursor.getString(usernameIdx) else "NeonPilot_99",
