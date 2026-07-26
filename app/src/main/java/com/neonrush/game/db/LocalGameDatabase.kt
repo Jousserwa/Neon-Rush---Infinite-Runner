@@ -283,27 +283,31 @@ class GameDbHelper(context: Context) : SQLiteOpenHelper(context, "neon_rush_comp
         db.execSQL("ALTER TABLE game_profile ADD COLUMN lastStreakLoginDate TEXT DEFAULT ''")
     }
     if (oldVersion < 4) {
-    db.execSQL("ALTER TABLE game_profile ADD COLUMN totalRuns INTEGER DEFAULT 0")
-    db.execSQL("ALTER TABLE game_profile ADD COLUMN averageScore INTEGER DEFAULT 0")
-    db.execSQL("ALTER TABLE game_profile ADD COLUMN totalGemsEarned INTEGER DEFAULT 0")
-}
-if (oldVersion < 5) {
-    db.execSQL("ALTER TABLE game_profile ADD COLUMN adsRemoved INTEGER DEFAULT 0")
+        db.execSQL("ALTER TABLE game_profile ADD COLUMN totalRuns INTEGER DEFAULT 0")
+        db.execSQL("ALTER TABLE game_profile ADD COLUMN averageScore INTEGER DEFAULT 0")
+        db.execSQL("ALTER TABLE game_profile ADD COLUMN totalGemsEarned INTEGER DEFAULT 0")
     }
-if (oldVersion < 6) {
-    db.execSQL("ALTER TABLE game_profile ADD COLUMN dailyMissionProgressCsv TEXT DEFAULT ''")
-    db.execSQL("ALTER TABLE game_profile ADD COLUMN dailyMissionsClaimedCsv TEXT DEFAULT ''")
-    db.execSQL("ALTER TABLE game_profile ADD COLUMN lastDailyMissionDate TEXT DEFAULT ''")
-    db.execSQL("ALTER TABLE game_profile ADD COLUMN weeklyMissionProgressCsv TEXT DEFAULT ''")
-    db.execSQL("ALTER TABLE game_profile ADD COLUMN weeklyMissionsClaimedCsv TEXT DEFAULT ''")
-    db.execSQL("ALTER TABLE game_profile ADD COLUMN lastWeeklyMissionDate TEXT DEFAULT ''")
-    db.execSQL("ALTER TABLE game_profile ADD COLUMN monthlyMissionProgressCsv TEXT DEFAULT ''")
-    db.execSQL("ALTER TABLE game_profile ADD COLUMN monthlyMissionsClaimedCsv TEXT DEFAULT ''")
-    db.execSQL("ALTER TABLE game_profile ADD COLUMN lastMonthlyMissionDate TEXT DEFAULT ''")
+    if (oldVersion < 5) {
+        db.execSQL("ALTER TABLE game_profile ADD COLUMN adsRemoved INTEGER DEFAULT 0")
+    }
+    if (oldVersion < 6) {
+        db.execSQL("ALTER TABLE game_profile ADD COLUMN dailyMissionProgressCsv TEXT DEFAULT ''")
+        db.execSQL("ALTER TABLE game_profile ADD COLUMN dailyMissionsClaimedCsv TEXT DEFAULT ''")
+        db.execSQL("ALTER TABLE game_profile ADD COLUMN lastDailyMissionDate TEXT DEFAULT ''")
+        db.execSQL("ALTER TABLE game_profile ADD COLUMN weeklyMissionProgressCsv TEXT DEFAULT ''")
+        db.execSQL("ALTER TABLE game_profile ADD COLUMN weeklyMissionsClaimedCsv TEXT DEFAULT ''")
+        db.execSQL("ALTER TABLE game_profile ADD COLUMN lastWeeklyMissionDate TEXT DEFAULT ''")
+        db.execSQL("ALTER TABLE game_profile ADD COLUMN monthlyMissionProgressCsv TEXT DEFAULT ''")
+        db.execSQL("ALTER TABLE game_profile ADD COLUMN monthlyMissionsClaimedCsv TEXT DEFAULT ''")
+        db.execSQL("ALTER TABLE game_profile ADD COLUMN lastMonthlyMissionDate TEXT DEFAULT ''")
+    }
     if (oldVersion < 7) {
-    db.execSQL("ALTER TABLE game_profile ADD COLUMN bestZoneReached INTEGER DEFAULT 0")
+        db.execSQL("ALTER TABLE game_profile ADD COLUMN bestZoneReached INTEGER DEFAULT 0")
+    }
+    if (oldVersion < 8) {
+        db.execSQL("ALTER TABLE game_profile ADD COLUMN dailyRerollCount INTEGER DEFAULT 0")
+        db.execSQL("ALTER TABLE game_profile ADD COLUMN weeklyRerollCount INTEGER DEFAULT 0")
+        db.execSQL("ALTER TABLE game_profile ADD COLUMN monthlyRerollCount INTEGER DEFAULT 0")
     }
 }
 }
-}
-    
