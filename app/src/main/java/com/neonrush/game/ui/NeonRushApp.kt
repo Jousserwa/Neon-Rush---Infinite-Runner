@@ -1012,20 +1012,40 @@ fun MissionTierBlock(
     missions: List<MissionTemplate>,
     progressCsv: String,
     claimedCsv: String,
-    viewModel: NeonRushViewModel
+    viewModel: NeonRushViewModel,
+    profile: GameProfile
 ) {
     val progress = remember(progressCsv) { MissionManager.parseProgressCsv(progressCsv) }
     val claimed = remember(claimedCsv) { MissionManager.parseClaimedCsv(claimedCsv) }
+    val rerollCost = when (tier) {
+        MissionTier.DAILY -> 10
+        MissionTier.WEEKLY -> 20
+        MissionTier.MONTHLY -> 30
+    }
 
-    Text(
-        text = title,
-        fontSize = 14.sp,
-        fontWeight = FontWeight.Bold,
-        color = CyberPrimary,
-        fontFamily = FontFamily.Monospace,
-        modifier = Modifier.padding(bottom = 6.dp)
-    )
-
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = title,
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Bold,
+            color = CyberPrimary,
+            fontFamily = FontFamily.Monospace
+        )
+        Button(
+            onClick = { viewModel.rerollMissions(tier) },
+            enabled = profile.gems >= rerollCost,
+            colors = ButtonDefaults.buttonColors(containerColor = CyberSurface),
+            shape = RoundedCornerShape(4.dp),
+            contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp)
+        ) {
+            Text(text = "🔄 $rerollCost💎", color = Color.White, fontFamily = FontFamily.Monospace, fontSize = 10.sp)
+        }
+    }
+    Spacer(modifier = Modifier.height(6.dp))
     missions.forEach { mission ->
         val current = (progress[mission.id] ?: 0).coerceAtMost(mission.target)
         val isClaimed = claimed.contains(mission.id)
