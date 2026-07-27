@@ -843,7 +843,8 @@ fun freezeStreak() {
                                     }
                                 }
                                 "obstacle", "bullet" -> {
-                                    if (hasInvincibility || hasGhostMode) {
+    val hasReviveShield = tick < state.shieldUntilTick
+    if (hasInvincibility || hasGhostMode || hasReviveShield) {
                                     } else if (hasShield) {
                                         soundEngine.playShieldBreak()
                                         nextDurationsMap.remove("PU1")
