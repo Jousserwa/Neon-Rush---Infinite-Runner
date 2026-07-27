@@ -997,11 +997,11 @@ fun ArcadeHomeView(
 @Composable
 fun MissionsSection(viewModel: NeonRushViewModel, profile: GameProfile) {
     Column(modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)) {
-        MissionTierBlock("📅 DAILY MISSIONS", MissionTier.DAILY, MissionManager.currentDailyMissions(), profile.dailyMissionProgressCsv, profile.dailyMissionsClaimedCsv, viewModel)
+        MissionTierBlock("📅 DAILY MISSIONS", MissionTier.DAILY, MissionManager.currentDailyMissions(profile.dailyRerollCount), profile.dailyMissionProgressCsv, profile.dailyMissionsClaimedCsv, viewModel, profile)
         Spacer(modifier = Modifier.height(12.dp))
-        MissionTierBlock("🗓️ WEEKLY MISSIONS", MissionTier.WEEKLY, MissionManager.currentWeeklyMissions(), profile.weeklyMissionProgressCsv, profile.weeklyMissionsClaimedCsv, viewModel)
+        MissionTierBlock("🗓️ WEEKLY MISSIONS", MissionTier.WEEKLY, MissionManager.currentWeeklyMissions(profile.weeklyRerollCount), profile.weeklyMissionProgressCsv, profile.weeklyMissionsClaimedCsv, viewModel, profile)
         Spacer(modifier = Modifier.height(12.dp))
-        MissionTierBlock("🏆 MONTHLY MISSIONS", MissionTier.MONTHLY, MissionManager.currentMonthlyMissions(), profile.monthlyMissionProgressCsv, profile.monthlyMissionsClaimedCsv, viewModel)
+        MissionTierBlock("🏆 MONTHLY MISSIONS", MissionTier.MONTHLY, MissionManager.currentMonthlyMissions(profile.monthlyRerollCount), profile.monthlyMissionProgressCsv, profile.monthlyMissionsClaimedCsv, viewModel, profile)
     }
 }
 
