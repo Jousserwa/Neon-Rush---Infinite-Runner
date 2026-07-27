@@ -1008,15 +1008,17 @@ if (!updated.adsRemoved) {
     }
 
     fun reviveSimulation() {
-        val currentState = _simState.value
-        _simState.value = currentState.copy(
-            isCompleted = false,
-            fuelLevelPercent = 100,
-            feedbackMessage = "Revive code accepted! Launching drone boosters..."
-        )
-        val currentTick = currentState.tickIndex
-        simJob?.cancel()
-        soundEngine.playRevive()
+    val currentState = _simState.value
+    val currentTick = currentState.tickIndex
+    _simState.value = currentState.copy(
+        isCompleted = false,
+        fuelLevelPercent = 100,
+        feedbackMessage = "Revive code accepted! Launching drone boosters...",
+        reviveCount = currentState.reviveCount + 1,
+        shieldUntilTick = currentTick + 25 // ~3 seconds of invulnerability at 120ms/tick
+    )
+    simJob?.cancel()
+    soundEngine.playRevive()
         simJob = viewModelScope.launch {
             val milestonesTriggered = mutableSetOf<Int>()
             for (ms in listOf(150, 500, 1500, 4000, 10000)) {
