@@ -137,11 +137,10 @@ fun currentMonthlyMissions(rerollCount: Int = 0): List<MissionTemplate> = select
     // Call once per completed run. bestZoneLifetime should be the player's all-time best zone
     // (i.e. max(profile.bestZoneReached, thisRunZone)) computed by the caller.
     fun recordRunResult(profile: GameProfile, zoneReached: Int, score: Int, gemsThisRun: Int, bestZoneLifetime: Int): GameProfile {
-        val p = rolledOver(profile)
-        val daily = currentDailyMissions()
-        val weekly = currentWeeklyMissions()
-        val monthly = currentMonthlyMissions()
-
+    val p = rolledOver(profile)
+    val daily = currentDailyMissions(p.dailyRerollCount)
+    val weekly = currentWeeklyMissions(p.weeklyRerollCount)
+    val monthly = currentMonthlyMissions(p.monthlyRerollCount)
         val dProg = parseProgressCsv(p.dailyMissionProgressCsv)
         val wProg = parseProgressCsv(p.weeklyMissionProgressCsv)
         val mProg = parseProgressCsv(p.monthlyMissionProgressCsv)
@@ -170,8 +169,8 @@ fun currentMonthlyMissions(rerollCount: Int = 0): List<MissionTemplate> = select
 
     // Call whenever the player watches a rewarded ad.
     fun recordAdWatched(profile: GameProfile): GameProfile {
-        val p = rolledOver(profile)
-        val daily = currentDailyMissions()
+    val p = rolledOver(profile)
+    val daily = currentDailyMissions(p.dailyRerollCount)
         val dProg = parseProgressCsv(p.dailyMissionProgressCsv)
         applyMetric(dProg, daily, MissionMetric.ADS_WATCHED_PERIOD, 1, cumulative = true)
         return p.copy(dailyMissionProgressCsv = progressMapToCsv(dProg))
