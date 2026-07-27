@@ -83,7 +83,9 @@ data class SimulationState(
     val frustrationLevelIndex: Float = 0.5f,
     val obstacleDensityMod: Float = 1.0f,
     val lastZoneTransitionTick: Int = -999,
-    val particles: List<Particle> = emptyList()
+    val particles: List<Particle> = emptyList(),
+    val reviveCount: Int = 0,
+    val shieldUntilTick: Int = -1
 )
 
 class NeonRushViewModel(
