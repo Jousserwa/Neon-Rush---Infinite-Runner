@@ -1018,6 +1018,7 @@ if (!updated.adsRemoved) {
 
     fun reviveSimulation() {
     val currentState = _simState.value
+    if (currentState.reviveCount >= 2) return
     val currentTick = currentState.tickIndex
     _simState.value = currentState.copy(
         isCompleted = false,
