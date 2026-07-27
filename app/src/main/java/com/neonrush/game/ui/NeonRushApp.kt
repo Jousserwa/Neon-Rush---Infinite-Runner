@@ -2272,8 +2272,7 @@ fun RacingSimulatorScreen(
         }
     }
 }
-
-@Composable
+ @Composable
 fun GameOverOverlayScreen(
     simState: SimulationState,
     viewModel: NeonRushViewModel,
@@ -2282,6 +2281,20 @@ fun GameOverOverlayScreen(
     onShowPaywall: () -> Unit
 ) {
     val activity = LocalContext.current as? Activity
+    val revivesExhausted = simState.reviveCount >= 2
+    var showSummary by remember(simState.reviveCount) { mutableStateOf(revivesExhausted) }
+    var secondsLeft by remember(simState.reviveCount) { mutableStateOf(5) }
+
+    LaunchedEffect(simState.reviveCount, revivesExhausted) {
+        if (!revivesExhausted) {
+            secondsLeft = 5
+            while (secondsLeft > 0) {
+                delay(1000)
+                secondsLeft--
+            }
+            showSummary = true
+        }
+    }
 
     Box(
         modifier = Modifier
@@ -2290,153 +2303,233 @@ fun GameOverOverlayScreen(
             .padding(24.dp),
         contentAlignment = Alignment.Center
     ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            Text(
-                text = "GAME OVER",
-                fontSize = 32.sp,
-                fontWeight = FontWeight.Black,
-                color = CyberPrimary,
-                fontFamily = FontFamily.Monospace
-            )
+        if (!showSummary) {
+            // ---------- SCREEN 1: Crash / Revive ----------
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                Text(
+                    text = "SYSTEM FAILURE",
+                    fontSize = 28.sp,
+                    fontWeight = FontWeight.Black,
+                    color = CyberPrimary,
+                    fontFamily = FontFamily.Monospace
+                )
 
-            Text(
-                text = "FINAL SCORE: ${simState.score}",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.White,
-                fontFamily = FontFamily.Monospace
-            )
+                Text(
+                    text = "SCORE: ${simState.score}",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White,
+                    fontFamily = FontFamily.Monospace
+                )
 
-            Text(
-                text = "DISTANCE: ${simState.distanceMeters.toInt()}m",
-                fontSize = 14.sp,
-                color = CyberSecondary,
-                fontFamily = FontFamily.Monospace
-            )
-
-            Text(
-                text = "ZONE REACHED: ${simState.currentZoneName}",
-                fontSize = 14.sp,
-                color = CyberSecondary,
-                fontFamily = FontFamily.Monospace
-            )
-
-            if (!isPro) {
-                Card(
-                    colors = CardDefaults.cardColors(containerColor = CyberSurface),
+                Box(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .border(1.dp, CyberPrimary, RoundedCornerShape(12.dp))
+                        .size(56.dp)
+                        .background(CyberSurface, RoundedCornerShape(50)),
+                    contentAlignment = Alignment.Center
                 ) {
-                    Column(
-                        modifier = Modifier.padding(16.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(
-                            text = "⚡ GO PRO",
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = CyberPrimary,
-                            fontFamily = FontFamily.Monospace
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            text = "Remove ads, unlock Legendary difficulty, and access all Worlds!",
-                            fontSize = 12.sp,
-                            color = CyberOnSurface.copy(alpha = 0.8f),
-                            textAlign = TextAlign.Center
-                        )
-                        Spacer(modifier = Modifier.height(12.dp))
-                        Button(
-                            onClick = onShowPaywall,
-                            colors = ButtonDefaults.buttonColors(containerColor = CyberPrimary),
-                            shape = RoundedCornerShape(8.dp),
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Text(
-                                text = "UPGRADE TO PRO",
-                                color = CyberBackground,
-                                fontFamily = FontFamily.Monospace,
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
-                    }
+                    Text(
+                        text = "$secondsLeft",
+                        fontSize = 22.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = CyberPrimary,
+                        fontFamily = FontFamily.Monospace
+                    )
                 }
-
-                Spacer(modifier = Modifier.height(8.dp))
 
                 Button(
                     onClick = {
                         activity?.let {
-    AdMobManager.showRewardedIfReady(it) {
-        viewModel.reviveSimulation()
-        viewModel.recordAdWatched()
-    }
-}
+                            AdMobManager.showRewardedIfReady(it) {
+                                viewModel.reviveSimulation()
+                                viewModel.recordAdWatched()
+                            }
+                        }
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50)),
                     shape = RoundedCornerShape(8.dp),
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(
-    text = "WATCH AD TO REVIVE",
-    color = Color.White,
-    fontFamily = FontFamily.Monospace,
-    fontWeight = FontWeight.Bold
-)
-            }
-        }
+                        text = "🎬 WATCH AD TO REVIVE",
+                        color = Color.White,
+                        fontFamily = FontFamily.Monospace,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
 
-        Spacer(modifier = Modifier.height(8.dp))
+                Button(
+                    onClick = { viewModel.reviveWithGems() },
+                    enabled = profile.gems >= viewModel.reviveCostForCurrentRun(),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF9C27B0)),
+                    shape = RoundedCornerShape(8.dp),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = "💎 REVIVE FOR ${viewModel.reviveCostForCurrentRun()} GEMS",
+                        color = Color.White,
+                        fontFamily = FontFamily.Monospace,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
 
-        Button(
-            onClick = { viewModel.reviveWithGems() },
-            enabled = profile.gems >= 30,
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF9C27B0)),
-            shape = RoundedCornerShape(8.dp),
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(
-                text = "💎 REVIVE FOR 30 GEMS",
-                color = Color.White,
-                fontFamily = FontFamily.Monospace,
-                fontWeight = FontWeight.Bold
-            )
-        }
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Button(
-onClick = {
-    if (!profile.adsRemoved && AdMobManager.isInterstitialDue()) {
-            activity?.let {
-                AdMobManager.showInterstitialIfReady(it) {
-                    viewModel.resetSimulation()
+                Button(
+                    onClick = { showSummary = true },
+                    colors = ButtonDefaults.buttonColors(containerColor = CyberSurface),
+                    shape = RoundedCornerShape(8.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .border(1.dp, CyberPrimary.copy(alpha = 0.4f), RoundedCornerShape(8.dp))
+                ) {
+                    Text(
+                        text = "QUIT",
+                        color = Color.White,
+                        fontFamily = FontFamily.Monospace,
+                        fontWeight = FontWeight.Bold
+                    )
                 }
             }
         } else {
-            viewModel.resetSimulation()
-        }
-    },
-    colors = ButtonDefaults.buttonColors(containerColor = CyberSurface),
-                shape = RoundedCornerShape(8.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .border(1.dp, CyberPrimary.copy(alpha = 0.4f), RoundedCornerShape(8.dp))
+            // ---------- SCREEN 2: Final Summary ----------
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 Text(
-                    text = "BACK TO MENU",
-                    color = Color.White,
-                    fontFamily = FontFamily.Monospace,
-                    fontWeight = FontWeight.Bold
+                    text = "GAME OVER",
+                    fontSize = 32.sp,
+                    fontWeight = FontWeight.Black,
+                    color = CyberPrimary,
+                    fontFamily = FontFamily.Monospace
                 )
+
+                Text(
+                    text = "FINAL SCORE: ${simState.score}",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White,
+                    fontFamily = FontFamily.Monospace
+                )
+
+                Text(
+                    text = "DISTANCE: ${simState.distanceMeters.toInt()}m",
+                    fontSize = 14.sp,
+                    color = CyberSecondary,
+                    fontFamily = FontFamily.Monospace
+                )
+
+                Text(
+                    text = "ZONE REACHED: ${simState.currentZoneName}",
+                    fontSize = 14.sp,
+                    color = CyberSecondary,
+                    fontFamily = FontFamily.Monospace
+                )
+
+                Button(
+                    onClick = {
+                        activity?.let {
+                            AdMobManager.showRewardedIfReady(it) {
+                                viewModel.doubleGemsForRun()
+                                viewModel.recordAdWatched()
+                            }
+                        }
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFFC107)),
+                    shape = RoundedCornerShape(8.dp),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = "🎬 DOUBLE GEMS (${simState.collectedGemsCount * 2} 💎)",
+                        color = Color.Black,
+                        fontFamily = FontFamily.Monospace,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+
+                if (!isPro) {
+                    Card(
+                        colors = CardDefaults.cardColors(containerColor = CyberSurface),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .border(1.dp, CyberPrimary, RoundedCornerShape(12.dp))
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(16.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                text = "⚡ GO PRO",
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = CyberPrimary,
+                                fontFamily = FontFamily.Monospace
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Text(
+                                text = "Remove ads, unlock Legendary difficulty, and access all Worlds!",
+                                fontSize = 12.sp,
+                                color = CyberOnSurface.copy(alpha = 0.8f),
+                                textAlign = TextAlign.Center
+                            )
+                            Spacer(modifier = Modifier.height(12.dp))
+                            Button(
+                                onClick = onShowPaywall,
+                                colors = ButtonDefaults.buttonColors(containerColor = CyberPrimary),
+                                shape = RoundedCornerShape(8.dp),
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Text(
+                                    text = "UPGRADE TO PRO",
+                                    color = CyberBackground,
+                                    fontFamily = FontFamily.Monospace,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+                        }
+                    }
+                }
+
+                Button(
+                    onClick = {
+                        if (!profile.adsRemoved && AdMobManager.isInterstitialDue()) {
+                            activity?.let {
+                                AdMobManager.showInterstitialIfReady(it) {
+                                    viewModel.resetSimulation()
+                                }
+                            }
+                        } else {
+                            viewModel.resetSimulation()
+                        }
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = CyberSurface),
+                    shape = RoundedCornerShape(8.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .border(1.dp, CyberPrimary.copy(alpha = 0.4f), RoundedCornerShape(8.dp))
+                ) {
+                    Text(
+                        text = "BACK TO MENU",
+                        color = Color.White,
+                        fontFamily = FontFamily.Monospace,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
             }
         }
     }
-}
+    }
+
+@Composable
+fun ProfileTab(profile: GameProfile, viewModel: NeonRushViewModel) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(16.dp),
+        verticalArrangement = Arrangeme
 
 @Composable
 fun ProfileTab(profile: GameProfile, viewModel: NeonRushViewModel) {
