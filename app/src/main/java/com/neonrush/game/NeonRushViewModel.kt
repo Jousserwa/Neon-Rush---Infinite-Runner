@@ -301,11 +301,19 @@ fun rerollMissions(tier: MissionTier) {
             }
         }
     }
+fun reviveCostForCurrentRun(): Int {
+    return when (_simState.value.reviveCount) {
+        0 -> 20
+        1 -> 25
+        else -> 30
+    }
+}
+
 fun reviveWithGems() {
     viewModelScope.launch {
         val prof = gameDao.getProfileDirect() ?: GameProfile()
-        val cost = 20
-        if (prof.gems >= cost) {
+        val cost = reviveCostForCurrentRun()
+        if (_simState.value.reviveCount < 2 && prof.gems >= cost) {
             val updated = prof.copy(gems = prof.gems - cost)
             gameDao.saveProfile(updated)
             reviveSimulation()
