@@ -2522,14 +2522,7 @@ fun GameOverOverlayScreen(
     }
     }
 
-@Composable
-fun ProfileTab(profile: GameProfile, viewModel: NeonRushViewModel) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(16.dp),
-        verticalArrangement = Arrangeme
+
 
 @Composable
 fun ProfileTab(profile: GameProfile, viewModel: NeonRushViewModel) {
