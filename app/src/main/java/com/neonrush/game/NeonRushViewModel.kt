@@ -232,6 +232,40 @@ fun claimMission(tier: MissionTier, missionId: String) {
         }
     }
 }
+fun rerollMissions(tier: MissionTier) {
+    viewModelScope.launch {
+        val prof = gameDao.getProfileDirect() ?: GameProfile()
+        val cost = when (tier) {
+            MissionTier.DAILY -> 10
+            MissionTier.WEEKLY -> 20
+            MissionTier.MONTHLY -> 30
+        }
+        if (prof.gems >= cost) {
+            val updated = when (tier) {
+                MissionTier.DAILY -> prof.copy(
+                    gems = prof.gems - cost,
+                    dailyRerollCount = prof.dailyRerollCount + 1,
+                    dailyMissionProgressCsv = "",
+                    dailyMissionsClaimedCsv = ""
+                )
+                MissionTier.WEEKLY -> prof.copy(
+                    gems = prof.gems - cost,
+                    weeklyRerollCount = prof.weeklyRerollCount + 1,
+                    weeklyMissionProgressCsv = "",
+                    weeklyMissionsClaimedCsv = ""
+                )
+                MissionTier.MONTHLY -> prof.copy(
+                    gems = prof.gems - cost,
+                    monthlyRerollCount = prof.monthlyRerollCount + 1,
+                    monthlyMissionProgressCsv = "",
+                    monthlyMissionsClaimedCsv = ""
+                )
+            }
+            gameDao.saveProfile(updated)
+            soundEngine.playUnlockSkin()
+        }
+    }
+}
     fun equipPilotSkin(skinId: String) {
         viewModelScope.launch {
             val prof = gameDao.getProfileDirect() ?: GameProfile()
