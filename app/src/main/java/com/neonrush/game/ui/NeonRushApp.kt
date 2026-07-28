@@ -2239,38 +2239,33 @@ fun RacingSimulatorScreen(
                         Spacer(modifier = Modifier.height(8.dp))
 
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(48.dp),
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-                Button(
-                    onClick = { viewModel.resetSimulation() },
-                    colors = ButtonDefaults.buttonColors(containerColor = CyberSurface),
-                    shape = RoundedCornerShape(8.dp),
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxHeight()
-                        .border(1.dp, CyberPrimary.copy(alpha = 0.4f), RoundedCornerShape(8.dp))
-                ) {
-                    Text("QUIT", color = Color.White, fontFamily = FontFamily.Monospace, fontSize = 12.sp, fontWeight = FontWeight.Bold)
-                }
-
-                Spacer(modifier = Modifier.width(8.dp))
-
-                Button(
-                    onClick = { viewModel.reviveSimulation() },
-                    colors = ButtonDefaults.buttonColors(containerColor = CyberSecondary),
-                    shape = RoundedCornerShape(8.dp),
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxHeight()
-                ) {
-                    Text("REVIVE", color = Color.White, fontFamily = FontFamily.Monospace, fontSize = 12.sp, fontWeight = FontWeight.Bold)
-                }
-            }
-        }
+    modifier = Modifier
+        .fillMaxWidth()
+        .height(48.dp),
+    horizontalArrangement = Arrangement.spacedBy(8.dp)
+) {
+    Button(
+        onClick = { viewModel.resetSimulation() },
+        colors = ButtonDefaults.buttonColors(containerColor = CyberSurface),
+        shape = RoundedCornerShape(8.dp),
+        modifier = Modifier
+            .weight(0.3f)
+            .fillMaxHeight()
+            .border(1.dp, CyberPrimary.copy(alpha = 0.4f), RoundedCornerShape(8.dp))
+    ) {
+        Text("QUIT", color = Color.White, fontFamily = FontFamily.Monospace, fontSize = 12.sp, fontWeight = FontWeight.Bold)
     }
+
+    FuelBar(
+        fuelPercent = simState.fuelLevelPercent,
+        refillCount = simState.fuelRefillCount,
+        isPro = isPro,
+        cost = viewModel.fuelRefillCostForCurrentRun(),
+        onRefuel = { viewModel.refuelWithGems(isPro) },
+        modifier = Modifier
+            .weight(0.7f)
+            .fillMaxHeight()
+    )
 }
  @Composable
 fun GameOverOverlayScreen(
