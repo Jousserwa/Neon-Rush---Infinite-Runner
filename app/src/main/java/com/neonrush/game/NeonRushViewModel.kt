@@ -329,6 +329,31 @@ fun reviveWithGems() {
         }
     }
 }
+fun fuelRefillCostForCurrentRun(): Int {
+    return when (_simState.value.fuelRefillCount) {
+        0 -> 20
+        1 -> 25
+        else -> 30
+    }
+}
+
+fun refuelWithGems(isPro: Boolean) {
+    viewModelScope.launch {
+        val current = _simState.value
+        if (!isPro && current.fuelRefillCount >= 3) return@launch
+        val prof = gameDao.getProfileDirect() ?: GameProfile()
+        val cost = fuelRefillCostForCurrentRun()
+        if (prof.gems >= cost) {
+            val updated = prof.copy(gems = prof.gems - cost)
+            gameDao.saveProfile(updated)
+            _simState.value = current.copy(
+                fuelLevelPercent = 100,
+                fuelRefillCount = current.fuelRefillCount + 1
+            )
+            soundEngine.playUnlockSkin()
+        }
+    }
+}
 fun buyExtraAttempt() {
     viewModelScope.launch {
         val prof = gameDao.getProfileDirect() ?: GameProfile()
