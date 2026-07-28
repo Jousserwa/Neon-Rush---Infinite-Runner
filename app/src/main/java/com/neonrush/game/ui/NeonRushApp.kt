@@ -2430,26 +2430,28 @@ fun GameOverOverlayScreen(
                     fontFamily = FontFamily.Monospace
                 )
 
-                Button(
-                    onClick = {
-                        activity?.let {
-                            AdMobManager.showRewardedIfReady(it) {
-                                viewModel.doubleGemsForRun()
-                                viewModel.recordAdWatched()
-                            }
-                        }
-                    },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFFC107)),
-                    shape = RoundedCornerShape(8.dp),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(
-                        text = "🎬 DOUBLE GEMS (${simState.collectedGemsCount * 2} 💎)",
-                        color = Color.Black,
-                        fontFamily = FontFamily.Monospace,
-                        fontWeight = FontWeight.Bold
-                    )
+                if (!isPro) {
+    Button(
+        onClick = {
+            activity?.let {
+                AdMobManager.showRewardedIfReady(it) {
+                    viewModel.doubleGemsForRun()
+                    viewModel.recordAdWatched()
                 }
+            }
+        },
+        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFFC107)),
+        shape = RoundedCornerShape(8.dp),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Text(
+            text = "🎬 DOUBLE GEMS (${simState.collectedGemsCount * 2} 💎)",
+            color = Color.Black,
+            fontFamily = FontFamily.Monospace,
+            fontWeight = FontWeight.Bold
+        )
+    }
+}
 
                 if (!isPro) {
                     Card(
