@@ -85,7 +85,8 @@ data class SimulationState(
     val lastZoneTransitionTick: Int = -999,
     val particles: List<Particle> = emptyList(),
     val reviveCount: Int = 0,
-    val shieldUntilTick: Int = -1
+    val shieldUntilTick: Int = -1,
+    val fuelRefillCount: Int = 0
 )
 
 class NeonRushViewModel(
