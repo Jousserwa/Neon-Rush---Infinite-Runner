@@ -2340,26 +2340,28 @@ fun GameOverOverlayScreen(
                     )
                 }
 
-                Button(
-                    onClick = {
-                        activity?.let {
-                            AdMobManager.showRewardedIfReady(it) {
-                                viewModel.reviveSimulation()
-                                viewModel.recordAdWatched()
-                            }
-                        }
-                    },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50)),
-                    shape = RoundedCornerShape(8.dp),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(
-                        text = "🎬 WATCH AD TO REVIVE",
-                        color = Color.White,
-                        fontFamily = FontFamily.Monospace,
-                        fontWeight = FontWeight.Bold
-                    )
+                if (!isPro) {
+    Button(
+        onClick = {
+            activity?.let {
+                AdMobManager.showRewardedIfReady(it) {
+                    viewModel.reviveSimulation()
+                    viewModel.recordAdWatched()
                 }
+            }
+        },
+        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50)),
+        shape = RoundedCornerShape(8.dp),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Text(
+            text = "🎬 WATCH AD TO REVIVE",
+            color = Color.White,
+            fontFamily = FontFamily.Monospace,
+            fontWeight = FontWeight.Bold
+        )
+    }
+}
 
                 Button(
                     onClick = { viewModel.reviveWithGems() },
