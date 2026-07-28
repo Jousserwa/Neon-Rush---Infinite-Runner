@@ -2267,6 +2267,9 @@ fun RacingSimulatorScreen(
             .fillMaxHeight()
     )
 }
+}
+}
+}
  @Composable
 fun GameOverOverlayScreen(
     simState: SimulationState,
