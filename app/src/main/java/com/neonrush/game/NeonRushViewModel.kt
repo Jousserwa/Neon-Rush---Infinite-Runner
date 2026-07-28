@@ -1059,7 +1059,7 @@ if (!updated.adsRemoved) {
         fuelLevelPercent = 100,
         feedbackMessage = "Revive code accepted! Launching drone boosters...",
         reviveCount = currentState.reviveCount + 1,
-        shieldUntilTick = currentTick + 25 // ~3 seconds of invulnerability at 120ms/tick,
+        shieldUntilTick = currentTick + 25 // ~3 seconds of invulnerability at 120ms/tick
         fuelRefillCount = 0 // fresh life = fresh set of 3 refuels
     )
     simJob?.cancel()
