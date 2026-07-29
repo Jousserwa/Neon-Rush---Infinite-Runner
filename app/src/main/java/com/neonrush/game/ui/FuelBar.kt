@@ -15,15 +15,19 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.runtime.getValue
 
 @Composable
 fun FuelBar(
@@ -32,26 +36,42 @@ fun FuelBar(
     isPro: Boolean,
     cost: Int,
     onRefuel: () -> Unit,
+    onFuelTierChanged: (String) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val capReached = !isPro && refillCount >= 3
+    val haptic = LocalHapticFeedback.current
 
-    // Base color by fuel level
-    val baseColor = when {
-        fuelPercent > 50 -> Color(0xFF00E5FF) // calm blue/cyan
-        fuelPercent > 30 -> Color(0xFFFF9800) // orange warning
-        else -> Color(0xFFFF1744)             // urgent red
+    // Base color + tier name by fuel level
+    val tier = when {
+        fuelPercent > 50 -> "normal"
+        fuelPercent > 30 -> "warning"
+        else -> "critical"
+    }
+    val baseColor = when (tier) {
+        "normal" -> Color(0xFF00E5FF)   // calm blue/cyan
+        "warning" -> Color(0xFFFF9800)  // orange warning
+        else -> Color(0xFFFF1744)       // urgent red
+    }
+
+    // Fire a callback exactly once whenever the tier changes (for sound/feedback hooks)
+    var lastTier by remember { mutableStateOf(tier) }
+    LaunchedEffect(tier) {
+        if (tier != lastTier) {
+            onFuelTierChanged(tier)
+            lastTier = tier
+        }
     }
 
     // Pulse speed/intensity scales with urgency
     val infiniteTransition = rememberInfiniteTransition(label = "fuelPulse")
-    val pulseDurationMs = when {
-        fuelPercent > 50 -> 100000 // effectively static
-        fuelPercent > 30 -> 900
+    val pulseDurationMs = when (tier) {
+        "normal" -> 100000 // effectively static
+        "warning" -> 900
         else -> 450
     }
     val pulseAlpha by infiniteTransition.animateFloat(
-        initialValue = if (fuelPercent > 50) 1f else 0.55f,
+        initialValue = if (tier == "normal") 1f else 0.55f,
         targetValue = 1f,
         animationSpec = infiniteRepeatable(
             animation = tween(pulseDurationMs, easing = LinearEasing),
@@ -60,12 +80,22 @@ fun FuelBar(
         label = "fuelPulseAlpha"
     )
 
+    val refuelsLeftLabel = if (!isPro) {
+        val left = (3 - refillCount).coerceAtLeast(0)
+        "  •  $left LEFT"
+    } else ""
+
+    val warningIcon = if (tier == "critical") "⚠️ " else if (tier == "warning") "⛽ " else "⛽ "
+
     Box(
         modifier = modifier
             .clip(RoundedCornerShape(8.dp))
             .background(Color(0xFF14141C))
             .border(1.dp, baseColor.copy(alpha = pulseAlpha), RoundedCornerShape(8.dp))
-            .clickable(enabled = !capReached) { onRefuel() }
+            .clickable(enabled = !capReached) {
+                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                onRefuel()
+            }
     ) {
         // Fill proportional to fuel level
         Box(
@@ -76,10 +106,14 @@ fun FuelBar(
         )
 
         Text(
-            text = if (capReached) "FUEL ${fuelPercent}%" else "⛽ ${fuelPercent}%  •  TAP: $cost💎",
+            text = if (capReached) {
+                "FUEL ${fuelPercent}%"
+            } else {
+                "$warningIcon${fuelPercent}%  •  TAP: $cost💎$refuelsLeftLabel"
+            },
             color = Color.White,
             fontFamily = FontFamily.Monospace,
-            fontSize = 11.sp,
+            fontSize = 10.sp,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.align(Alignment.Center)
         )
