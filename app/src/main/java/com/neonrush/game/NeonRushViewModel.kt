@@ -208,10 +208,11 @@ class NeonRushViewModel(
                 gameDao.saveProfile(updated)
                 soundEngine.playUnlockSkin()
             }
+        } else {
+            _purchaseErrorEvent.tryEmit("Purchase failed. Please try again.")
         }
     }
 }
-
 fun purchaseRemoveAds(activity: Activity) {
     RevenueCatManager.purchaseRemoveAds(activity) { success ->
         if (success) {
@@ -221,6 +222,8 @@ fun purchaseRemoveAds(activity: Activity) {
                 gameDao.saveProfile(updated)
                 soundEngine.playUnlockSkin()
             }
+        } else {
+            _purchaseErrorEvent.tryEmit("Purchase failed. Please try again.")
         }
     }
 }
