@@ -2325,19 +2325,24 @@ fun GameOverOverlayScreen(
                 )
 
                 Box(
-                    modifier = Modifier
-                        .size(56.dp)
-                        .background(CyberSurface, RoundedCornerShape(50)),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "$secondsLeft",
-                        fontSize = 22.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = CyberPrimary,
-                        fontFamily = FontFamily.Monospace
-                    )
-                }
+    modifier = Modifier.size(56.dp),
+    contentAlignment = Alignment.Center
+) {
+    CircularProgressIndicator(
+        progress = secondsLeft / 5f,
+        modifier = Modifier.fillMaxSize(),
+        color = CyberPrimary,
+        trackColor = CyberSurface,
+        strokeWidth = 4.dp
+    )
+    Text(
+        text = "$secondsLeft",
+        fontSize = 22.sp,
+        fontWeight = FontWeight.Bold,
+        color = CyberPrimary,
+        fontFamily = FontFamily.Monospace
+    )
+}
 
                 if (!isPro) {
     Button(
