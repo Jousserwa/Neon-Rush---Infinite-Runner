@@ -336,6 +336,13 @@ fun fuelRefillCostForCurrentRun(): Int {
         else -> 30
     }
 }
+fun onFuelTierChanged(tier: String) {
+    when (tier) {
+        "warning" -> soundEngine.playTone(440f, 150, "sine")
+        "critical" -> soundEngine.playTone(880f, 200, "sawtooth")
+        else -> {}
+    }
+}
 
 fun refuelWithGems(isPro: Boolean) {
     viewModelScope.launch {
