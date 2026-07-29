@@ -179,17 +179,19 @@ class NeonRushViewModel(
     }
 
     fun purchaseGemPack(activity: Activity, productId: String, gemAmount: Int) {
-        RevenueCatManager.purchaseGemPack(activity, productId) { success ->
-            if (success) {
-                viewModelScope.launch {
-                    val prof = gameDao.getProfileDirect() ?: GameProfile()
-                    val updated = prof.copy(gems = prof.gems + gemAmount)
-                    gameDao.saveProfile(updated)
-                    soundEngine.playUnlockSkin()
-                }
+    RevenueCatManager.purchaseGemPack(activity, productId) { success ->
+        if (success) {
+            viewModelScope.launch {
+                val prof = gameDao.getProfileDirect() ?: GameProfile()
+                val updated = prof.copy(gems = prof.gems + gemAmount)
+                gameDao.saveProfile(updated)
+                soundEngine.playUnlockSkin()
             }
+        } else {
+            _purchaseErrorEvent.tryEmit("Purchase failed. Please try again.")
         }
     }
+}
     fun recordAdWatched() {
     viewModelScope.launch {
         val prof = gameDao.getProfileDirect() ?: GameProfile()
