@@ -377,6 +377,8 @@ fun buyExtraAttempt() {
 }
     private val _streakRewardEvent = MutableSharedFlow<StreakReward>(extraBufferCapacity = 2)
     val streakRewardEvent: SharedFlow<StreakReward> = _streakRewardEvent.asSharedFlow()
+    private val _purchaseErrorEvent = MutableSharedFlow<String>(extraBufferCapacity = 2)
+    val purchaseErrorEvent: SharedFlow<String> = _purchaseErrorEvent.asSharedFlow()
 
     fun checkDailyStreak() {
     viewModelScope.launch {
