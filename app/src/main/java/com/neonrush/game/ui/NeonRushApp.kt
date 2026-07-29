@@ -2257,15 +2257,16 @@ fun RacingSimulatorScreen(
     }
 
     FuelBar(
-        fuelPercent = simState.fuelLevelPercent,
-        refillCount = simState.fuelRefillCount,
-        isPro = isPro,
-        cost = viewModel.fuelRefillCostForCurrentRun(),
-        onRefuel = { viewModel.refuelWithGems(isPro) },
-        modifier = Modifier
-            .weight(0.7f)
-            .fillMaxHeight()
-    )
+    fuelPercent = simState.fuelLevelPercent,
+    refillCount = simState.fuelRefillCount,
+    isPro = isPro,
+    cost = viewModel.fuelRefillCostForCurrentRun(),
+    onRefuel = { viewModel.refuelWithGems(isPro) },
+    onFuelTierChanged = { tier -> viewModel.onFuelTierChanged(tier) },
+    modifier = Modifier
+        .weight(0.7f)
+        .fillMaxHeight()
+)
 }
 }
 }
