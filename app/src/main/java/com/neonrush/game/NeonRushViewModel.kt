@@ -307,14 +307,16 @@ fun doubleGemsForRun() {
         soundEngine.playUnlockSkin()
     }
 }
-    fun purchasePilotSkin(activity: Activity, skinId: String, productId: String) {
-        RevenueCatManager.purchasePilotSuit(activity, productId) { success ->
-            if (success) {
-                unlockPilotSkinFromStory(skinId)
-                equipPilotSkin(skinId)
-            }
+fun purchasePilotSkin(activity: Activity, skinId: String, productId: String) {
+    RevenueCatManager.purchasePilotSuit(activity, productId) { success ->
+        if (success) {
+            unlockPilotSkinFromStory(skinId)
+            equipPilotSkin(skinId)
+        } else {
+            _purchaseErrorEvent.tryEmit("Purchase failed. Please try again.")
         }
     }
+}
 fun reviveCostForCurrentRun(): Int {
     return when (_simState.value.reviveCount) {
         0 -> 20
