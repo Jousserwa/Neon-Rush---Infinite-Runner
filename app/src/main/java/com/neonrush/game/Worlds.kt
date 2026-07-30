@@ -95,7 +95,7 @@ object Worlds {
     bossIntroText = "A rogue trace-daemon breaches the tunnel — it's been hunting your signal for weeks.",
     endingText = "You slip the last firewall as the city's grid flickers back to normal. For now, you're a ghost again.",
     requiresPro = true,
-    environmentIds = listOf(14, 13, 2) // Dimensional Rift, Plasma Field, Crystal Cave
+    environmentIds = listOf(15) // Signal Fracture (dedicated new environment)
 ),
 World(
     id = 7,
@@ -108,7 +108,7 @@ World(
     bossIntroText = "The ice cracks behind you — something enormous was sleeping just beneath it.",
     endingText = "You break the surface into blinding white, the facility collapsing into the dark below.",
     requiresPro = true,
-    environmentIds = listOf(12, 4, 10) // Frozen Tundra, Void Realm, Shadow World
+    environmentIds = listOf(16) // Frozen Veil (dedicated new environment)
 ),
 World(
     id = 8,
@@ -121,7 +121,7 @@ World(
     bossIntroText = "The source reveals itself — not human, not machine, something in between.",
     endingText = "The signal goes silent. For the first time since this all began, so does your mind.",
     requiresPro = true,
-    environmentIds = listOf(11, 9, 5) // Golden Age, Prismatic, Electric Storm
+    environmentIds = listOf(17) // Apex Signal (dedicated new environment)
 )
     )
 
