@@ -52,24 +52,26 @@ object ZoneGenerator {
 
     // 16 environments
     val ENVIRONMENTS = listOf(
-        Triple("NEON CITY", "🌆", "#00E5FF"),
-        Triple("DEEP SPACE", "🌌", "#9D00FF"),
-        Triple("CRYSTAL CAVE", "❄️", "#00FFF0"),
-        Triple("LAVA FORGE", "🌋", "#FF007F"),
-        Triple("VOID REALM", "🌀", "#1A1A24"),
-        Triple("ELECTRIC STORM", "⚡", "#FFD700"),
-        Triple("OCEAN DEEP", "🐳", "#0088FF"),
-        Triple("ANCIENT RUINS", "🏛️", "#8D99AE"),
-        Triple("CYBER GARDEN", "🌿", "#00FF66"),
-        Triple("PRISMATIC", "🌈", "#FF5EFF"),
-        Triple("SHADOW WORLD", "🌘", "#111111"),
-        Triple("GOLDEN AGE", "👑", "#D4AF37"),
-        Triple("FROZEN TUNDRA", "🏔️", "#E0FAFF"),
-        Triple("PLASMA FIELD", "🔋", "#FF00B4"),
-        Triple("DIMENSIONAL RIFT", "👾", "#AE00FF"),
-        Triple("TRANSCENDENT", "✨", "#FFFFFF")
-    )
-
+    Triple("NEON CITY", "🌆", "#00E5FF"),
+    Triple("DEEP SPACE", "🌌", "#9D00FF"),
+    Triple("CRYSTAL CAVE", "❄️", "#00FFF0"),
+    Triple("LAVA FORGE", "🌋", "#FF007F"),
+    Triple("VOID REALM", "🌀", "#1A1A24"),
+    Triple("ELECTRIC STORM", "⚡", "#FFD700"),
+    Triple("OCEAN DEEP", "🐳", "#0088FF"),
+    Triple("ANCIENT RUINS", "🏛️", "#8D99AE"),
+    Triple("CYBER GARDEN", "🌿", "#00FF66"),
+    Triple("PRISMATIC", "🌈", "#FF5EFF"),
+    Triple("SHADOW WORLD", "🌘", "#111111"),
+    Triple("GOLDEN AGE", "👑", "#D4AF37"),
+    Triple("FROZEN TUNDRA", "🏔️", "#E0FAFF"),
+    Triple("PLASMA FIELD", "🔋", "#FF00B4"),
+    Triple("DIMENSIONAL RIFT", "👾", "#AE00FF"),
+    Triple("SIGNAL FRACTURE", "🧬", "#E000FF"),
+    Triple("FROZEN VEIL", "🧊", "#7FDBFF"),
+    Triple("APEX SIGNAL", "🗼", "#FFD700"),
+    Triple("TRANSCENDENT", "✨", "#FFFFFF")
+)
     fun calculateSpeed(zone: Int): Float {
         // Grace period: zones 1-3 stay flat so new players get their bearings
         val effectiveZone = (zone - 3).coerceIn(0, 100) // cap growth so speed plateaus instead of declining
