@@ -80,7 +80,7 @@ object ZoneGenerator {
     }
 
     fun selectEnvironment(zone: Int): Int {
-    if (zone >= 100) return 15 // Transcendent is ENV16 (0-indexed 15)
+    if (zone >= 100) return 18 // Transcendent is now the 19th environment (0-indexed 18)
     val world = Worlds.worldForZone(zone)
     return if (world.environmentIds.isNotEmpty()) {
         world.environmentIds[zone % world.environmentIds.size]
