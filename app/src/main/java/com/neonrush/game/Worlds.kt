@@ -111,22 +111,75 @@ World(
     environmentIds = listOf(16) // Frozen Veil (dedicated new environment)
 ),
 World(
-    id = 8,
-    title = "APEX SIGNAL",
-    subtitle = "Final Ascent",
-    startZone = 57,
-    endZone = 64,
-    openingText = "Every job, every job you've ever run — it all led here. The Apex Signal. Whatever's broadcasting it built everything you've survived so far.",
-    midRunText = "The signal speaks directly into your comms now: \"You were always going to come.\"",
-    bossIntroText = "The source reveals itself — not human, not machine, something in between.",
-    endingText = "The signal goes silent. For the first time since this all began, so does your mind.",
+    id = 5,
+    title = "RED PROTOCOL",
+    subtitle = "Citywide Manhunt",
+    startZone = 33,
+    endZone = 40,
+    openingText = "Your face just hit every screen in the city. RED PROTOCOL is active — every drone, every camera, every door is against you now.",
+    midRunText = "Command channel, encrypted: \"They've sealed the outer district. You have one route left — through the transit spine.\"",
+    bossIntroText = "A hunter-class enforcer drops from the skyline, already locked onto your signal.",
+    endingText = "You clear the city limits as the alert finally goes dark behind you. For now, Red Protocol is over. For you, it never really ends.",
     requiresPro = true,
-    environmentIds = listOf(17) // Apex Signal (dedicated new environment)
+    environmentIds = listOf(0, 13, 9) // Neon City, Plasma Field, Prismatic
 )
+    )
+
+    // Special Mode worlds — not part of normal endless progression.
+    // Unlocked permanently via mission-tier qualification (see MissionManager/ViewModel).
+    val SPECIAL_WORLDS: List<World> = listOf(
+        World(
+            id = 6,
+            title = "SIGNAL FRACTURE",
+            subtitle = "Data Heist",
+            startZone = 1,
+            endZone = 999,
+            openingText = "Red Protocol went dark, but someone's been watching the whole time. They want what's in your head — the run data. Time to disappear into the wire.",
+            midRunText = "A voice bleeds through every speaker you pass: \"We know where you're going.\"",
+            bossIntroText = "A rogue trace-daemon breaches the tunnel — it's been hunting your signal for weeks.",
+            endingText = "You slip the last firewall as the city's grid flickers back to normal. For now, you're a ghost again.",
+            requiresPro = false,
+            environmentIds = listOf(15) // Signal Fracture (dedicated new environment)
+        ),
+        World(
+            id = 7,
+            title = "FROZEN VEIL",
+            subtitle = "Arctic Infiltration",
+            startZone = 1,
+            endZone = 999,
+            openingText = "Coordinates lead north, to a research site buried under a century of ice. Something down there was never meant to surface.",
+            midRunText = "The facility's old intercom crackles: \"Site containment has failed. Do not proceed.\"",
+            bossIntroText = "The ice cracks behind you — something enormous was sleeping just beneath it.",
+            endingText = "You break the surface into blinding white, the facility collapsing into the dark below.",
+            requiresPro = false,
+            environmentIds = listOf(16) // Frozen Veil (dedicated new environment)
+        ),
+        World(
+            id = 8,
+            title = "APEX SIGNAL",
+            subtitle = "Final Ascent",
+            startZone = 1,
+            endZone = 999,
+            openingText = "Every job, every job you've ever run — it all led here. The Apex Signal. Whatever's broadcasting it built everything you've survived so far.",
+            midRunText = "The signal speaks directly into your comms now: \"You were always going to come.\"",
+            bossIntroText = "The source reveals itself — not human, not machine, something in between.",
+            endingText = "The signal goes silent. For the first time since this all began, so does your mind.",
+            requiresPro = false,
+            environmentIds = listOf(17) // Apex Signal (dedicated new environment)
+        )
     )
 
     fun worldForZone(zone: Int): World {
         return ALL.find { zone in it.startZone..it.endZone } ?: ALL.last()
+    }
+
+    fun specialWorldForTier(tier: Int): World? {
+        return when (tier) {
+            1 -> SPECIAL_WORLDS.getOrNull(0)
+            2 -> SPECIAL_WORLDS.getOrNull(1)
+            3 -> SPECIAL_WORLDS.getOrNull(2)
+            else -> null
+        }
     }
 
     fun isWorldUnlocked(world: World, isPro: Boolean): Boolean {
