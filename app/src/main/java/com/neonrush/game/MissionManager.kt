@@ -110,6 +110,16 @@ fun currentMonthlyMissions(rerollCount: Int = 0): List<MissionTemplate> = select
 
     fun findTemplate(id: String): MissionTemplate? =
         (DAILY_POOL + WEEKLY_POOL + MONTHLY_POOL).find { it.id == id }
+        fun checkSpecialWorldQualification(profile: GameProfile): Int {
+    var tier = profile.specialWorldTier
+    val dailyClaimed = parseClaimedCsv(profile.dailyMissionsClaimedCsv)
+    if (tier < 1 && dailyClaimed.size >= 3) tier = 1
+    val weeklyClaimed = parseClaimedCsv(profile.weeklyMissionsClaimedCsv)
+    if (tier < 2 && weeklyClaimed.size >= 3) tier = 2
+    val monthlyClaimed = parseClaimedCsv(profile.monthlyMissionsClaimedCsv)
+    if (tier < 3 && monthlyClaimed.size >= 3) tier = 3
+    return tier
+}
 
     // Resets progress/claimed CSVs whenever the period key has changed since last recorded.
     private fun rolledOver(profile: GameProfile): GameProfile {
