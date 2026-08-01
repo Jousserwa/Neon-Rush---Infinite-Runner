@@ -86,9 +86,9 @@ data class SimulationState(
     val particles: List<Particle> = emptyList(),
     val reviveCount: Int = 0,
     val shieldUntilTick: Int = -1,
-    val fuelRefillCount: Int = 0
+    val fuelRefillCount: Int = 0,
+    val specialWorldId: Int? = null
 )
-
 class NeonRushViewModel(
     private val gameDao: GameDao,
     context: Context
