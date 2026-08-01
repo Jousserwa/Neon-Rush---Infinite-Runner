@@ -133,7 +133,8 @@ class GameDao(context: Context) {
                 bestZoneReached = if (bestZoneReachedIdx != -1) cursor.getInt(bestZoneReachedIdx) else 0,
                 dailyRerollCount = if (dailyRerollCountIdx != -1) cursor.getInt(dailyRerollCountIdx) else 0,
                 weeklyRerollCount = if (weeklyRerollCountIdx != -1) cursor.getInt(weeklyRerollCountIdx) else 0,
-                monthlyRerollCount = if (monthlyRerollCountIdx != -1) cursor.getInt(monthlyRerollCountIdx) else 0
+                monthlyRerollCount = if (monthlyRerollCountIdx != -1) cursor.getInt(monthlyRerollCountIdx) else 0,
+                specialWorldTier = if (specialWorldTierIdx != -1) cursor.getInt(specialWorldTierIdx) else 0
             )
             
             _profileFlow.value = profile
