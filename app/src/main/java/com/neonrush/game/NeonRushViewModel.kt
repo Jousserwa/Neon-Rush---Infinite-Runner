@@ -760,7 +760,8 @@ fun startRacingSimulation(ghost: GhostChallengeEntity, specialWorldId: Int? = nu
                 val tickDistanceOffset = speedInPx * 3.6f
                 val nextDistance = state.distanceMeters + tickDistanceOffset
                 val nextZoneNumber = (nextDistance / 500f).toInt() + 1
-                val activeDna = ZoneGenerator.generateZone(nextZoneNumber, random.nextLong())
+                var activeDna = ZoneGenerator.generateZone(nextZoneNumber, random.nextLong())
+                if (state.specialWorldId != null) activeDna = overrideEnvironment(activeDna, state.specialWorldId)
                 var updatedMsg = state.feedbackMessage
                 if (nextZoneNumber != state.currentZoneNumber) {
                     soundEngine.playTone(660f, 300, "sawtooth")
