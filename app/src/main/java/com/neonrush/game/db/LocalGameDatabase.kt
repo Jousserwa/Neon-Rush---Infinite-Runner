@@ -40,7 +40,8 @@ data class GameProfile(
     val bestZoneReached: Int = 0,
     val dailyRerollCount: Int = 0,
     val weeklyRerollCount: Int = 0,
-    val monthlyRerollCount: Int = 0
+    val monthlyRerollCount: Int = 0,
+    val specialWorldTier: Int = 0
 )
 
 data class GhostChallengeEntity(
