@@ -76,8 +76,13 @@ object MissionManager {
         val rnd = Random(seed.hashCode().toLong())
         return pool.shuffled(rnd).take(3)
     }
-
-    fun currentDailyMissions(rerollCount: Int = 0): List<MissionTemplate> = selectThree(DAILY_POOL, dateKey() + "-r$rerollCount")
+fun currentDailyMissions(rerollCount: Int = 0): List<MissionTemplate> {
+    val adsMission = DAILY_POOL.first { it.id == "d_ads2" }
+    val rest = DAILY_POOL.filter { it.id != "d_ads2" }
+    val others = selectThree(rest, dateKey() + "-r$rerollCount").take(2)
+    return listOf(adsMission) + others
+}
+    
 fun currentWeeklyMissions(rerollCount: Int = 0): List<MissionTemplate> = selectThree(WEEKLY_POOL, weekKey() + "-r$rerollCount")
 fun currentMonthlyMissions(rerollCount: Int = 0): List<MissionTemplate> = selectThree(MONTHLY_POOL, monthKey() + "-r$rerollCount")
 
