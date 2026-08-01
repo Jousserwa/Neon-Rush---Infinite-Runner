@@ -100,6 +100,7 @@ class GameDao(context: Context) {
             val dailyRerollCountIdx = cursor.getColumnIndex("dailyRerollCount")
             val weeklyRerollCountIdx = cursor.getColumnIndex("weeklyRerollCount")
             val monthlyRerollCountIdx = cursor.getColumnIndex("monthlyRerollCount")
+            val specialWorldTierIdx = cursor.getColumnIndex("specialWorldTier")
             val profile = GameProfile(
                 id = 1,
                 username = if (usernameIdx != -1) cursor.getString(usernameIdx) else "NeonPilot_99",
