@@ -679,25 +679,43 @@ fun freezeStreak() {
         }
     }
 
-    fun startRacingSimulation(ghost: GhostChallengeEntity) {
-        simJob?.cancel()
-        val startupDna = ZoneGenerator.generateZone(1, 42)
-        val todayMutation = DailyMutations.getActiveMutation()
-        val isFirstLucky = (System.currentTimeMillis() - lastPlayTime) > 3 * 24 * 3600 * 1000L
-        _simState.value = SimulationState(
-            activeGhost = ghost,
-            isStarted = true,
-            isCompleted = false,
-            tickIndex = 0,
-            ghostYPath = ZoneGenerator.parseTelemetry(ghost.yPositionsCsv),
-            userYPath = parseTelemetryFromSimParameters(),
-            feedbackMessage = if (isFirstLucky) "LUCKY DRIFT ENGAGED (SLOWER SPEED, MORE POWERUPS)!" else "Synchronizing procedural light grid pathways...",
-            currentZoneNumber = 1,
-            zoneDNA = startupDna,
-            activeTrackElements = emptyList(),
-            activePowerupDurations = emptyMap(),
-            currentMutationName = todayMutation.title
-        )
+    fun overrideEnvironment(dna: ZoneDNA, envId: Int): ZoneDNA {
+    val (name, emoji, color) = ZoneGenerator.ENVIRONMENTS[envId]
+    return dna.copy(environmentId = envId, environmentName = name, environmentEmoji = emoji, environmentColor = color)
+}
+
+fun startSpecialModeRun(ghost: GhostChallengeEntity) {
+    viewModelScope.launch {
+        val prof = gameDao.getProfileDirect() ?: GameProfile()
+        val world = Worlds.specialWorldForTier(prof.specialWorldTier)
+        val envId = world?.environmentIds?.firstOrNull()
+        if (envId != null) {
+            startRacingSimulation(ghost, specialWorldId = envId)
+        }
+    }
+}
+
+fun startRacingSimulation(ghost: GhostChallengeEntity, specialWorldId: Int? = null) {
+    simJob?.cancel()
+    var startupDna = ZoneGenerator.generateZone(1, 42)
+    if (specialWorldId != null) startupDna = overrideEnvironment(startupDna, specialWorldId)
+    val todayMutation = DailyMutations.getActiveMutation()
+    val isFirstLucky = (System.currentTimeMillis() - lastPlayTime) > 3 * 24 * 3600 * 1000L
+    _simState.value = SimulationState(
+        activeGhost = ghost,
+        isStarted = true,
+        isCompleted = false,
+        tickIndex = 0,
+        ghostYPath = ZoneGenerator.parseTelemetry(ghost.yPositionsCsv),
+        userYPath = parseTelemetryFromSimParameters(),
+        feedbackMessage = if (isFirstLucky) "LUCKY DRIFT ENGAGED (SLOWER SPEED, MORE POWERUPS)!" else "Synchronizing procedural light grid pathways...",
+        currentZoneNumber = 1,
+        zoneDNA = startupDna,
+        activeTrackElements = emptyList(),
+        activePowerupDurations = emptyMap(),
+        currentMutationName = todayMutation.title,
+        specialWorldId = specialWorldId
+    )
         soundEngine.setHomeScreenActiveState(false)
         soundEngine.playThrusterCharge()
         AnalyticsManager.logGameStart()
