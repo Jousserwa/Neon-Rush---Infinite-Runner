@@ -1002,6 +1002,8 @@ fun ArcadeHomeView(
                     .border(1.dp, CyberSecondary.copy(alpha = 0.4f), RoundedCornerShape(12.dp))
                     .testTag("quick_skins_button")
             ) {
+                testTag("quick_skins_button")
+            ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center
@@ -1012,10 +1014,36 @@ fun ArcadeHomeView(
                 }
             }
         }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        val specialWorld = Worlds.specialWorldForTier(profile.specialWorldTier)
+        Button(
+            onClick = { if (specialWorld != null) onStartSpecialMode() },
+            enabled = specialWorld != null,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = if (specialWorld != null) Color(0xFF9C27B0) else CyberSurface
+            ),
+            shape = RoundedCornerShape(8.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(48.dp)
+                .border(1.dp, Color(0xFF9C27B0).copy(alpha = 0.5f), RoundedCornerShape(8.dp))
+        ) {
+            Text(
+                text = if (specialWorld != null) "⚡ ENTER ${specialWorld.title}" else "🔒 COMPLETE DAILY MISSIONS TO UNLOCK",
+                color = Color.White,
+                fontFamily = FontFamily.Monospace,
+                fontWeight = FontWeight.Bold,
+                fontSize = 12.sp
+            )
+        }
     }
 }
 @Composable
 fun MissionsSection(viewModel: NeonRushViewModel, profile: GameProfile) {
+    Column(modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)) {
+        MissionTierBlock("📅 DAILY
     Column(modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)) {
         MissionTierBlock("📅 DAILY MISSIONS", MissionTier.DAILY, MissionManager.currentDailyMissions(profile.dailyRerollCount), profile.dailyMissionProgressCsv, profile.dailyMissionsClaimedCsv, viewModel, profile)
         Spacer(modifier = Modifier.height(12.dp))
