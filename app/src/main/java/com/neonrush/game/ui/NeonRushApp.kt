@@ -680,6 +680,8 @@ fun GhostRacerTab(viewModel: NeonRushViewModel, onBack: () -> Unit) {
         }
 
         Spacer(modifier = Modifier.height(8.dp))
+    }
+}
 
 @Composable
 fun ArcadeHomeView(
