@@ -702,6 +702,7 @@ fun ArcadeHomeView(
     onNavigateToGlobal: () -> Unit,
     onNavigateToSkins: () -> Unit,
     onNavigateToSocial: () -> Unit,
+    onStartSpecialMode: () -> Unit,
     isPro: Boolean
 ) {
     Column(
