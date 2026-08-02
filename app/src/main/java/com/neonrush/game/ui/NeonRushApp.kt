@@ -282,6 +282,16 @@ if (showStreakFreezeOffer) {
                                         onNavigateToGlobal = { activeTab = "rankings" },
                                         onNavigateToSkins = { activeTab = "skins" },
                                         onNavigateToSocial = { activeTab = "social" },
+                                        onStartSpecialMode = {
+                                            val specialGhost = com.neonrush.game.db.GhostChallengeEntity(
+                                                "ghost_cyberrunner",
+                                                "CyberRunner",
+                                                850,
+                                                4,
+                                                ZoneGenerator.generateTelemetryCsv(850, 111)
+                                            )
+                                            viewModel.startSpecialModeRun(specialGhost)
+                                        },
                                         isPro = isPro
                                     
                                 
