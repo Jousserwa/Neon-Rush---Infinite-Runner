@@ -1002,8 +1002,7 @@ fun ArcadeHomeView(
                     .border(1.dp, CyberSecondary.copy(alpha = 0.4f), RoundedCornerShape(12.dp))
                     .testTag("quick_skins_button")
             ) {
-                testTag("quick_skins_button")
-            ) {
+                
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center
