@@ -681,29 +681,6 @@ fun GhostRacerTab(viewModel: NeonRushViewModel, onBack: () -> Unit) {
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        val specialWorld = Worlds.specialWorldForTier(profile.specialWorldTier)
-        Button(
-            onClick = { if (specialWorld != null) onStartSpecialMode() },
-            enabled = specialWorld != null,
-            colors = ButtonDefaults.buttonColors(
-                containerColor = if (specialWorld != null) Color(0xFF9C27B0) else CyberSurface
-            ),
-            shape = RoundedCornerShape(8.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(48.dp)
-                .border(1.dp, Color(0xFF9C27B0).copy(alpha = 0.5f), RoundedCornerShape(8.dp))
-        ) {
-            Text(
-                text = if (specialWorld != null) "⚡ ENTER ${specialWorld.title}" else "🔒 COMPLETE DAILY MISSIONS TO UNLOCK",
-                color = Color.White,
-                fontFamily = FontFamily.Monospace,
-                fontWeight = FontWeight.Bold,
-                fontSize = 12.sp
-            )
-        }
-    }
-}
 @Composable
 fun ArcadeHomeView(
     profile: GameProfile,
