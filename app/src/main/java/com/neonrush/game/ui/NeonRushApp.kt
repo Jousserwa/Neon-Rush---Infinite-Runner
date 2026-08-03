@@ -739,9 +739,10 @@ fun SpecialModeTab(profile: GameProfile, viewModel: NeonRushViewModel, onStartSp
             Triple(3, "Apex Signal", "Complete all 3 Monthly Missions")
         )
 
+        var expandedTier by remember { mutableStateOf<Int?>(null) }
+
         tiers.forEach { (tierNum, name, requirement) ->
             val unlocked = profile.specialWorldTier >= tierNum
-            val isCurrent = profile.specialWorldTier == tierNum
 
             Row(
                 modifier = Modifier
@@ -754,10 +755,12 @@ fun SpecialModeTab(profile: GameProfile, viewModel: NeonRushViewModel, onStartSp
                         if (unlocked) Color(0xFF9C27B0) else CyberOnSurface.copy(alpha = 0.2f),
                         RoundedCornerShape(8.dp)
                     )
+                    .clickable(enabled = !unlocked) { expandedTier = tierNum }
                     .padding(14.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
+            
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
                         text = if (unlocked) "✅ $name" else "🔒 $name",
