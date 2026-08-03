@@ -682,6 +682,84 @@ fun GhostRacerTab(viewModel: NeonRushViewModel, onBack: () -> Unit) {
         Spacer(modifier = Modifier.height(8.dp))
     }
 }
+Spacer(modifier = Modifier.height(8.dp))
+    }
+}
+@Composable
+fun SpecialModeTab(profile: GameProfile, viewModel: NeonRushViewModel, onStartSpecialMode: () -> Unit) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(16.dp)
+    ) {
+        Text(
+            text = "⚡ SPECIAL MODE",
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Black,
+            color = Color(0xFF9C27B0),
+            fontFamily = FontFamily.Monospace
+        )
+        Spacer(modifier = Modifier.height(4.dp))
+        Text(
+            text = "Qualify through missions to unlock a completely different world.",
+            fontSize = 12.sp,
+            color = CyberOnSurface.copy(alpha = 0.7f)
+        )
+        Spacer(modifier = Modifier.height(20.dp))
+
+        val tiers = listOf(
+            Triple(1, "Signal Fracture", "Complete all 3 Daily Missions"),
+            Triple(2, "Frozen Veil", "Complete all 3 Weekly Missions"),
+            Triple(3, "Apex Signal", "Complete all 3 Monthly Missions")
+        )
+
+        tiers.forEach { (tierNum, name, requirement) ->
+            val unlocked = profile.specialWorldTier >= tierNum
+            val isCurrent = profile.specialWorldTier == tierNum
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 6.dp)
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(if (unlocked) Color(0xFF9C27B0).copy(alpha = 0.15f) else CyberSurface)
+                    .border(
+                        1.dp,
+                        if (unlocked) Color(0xFF9C27B0) else CyberOnSurface.copy(alpha = 0.2f),
+                        RoundedCornerShape(8.dp)
+                    )
+                    .padding(14.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = if (unlocked) "✅ $name" else "🔒 $name",
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White,
+                        fontFamily = FontFamily.Monospace
+                    )
+                    Text(
+                        text = requirement,
+                        fontSize = 11.sp,
+                        color = CyberOnSurface.copy(alpha = 0.6f)
+                    )
+                }
+                if (unlocked && tierNum == profile.specialWorldTier) {
+                    Button(
+                        onClick = onStartSpecialMode,
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF9C27B0)),
+                        shape = RoundedCornerShape(4.dp)
+                    ) {
+                        Text("ENTER", color = Color.White, fontFamily = FontFamily.Monospace, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                    }
+                }
+            }
+        }
+    }
+}
+
 
 @Composable
 fun ArcadeHomeView(
