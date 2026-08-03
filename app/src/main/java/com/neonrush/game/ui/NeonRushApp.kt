@@ -191,6 +191,19 @@ if (showStreakFreezeOffer) {
                             icon = { Icon(Icons.Filled.Star, contentDescription = "Social") },
                             label = { Text("Social", fontFamily = FontFamily.Monospace, fontSize = 11.sp) }
                         )
+                        if (currentProfile.specialWorldTier >= 1) {
+                            NavigationBarItem(
+                                selected = activeTab == "special",
+                                onClick = { activeTab = "special" },
+                                colors = NavigationBarItemDefaults.colors(
+                                    selectedIconColor = Color(0xFF9C27B0),
+                                    unselectedIconColor = CyberOnSurface.copy(alpha = 0.5f),
+                                    indicatorColor = Color(0xFF9C27B0).copy(alpha = 0.1f)
+                                ),
+                                icon = { Text("⚡", fontSize = 18.sp) },
+                                label = { Text("Special", fontFamily = FontFamily.Monospace, fontSize = 11.sp) }
+                            )
+                        }
                         NavigationBarItem(
                             selected = activeTab == "skins",
                             onClick = { activeTab = "skins" },
