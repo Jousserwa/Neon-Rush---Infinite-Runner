@@ -315,6 +315,20 @@ if (showStreakFreezeOffer) {
                             "rankings" -> LeaderboardsTab(viewModel = viewModel, playerProfile = currentProfile)
                             "social" -> DailyChallengeTab(viewModel = viewModel, profile = currentProfile)
                             "skins" -> SkinsDeckTab(viewModel = viewModel, profile = currentProfile)
+                            "special" -> SpecialModeTab(
+                                profile = currentProfile,
+                                viewModel = viewModel,
+                                onStartSpecialMode = {
+                                    val specialGhost = com.neonrush.game.db.GhostChallengeEntity(
+                                        "ghost_cyberrunner",
+                                        "CyberRunner",
+                                        850,
+                                        4,
+                                        ZoneGenerator.generateTelemetryCsv(850, 111)
+                                    )
+                                    viewModel.startSpecialModeRun(specialGhost)
+                                }
+                            )
                             "profile" -> ProfileTab(profile = currentProfile, viewModel = viewModel)
                         }
                     }
