@@ -1156,9 +1156,11 @@ fun ArcadeHomeView(
         Spacer(modifier = Modifier.height(8.dp))
 
         val specialWorld = Worlds.specialWorldForTier(profile.specialWorldTier)
+        var showSpecialLockInfo by remember { mutableStateOf(false) }
         Button(
-            onClick = { if (specialWorld != null) onStartSpecialMode() },
-            enabled = specialWorld != null,
+            onClick = {
+                if (specialWorld != null) onStartSpecialMode() else showSpecialLockInfo = true
+            },
             colors = ButtonDefaults.buttonColors(
                 containerColor = if (specialWorld != null) Color(0xFF9C27B0) else CyberSurface
             ),
@@ -1174,6 +1176,38 @@ fun ArcadeHomeView(
                 fontFamily = FontFamily.Monospace,
                 fontWeight = FontWeight.Bold,
                 fontSize = 12.sp
+            )
+        }
+
+        if (showSpecialLockInfo) {
+            val nextTier = profile.specialWorldTier + 1
+            val (missions, claimedCsv) = when (nextTier) {
+                1 -> MissionManager.currentDailyMissions(profile.dailyRerollCount) to profile.dailyMissionsClaimedCsv
+                2 -> MissionManager.currentWeeklyMissions(profile.weeklyRerollCount) to profile.weeklyMissionsClaimedCsv
+                else -> MissionManager.currentMonthlyMissions(profile.monthlyRerollCount) to profile.monthlyMissionsClaimedCsv
+            }
+            val claimed = MissionManager.parseClaimedCsv(claimedCsv)
+            AlertDialog(
+                onDismissRequest = { showSpecialLockInfo = false },
+                title = { Text("What's still needed", fontFamily = FontFamily.Monospace) },
+                text = {
+                    Column {
+                        missions.forEach { mission ->
+                            val done = claimed.contains(mission.id)
+                            Text(
+                                text = if (done) "✅ ${mission.description}" else "◻️ ${mission.description}",
+                                color = if (done) Color(0xFF4CAF50) else Color.White,
+                                fontSize = 13.sp,
+                                modifier = Modifier.padding(vertical = 4.dp)
+                            )
+                        }
+                    }
+                },
+                confirmButton = {
+                    Button(onClick = { showSpecialLockInfo = false }) {
+                        Text("Got it")
+                    }
+                }
             )
         }
     }
