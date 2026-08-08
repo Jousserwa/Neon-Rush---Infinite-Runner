@@ -1490,7 +1490,126 @@ if (profile.dailyAttemptsToday >= 3) {
         }
     }
 }
+// TODO: swap these for your real invite/subreddit URLs once created
+private const val DISCORD_INVITE_URL = "https://discord.gg/YOUR-INVITE-CODE"
+private const val REDDIT_URL = "https://reddit.com/r/NeonRushGame"
+private const val PLAY_STORE_URL = "https://play.google.com/store/apps/details?id=com.neonrush.game"
 
+@Composable
+fun CommunityAndShareCard(profile: GameProfile) {
+    val context = LocalContext.current
+
+    // Referral code persisted per-device via SharedPreferences.
+    // NOTE: actually crediting Gems to both the referrer and the new player
+    // when this code is used requires the Play Install Referrer API (to read
+    // the code back out on first launch) plus a backend check to confirm
+    // the referred player reached your reward threshold. This wiring only
+    // covers generating and sharing the code/link.
+    val prefs = remember { context.getSharedPreferences("neonrush_prefs", 0) }
+    val referralCode = remember {
+        var code = prefs.getString("referral_code", null)
+        if (code == null) {
+            code = profile.hashCode().toString(36).takeLast(6).uppercase()
+            prefs.edit().putString("referral_code", code).apply()
+        }
+        code
+    }
+
+    Card(
+        colors = CardDefaults.cardColors(containerColor = CyberSurface),
+        modifier = Modifier
+            .fillMaxWidth()
+            .border(2.dp, CyberPrimary, RoundedCornerShape(12.dp))
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(
+                text = "🌐 JOIN THE CREW",
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Bold,
+                color = CyberPrimary,
+                fontFamily = FontFamily.Monospace
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = "Get patch notes, join events, and vote on what we build next.",
+                fontSize = 12.sp,
+                color = CyberOnSurface.copy(alpha = 0.7f)
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Button(
+                    onClick = {
+                        context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(DISCORD_INVITE_URL)))
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF5865F2)),
+                    shape = RoundedCornerShape(8.dp),
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("DISCORD", color = Color.White, fontFamily = FontFamily.Monospace, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                }
+                Button(
+                    onClick = {
+                        context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(REDDIT_URL)))
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF4500)),
+                    shape = RoundedCornerShape(8.dp),
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("REDDIT", color = Color.White, fontFamily = FontFamily.Monospace, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+            Divider(color = CyberOnSurface.copy(alpha = 0.08f), thickness = 1.dp)
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Text(
+                text = "🎁 SHARE & EARN GEMS",
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Bold,
+                color = CyberSecondary,
+                fontFamily = FontFamily.Monospace
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = "Invite a friend with your code. When they join and start playing, you both get Gems.",
+                fontSize = 12.sp,
+                color = CyberOnSurface.copy(alpha = 0.7f)
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = "Your code: $referralCode",
+                fontSize = 13.sp,
+                fontFamily = FontFamily.Monospace,
+                fontWeight = FontWeight.Bold,
+                color = Color.White
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Button(
+                onClick = {
+                    val shareText = "I'm playing Neon Rush — how far can you go? 🚀\n" +
+                        "Use my code $referralCode when you install and we both get Gems!\n" +
+                        "$PLAY_STORE_URL&referrer=$referralCode"
+                    val sendIntent = Intent(Intent.ACTION_SEND).apply {
+                        type = "text/plain"
+                        putExtra(Intent.EXTRA_TEXT, shareText)
+                    }
+                    context.startActivity(Intent.createChooser(sendIntent, "Share Neon Rush"))
+                },
+                colors = ButtonDefaults.buttonColors(containerColor = CyberSecondary),
+                shape = RoundedCornerShape(8.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("SHARE MY CODE", color = Color.White, fontFamily = FontFamily.Monospace, fontWeight = FontWeight.Bold)
+            }
+        }
+    }
+}
 @Composable
 fun SkinsDeckTab(viewModel: NeonRushViewModel, profile: GameProfile) {
     val unlockedSkins = remember(profile.unlockedSkinsCsv) {
