@@ -37,6 +37,8 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextOverflow
 import kotlinx.coroutines.delay 
 import com.neonrush.game.StreakReward
+import android.content.Intent
+import android.net.Uri
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
