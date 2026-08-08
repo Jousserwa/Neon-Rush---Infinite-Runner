@@ -1491,7 +1491,7 @@ if (profile.dailyAttemptsToday >= 3) {
     }
 }
 // TODO: swap these for your real invite/subreddit URLs once created
-private const val DISCORD_INVITE_URL = "https://discord.gg/YOUR-INVITE-CODE"
+private const val DISCORD_INVITE_URL = "https://discord.gg/GmBWCp2WuN"
 private const val REDDIT_URL = "https://reddit.com/r/NeonRushGame"
 private const val PLAY_STORE_URL = "https://play.google.com/store/apps/details?id=com.neonrushinfinite.game"
 
