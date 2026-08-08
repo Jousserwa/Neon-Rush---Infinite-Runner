@@ -1436,6 +1436,10 @@ if (profile.dailyAttemptsToday >= 3) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        CommunityAndShareCard(profile = profile)
+
+        Spacer(modifier = Modifier.height(16.dp))
+
         Text(
             text = "💬 COMPANION PILOT CHAT",
             fontSize = 13.sp,
