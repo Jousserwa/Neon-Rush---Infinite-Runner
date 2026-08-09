@@ -39,6 +39,8 @@ import kotlinx.coroutines.delay
 import com.neonrush.game.StreakReward
 import android.content.Intent
 import android.net.Uri
+import com.neonrush.game.ReferralRepository
+import kotlinx.coroutines.launch
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
