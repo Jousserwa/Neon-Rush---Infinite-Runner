@@ -2511,9 +2511,15 @@ val ghostMarkerImg = ImageBitmap.imageResource(id = R.drawable.marker_ghost_riva
                                         }
                                     }
                                 }
-                                "bullet" -> {
-                                    drawCircle(color = Color(0xFFFF00FF), radius = 3.dp.toPx(), center = Offset(x, y))
-                                }
+                               "bullet" -> {
+    val baseSize = ch * 0.05f
+    val w = baseSize * (bulletImg.width.toFloat() / bulletImg.height.toFloat())
+    drawImage(
+        image = bulletImg,
+        dstOffset = IntOffset((x - w / 2f).roundToInt(), (y - baseSize / 2f).roundToInt()),
+        dstSize = IntSize(w.roundToInt(), baseSize.roundToInt())
+    )
+} 
                             }
                         }
 
