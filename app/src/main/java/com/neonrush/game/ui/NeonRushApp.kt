@@ -2338,9 +2338,30 @@ val puLegendaryAuraImg = ImageBitmap.imageResource(id = R.drawable.powerup_legen
                                     }
                                 }
                                 "powerup" -> {
-                                    drawCircle(color = Color(0xFF8338EC), radius = 9.dp.toPx(), center = Offset(x, y))
-                                    drawCircle(color = Color.White, radius = 7.dp.toPx(), center = Offset(x, y), style = Stroke(1.dp.toPx()))
-                                }
+    val puImg = when (elem.subType) {
+        "PU1" -> puShieldImg
+        "PU2" -> puMagnetImg
+        "PU3" -> puTimeSlowImg
+        "PU4" -> puGhostImg
+        "PU5" -> puScoreX2Img
+        "PU6" -> puScoreX5Img
+        "PU7" -> puInvincibilityImg
+        "PU8" -> puBoomClearImg
+        "PU9" -> puShrinkImg
+        "PU10" -> puLaneWarpImg
+        "PU11" -> puZoneSkipImg
+        "PU12" -> puLegendaryAuraImg
+        else -> puScoreX2Img
+    }
+    val pulse = 1f + 0.15f * sin(simState.tickIndex * 0.3f)
+    val baseSize = ch * 0.07f * pulse
+    val w = baseSize * (puImg.width.toFloat() / puImg.height.toFloat())
+    drawImage(
+        image = puImg,
+        dstOffset = IntOffset((x - w / 2f).roundToInt(), (y - baseSize / 2f).roundToInt()),
+        dstSize = IntSize(w.roundToInt(), baseSize.roundToInt())
+    )
+}
                                 "obstacle" -> {
                                     val obsColor = Color(0xFFFF0055)
                                     when (elem.subType) {
