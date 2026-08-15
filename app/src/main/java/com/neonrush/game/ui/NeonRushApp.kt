@@ -2543,11 +2543,13 @@ val ghostMarkerImg = ImageBitmap.imageResource(id = R.drawable.marker_ghost_riva
                             val ghostY = ch * (simState.ghostYPos / 100f)
                             val ghostX = cw * 0.2f
 
-                            drawCircle(
-                                color = CyberSecondary.copy(alpha = 0.5f),
-                                radius = 8.dp.toPx(),
-                                center = Offset(ghostX, ghostY)
-                            )
+                            val markerSize = ch * 0.05f
+    drawImage(
+        image = ghostMarkerImg,
+        dstOffset = IntOffset((ghostX - markerSize / 2f).roundToInt(), (ghostY - markerSize / 2f).roundToInt()),
+        dstSize = IntSize(markerSize.roundToInt(), markerSize.roundToInt())
+    )
+                                
                         }
 
                         val userY = ch * (simState.userYPos / 100f)
