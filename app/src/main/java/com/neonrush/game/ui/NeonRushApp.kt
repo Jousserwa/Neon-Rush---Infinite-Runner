@@ -2145,6 +2145,8 @@ val puShrinkImg = ImageBitmap.imageResource(id = R.drawable.powerup_shrink)
 val puLaneWarpImg = ImageBitmap.imageResource(id = R.drawable.powerup_lane_warp)
 val puZoneSkipImg = ImageBitmap.imageResource(id = R.drawable.powerup_zone_skip)
 val puLegendaryAuraImg = ImageBitmap.imageResource(id = R.drawable.powerup_legendary_aura)
+val bulletImg = ImageBitmap.imageResource(id = R.drawable.hazard_bullet_boss)
+val ghostMarkerImg = ImageBitmap.imageResource(id = R.drawable.marker_ghost_rival)
     
     val textMeasurer = rememberTextMeasurer()
     var previousScoreForPopups by remember { mutableStateOf(simState.score) }
