@@ -2133,6 +2133,18 @@ fun RacingSimulatorScreen(
     val tunnelTopImg = ImageBitmap.imageResource(id = R.drawable.obstacle_tunnel_top)
     val tunnelBottomImg = ImageBitmap.imageResource(id = R.drawable.obstacle_tunnel_bottom)
     val standardImg = ImageBitmap.imageResource(id = R.drawable.obstacle_standard)
+    val puShieldImg = ImageBitmap.imageResource(id = R.drawable.powerup_shield)
+val puMagnetImg = ImageBitmap.imageResource(id = R.drawable.powerup_magnet)
+val puTimeSlowImg = ImageBitmap.imageResource(id = R.drawable.powerup_time_slow)
+val puGhostImg = ImageBitmap.imageResource(id = R.drawable.powerup_ghost)
+val puScoreX2Img = ImageBitmap.imageResource(id = R.drawable.powerup_score_x2)
+val puScoreX5Img = ImageBitmap.imageResource(id = R.drawable.powerup_score_x5)
+val puInvincibilityImg = ImageBitmap.imageResource(id = R.drawable.powerup_invincibility)
+val puBoomClearImg = ImageBitmap.imageResource(id = R.drawable.powerup_boom_clear)
+val puShrinkImg = ImageBitmap.imageResource(id = R.drawable.powerup_shrink)
+val puLaneWarpImg = ImageBitmap.imageResource(id = R.drawable.powerup_lane_warp)
+val puZoneSkipImg = ImageBitmap.imageResource(id = R.drawable.powerup_zone_skip)
+val puLegendaryAuraImg = ImageBitmap.imageResource(id = R.drawable.powerup_legendary_aura)
     
     val textMeasurer = rememberTextMeasurer()
     var previousScoreForPopups by remember { mutableStateOf(simState.score) }
