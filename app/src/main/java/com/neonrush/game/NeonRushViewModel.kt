@@ -77,6 +77,7 @@ data class SimulationState(
     val bossHealth: Float = 1.0f,
     val bossY: Int = 50,
     val collectedGemsCount: Int = 0,
+    val gemsEarnedLastRun: Int = 0,
     val ghostTierMode: Int = 1,
     val isTranscendenceUnlocked: Boolean = false,
     val currentMutationName: String = "",
