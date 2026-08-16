@@ -1069,6 +1069,7 @@ val updated = prof.copy(
     totalGemsEarned = prof.totalGemsEarned + gemsEarnedThisRun,
     bestZoneReached = bestZoneLifetime
 )
+_simState.value = _simState.value.copy(gemsEarnedLastRun = gemsEarnedThisRun)
 val missionUpdated = MissionManager.recordRunResult(
     updated,
     zoneReached = finalState.currentZoneNumber,
