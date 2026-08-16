@@ -309,7 +309,7 @@ fun rerollMissions(tier: MissionTier) {
 fun doubleGemsForRun() {
     viewModelScope.launch {
         val prof = gameDao.getProfileDirect() ?: GameProfile()
-        val bonus = _simState.value.collectedGemsCount
+        val bonus = _simState.value.gemsEarnedLastRun
         val updated = prof.copy(gems = prof.gems + bonus)
         gameDao.saveProfile(updated)
         soundEngine.playUnlockSkin()
