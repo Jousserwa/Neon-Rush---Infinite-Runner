@@ -2843,17 +2843,7 @@ fun GameOverOverlayScreen(
         )
     }
 }
-
-                if (!isPro) {
-                    Card
-            color = Color.Black,
-            fontFamily = FontFamily.Monospace,
-            fontWeight = FontWeight.Bold
-        )
-    }
-}
-
-                if (!isPro) {
+            if (!isPro) {
                     Card(
                         colors = CardDefaults.cardColors(containerColor = CyberSurface),
                         modifier = Modifier
