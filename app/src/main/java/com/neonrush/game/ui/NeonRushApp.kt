@@ -2835,8 +2835,17 @@ fun GameOverOverlayScreen(
         shape = RoundedCornerShape(8.dp),
         modifier = Modifier.fillMaxWidth()
     ) {
-        Text(
-            text = "🎬 DOUBLE GEMS (${simState.collectedGemsCount * 2} 💎)",
+       Text(
+            text = "🎬 DOUBLE GEMS (${simState.gemsEarnedLastRun} 💎)",
+            color = Color.Black,
+            fontFamily = FontFamily.Monospace,
+            fontWeight = FontWeight.Bold
+        )
+    }
+}
+
+                if (!isPro) {
+                    Card
             color = Color.Black,
             fontFamily = FontFamily.Monospace,
             fontWeight = FontWeight.Bold
