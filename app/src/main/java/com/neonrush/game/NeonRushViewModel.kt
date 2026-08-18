@@ -1058,11 +1058,6 @@ fun startRacingSimulation(ghost: GhostChallengeEntity, specialWorldId: Int? = nu
 val gemsEarnedThisRun = (((finalState.collectedGemsCount + bonusGems + FridayBonus) * valMultiplier) * GEM_ECONOMY_RATE).toInt()
         android.util.Log.d("GEM_DEBUG", "collected=${finalState.collectedGemsCount} bonus=$bonusGems friday=$FridayBonus mult=$valMultiplier earned=$gemsEarnedThisRun profGemsBefore=${prof.gems}")
 
-
-val newTotalRuns = prof.totalRuns + 1
-val newAverageScore = ((prof.averageScore * prof.totalRuns) + finalState.score) / newTotalRuns
-
-
 val newTotalRuns = prof.totalRuns + 1
 val newAverageScore = ((prof.averageScore * prof.totalRuns) + finalState.score) / newTotalRuns
 
