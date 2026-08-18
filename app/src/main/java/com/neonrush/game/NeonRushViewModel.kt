@@ -1054,7 +1054,7 @@ fun startRacingSimulation(ghost: GhostChallengeEntity, specialWorldId: Int? = nu
             bonusGems = 55
             soundEngine.playUnlockSkin()
         }
-        val GEM_ECONOMY_RATE = 0.5f
+        val GEM_ECONOMY_RATE = (1f / 3f)
 val gemsEarnedThisRun = (((finalState.collectedGemsCount + bonusGems + FridayBonus) * valMultiplier) * GEM_ECONOMY_RATE).toInt()
         android.util.Log.d("GEM_DEBUG", "collected=${finalState.collectedGemsCount} bonus=$bonusGems friday=$FridayBonus mult=$valMultiplier earned=$gemsEarnedThisRun profGemsBefore=${prof.gems}")
 
