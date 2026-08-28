@@ -7,7 +7,8 @@ import android.database.sqlite.SQLiteOpenHelper
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 data class GameProfile(
     val id: Int = 1,
     val username: String = "NeonPilot_99",
