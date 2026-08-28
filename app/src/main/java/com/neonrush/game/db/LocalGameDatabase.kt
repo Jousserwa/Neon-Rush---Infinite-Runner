@@ -157,6 +157,15 @@ class GameDao(context: Context) {
     suspend fun saveProfile(profile: GameProfile) {
         saveProfileDirect(profile)
     }
+    suspend fun updateProfile(block: (GameProfile) -> GameProfile): GameProfile {
+        return profileMutex.withLock {
+            refreshProfile()
+            val current = _profileFlow.value ?: GameProfile()
+            val updated = block(current)
+            saveProfileDirect(updated)
+            updated
+        }
+    }
 
     private fun saveProfileDirect(profile: GameProfile) {
         val db = dbHelper.writableDatabase
