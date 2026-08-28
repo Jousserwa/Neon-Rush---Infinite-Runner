@@ -57,6 +57,7 @@ data class GhostChallengeEntity(
 class GameDao(context: Context) {
     private val dbHelper = GameDbHelper(context)
     private val _profileFlow = MutableStateFlow<GameProfile?>(null)
+    private val profileMutex = Mutex()
     
     init {
         refreshProfile()
