@@ -212,9 +212,7 @@ fun purchaseRemoveAds(activity: Activity) {
     RevenueCatManager.purchaseRemoveAds(activity) { success ->
         if (success) {
             viewModelScope.launch {
-                val prof = gameDao.getProfileDirect() ?: GameProfile()
-                val updated = prof.copy(adsRemoved = true)
-                gameDao.saveProfile(updated)
+                gameDao.updateProfile { prof -> prof.copy(adsRemoved = true) }
                 soundEngine.playUnlockSkin()
             }
         } else {
