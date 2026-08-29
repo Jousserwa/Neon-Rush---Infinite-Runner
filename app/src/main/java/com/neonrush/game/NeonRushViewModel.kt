@@ -479,22 +479,27 @@ suspend fun isStreakFreezeEligible(): Boolean {
 }
 fun freezeStreak() {
     viewModelScope.launch {
-        val prof = gameDao.getProfileDirect() ?: GameProfile()
         val cost = 25
-        val missed = streakDaysMissed(prof)
-        if (missed == 2 && prof.gems >= cost) {
-            val fmt = SimpleDateFormat("yyyy-MM-dd", Locale.US)
-            val cal = Calendar.getInstance()
-            cal.add(Calendar.DAY_OF_YEAR, -1)
-            val yesterday = fmt.format(cal.time)
-            val updated = prof.copy(gems = prof.gems - cost, lastStreakLoginDate = yesterday)
-            gameDao.saveProfile(updated)
+        var didFreeze = false
+        gameDao.updateProfile { prof ->
+            val missed = streakDaysMissed(prof)
+            if (missed == 2 && prof.gems >= cost) {
+                didFreeze = true
+                val fmt = SimpleDateFormat("yyyy-MM-dd", Locale.US)
+                val cal = Calendar.getInstance()
+                cal.add(Calendar.DAY_OF_YEAR, -1)
+                val yesterday = fmt.format(cal.time)
+                prof.copy(gems = prof.gems - cost, lastStreakLoginDate = yesterday)
+            } else {
+                prof
+            }
+        }
+        if (didFreeze) {
             soundEngine.playUnlockSkin()
             checkDailyStreak()
         }
     }
 }
-
 
     init {
         loadSocialComments()
