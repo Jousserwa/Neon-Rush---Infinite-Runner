@@ -222,21 +222,31 @@ fun purchaseRemoveAds(activity: Activity) {
 }
 fun claimMission(tier: MissionTier, missionId: String) {
     viewModelScope.launch {
-        val prof = gameDao.getProfileDirect() ?: GameProfile()
-        val result = MissionManager.claimMission(prof, tier, missionId)
-        if (result != null) {
-            val (updatedProfile, rewardGems) = result
-            val newTier = MissionManager.checkSpecialWorldQualification(updatedProfile)
-            val finalProfile = updatedProfile.copy(
-                gems = updatedProfile.gems + rewardGems,
-                specialWorldTier = newTier
-            )
-            gameDao.saveProfile(finalProfile)
+        var rewardGemsResult = 0
+        var oldSpecialWorldTier = 0
+        var claimed = false
+        val finalProfile = gameDao.updateProfile { prof ->
+            oldSpecialWorldTier = prof.specialWorldTier
+            val result = MissionManager.claimMission(prof, tier, missionId)
+            if (result != null) {
+                val (updatedProfile, rewardGems) = result
+                rewardGemsResult = rewardGems
+                claimed = true
+                val newTier = MissionManager.checkSpecialWorldQualification(updatedProfile)
+                updatedProfile.copy(
+                    gems = updatedProfile.gems + rewardGems,
+                    specialWorldTier = newTier
+                )
+            } else {
+                prof
+            }
+        }
+        if (claimed) {
             soundEngine.playUnlockSkin()
-            if (newTier > prof.specialWorldTier) {
+            if (finalProfile.specialWorldTier > oldSpecialWorldTier) {
                 soundEngine.playPersonalBestBroken() // reuse as a celebratory "world unlocked" sound
             }
-            AnalyticsManager.logScoreMilestone(rewardGems)
+            AnalyticsManager.logScoreMilestone(rewardGemsResult)
         }
     }
 }
