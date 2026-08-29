@@ -292,11 +292,17 @@ fun rerollMissions(tier: MissionTier) {
 }
     fun equipPilotSkin(skinId: String) {
         viewModelScope.launch {
-            val prof = gameDao.getProfileDirect() ?: GameProfile()
-            val unlocked = prof.unlockedPilotSkinsCsv.split(",").toSet()
-            if (unlocked.contains(skinId)) {
-                val updated = prof.copy(activePilotSkinId = skinId)
-                gameDao.saveProfile(updated)
+            var didEquip = false
+            gameDao.updateProfile { prof ->
+                val unlocked = prof.unlockedPilotSkinsCsv.split(",").toSet()
+                if (unlocked.contains(skinId)) {
+                    didEquip = true
+                    prof.copy(activePilotSkinId = skinId)
+                } else {
+                    prof
+                }
+            }
+            if (didEquip) {
                 soundEngine.playTone(400f, 100, "sine")
             }
         }
