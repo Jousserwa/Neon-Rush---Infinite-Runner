@@ -387,11 +387,17 @@ fun refuelWithGems(isPro: Boolean) {
     viewModelScope.launch {
         val current = _simState.value
         if (!isPro && current.fuelRefillCount >= 3) return@launch
-        val prof = gameDao.getProfileDirect() ?: GameProfile()
         val cost = fuelRefillCostForCurrentRun()
-        if (prof.gems >= cost) {
-            val updated = prof.copy(gems = prof.gems - cost)
-            gameDao.saveProfile(updated)
+        var didRefuel = false
+        gameDao.updateProfile { prof ->
+            if (prof.gems >= cost) {
+                didRefuel = true
+                prof.copy(gems = prof.gems - cost)
+            } else {
+                prof
+            }
+        }
+        if (didRefuel) {
             _simState.value = current.copy(
                 fuelLevelPercent = 100,
                 fuelRefillCount = current.fuelRefillCount + 1
