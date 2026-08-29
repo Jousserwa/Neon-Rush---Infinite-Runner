@@ -193,9 +193,7 @@ class NeonRushViewModel(
 }
     fun recordAdWatched() {
     viewModelScope.launch {
-        val prof = gameDao.getProfileDirect() ?: GameProfile()
-        val updated = MissionManager.recordAdWatched(prof)
-        gameDao.saveProfile(updated)
+        gameDao.updateProfile { prof -> MissionManager.recordAdWatched(prof) }
     }
 }
     fun purchaseStarterPack(activity: Activity) {
