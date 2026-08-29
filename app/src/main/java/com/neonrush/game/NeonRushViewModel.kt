@@ -353,11 +353,17 @@ fun reviveCostForCurrentRun(): Int {
 
 fun reviveWithGems() {
     viewModelScope.launch {
-        val prof = gameDao.getProfileDirect() ?: GameProfile()
         val cost = reviveCostForCurrentRun()
-        if (_simState.value.reviveCount < 2 && prof.gems >= cost) {
-            val updated = prof.copy(gems = prof.gems - cost)
-            gameDao.saveProfile(updated)
+        var didRevive = false
+        gameDao.updateProfile { prof ->
+            if (_simState.value.reviveCount < 2 && prof.gems >= cost) {
+                didRevive = true
+                prof.copy(gems = prof.gems - cost)
+            } else {
+                prof
+            }
+        }
+        if (didRevive) {
             reviveSimulation()
         }
     }
