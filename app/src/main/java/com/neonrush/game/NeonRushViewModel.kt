@@ -559,15 +559,15 @@ fun freezeStreak() {
 
     fun toggleFollowUser(pilotName: String) {
         viewModelScope.launch {
-            val prof = gameDao.getProfileDirect() ?: GameProfile()
-            val followedList = prof.followedUsersCsv.split(",").filter { it.isNotEmpty() }.toMutableList()
-            if (followedList.contains(pilotName)) {
-                followedList.remove(pilotName)
-            } else {
-                followedList.add(pilotName)
+            gameDao.updateProfile { prof ->
+                val followedList = prof.followedUsersCsv.split(",").filter { it.isNotEmpty() }.toMutableList()
+                if (followedList.contains(pilotName)) {
+                    followedList.remove(pilotName)
+                } else {
+                    followedList.add(pilotName)
+                }
+                prof.copy(followedUsersCsv = followedList.joinToString(","))
             }
-            val updated = prof.copy(followedUsersCsv = followedList.joinToString(","))
-            gameDao.saveProfile(updated)
             loadDefaultLeaderboard()
         }
     }
