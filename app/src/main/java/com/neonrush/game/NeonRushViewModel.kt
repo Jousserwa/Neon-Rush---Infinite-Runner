@@ -574,25 +574,33 @@ fun freezeStreak() {
 
     fun purchaseSkin(skinId: String, cost: Int) {
         viewModelScope.launch {
-            val prof = gameDao.getProfileDirect() ?: GameProfile()
-            val unlockedSkins = prof.unlockedSkinsCsv.split(",").toMutableList()
-            if (unlockedSkins.contains(skinId)) {
-                val updated = prof.copy(activeSkinId = skinId)
-                gameDao.saveProfile(updated)
-                soundEngine.playTone(400f, 100, "sine")
-                loadDefaultLeaderboard()
-                return@launch
+            var outcome = "none" // "equipped", "bought", or "none"
+            gameDao.updateProfile { prof ->
+                val unlockedSkins = prof.unlockedSkinsCsv.split(",").toMutableList()
+                if (unlockedSkins.contains(skinId)) {
+                    outcome = "equipped"
+                    prof.copy(activeSkinId = skinId)
+                } else if (prof.gems >= cost) {
+                    unlockedSkins.add(skinId)
+                    outcome = "bought"
+                    prof.copy(
+                        gems = prof.gems - cost,
+                        unlockedSkinsCsv = unlockedSkins.joinToString(","),
+                        activeSkinId = skinId
+                    )
+                } else {
+                    prof
+                }
             }
-            if (prof.gems >= cost) {
-                unlockedSkins.add(skinId)
-                val updated = prof.copy(
-                    gems = prof.gems - cost,
-                    unlockedSkinsCsv = unlockedSkins.joinToString(","),
-                    activeSkinId = skinId
-                )
-                gameDao.saveProfile(updated)
-                soundEngine.playUnlockSkin()
-                loadDefaultLeaderboard()
+            when (outcome) {
+                "equipped" -> {
+                    soundEngine.playTone(400f, 100, "sine")
+                    loadDefaultLeaderboard()
+                }
+                "bought" -> {
+                    soundEngine.playUnlockSkin()
+                    loadDefaultLeaderboard()
+                }
             }
         }
     }
