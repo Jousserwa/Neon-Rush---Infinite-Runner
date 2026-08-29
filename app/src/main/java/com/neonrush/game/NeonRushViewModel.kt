@@ -682,26 +682,32 @@ fun freezeStreak() {
 
     fun triggerTranscendence() {
         viewModelScope.launch {
-            val prof = gameDao.getProfileDirect() ?: GameProfile()
-            if (prof.bestScore >= 5000 || prof.transcendenceCount > 0) {
-                val nextPrestige = prof.transcendenceCount + 1
-                val currentUnlocked = prof.unlockedSkinsCsv.split(",").filter { it.isNotEmpty() }.toMutableList()
-                val exclusiveSkin = when (nextPrestige) {
-                    1 -> "gold_transcendence"
-                    2 -> "matrix_grid"
-                    else -> "elite_nebula"
+            var didTranscend = false
+            gameDao.updateProfile { prof ->
+                if (prof.bestScore >= 5000 || prof.transcendenceCount > 0) {
+                    didTranscend = true
+                    val nextPrestige = prof.transcendenceCount + 1
+                    val currentUnlocked = prof.unlockedSkinsCsv.split(",").filter { it.isNotEmpty() }.toMutableList()
+                    val exclusiveSkin = when (nextPrestige) {
+                        1 -> "gold_transcendence"
+                        2 -> "matrix_grid"
+                        else -> "elite_nebula"
+                    }
+                    if (!currentUnlocked.contains(exclusiveSkin)) {
+                        currentUnlocked.add(exclusiveSkin)
+                    }
+                    prof.copy(
+                        transcendenceCount = nextPrestige,
+                        bestScore = 0,
+                        gems = prof.gems + 500,
+                        unlockedSkinsCsv = currentUnlocked.joinToString(","),
+                        activeSkinId = exclusiveSkin
+                    )
+                } else {
+                    prof
                 }
-                if (!currentUnlocked.contains(exclusiveSkin)) {
-                    currentUnlocked.add(exclusiveSkin)
-                }
-                val updated = prof.copy(
-                    transcendenceCount = nextPrestige,
-                    bestScore = 0,
-                    gems = prof.gems + 500,
-                    unlockedSkinsCsv = currentUnlocked.joinToString(","),
-                    activeSkinId = exclusiveSkin
-                )
-                gameDao.saveProfile(updated)
+            }
+            if (didTranscend) {
                 soundEngine.playTone(880f, 500, "sawtooth")
                 loadDefaultLeaderboard()
             }
