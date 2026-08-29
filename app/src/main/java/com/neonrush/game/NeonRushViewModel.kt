@@ -200,9 +200,7 @@ class NeonRushViewModel(
     RevenueCatManager.purchaseStarterPack(activity) { success ->
         if (success) {
             viewModelScope.launch {
-                val prof = gameDao.getProfileDirect() ?: GameProfile()
-                val updated = prof.copy(gems = prof.gems + RevenueCatManager.STARTER_PACK_GEMS_AMOUNT)
-                gameDao.saveProfile(updated)
+                gameDao.updateProfile { prof -> prof.copy(gems = prof.gems + RevenueCatManager.STARTER_PACK_GEMS_AMOUNT) }
                 soundEngine.playUnlockSkin()
             }
         } else {
