@@ -408,14 +408,20 @@ fun refuelWithGems(isPro: Boolean) {
 }
 fun buyExtraAttempt() {
     viewModelScope.launch {
-        val prof = gameDao.getProfileDirect() ?: GameProfile()
         val cost = 25
-        if (prof.gems >= cost) {
-            val updated = prof.copy(
-                gems = prof.gems - cost,
-                dailyAttemptsToday = (prof.dailyAttemptsToday - 1).coerceAtLeast(0)
-            )
-            gameDao.saveProfile(updated)
+        var didBuy = false
+        gameDao.updateProfile { prof ->
+            if (prof.gems >= cost) {
+                didBuy = true
+                prof.copy(
+                    gems = prof.gems - cost,
+                    dailyAttemptsToday = (prof.dailyAttemptsToday - 1).coerceAtLeast(0)
+                )
+            } else {
+                prof
+            }
+        }
+        if (didBuy) {
             soundEngine.playUnlockSkin()
         }
     }
