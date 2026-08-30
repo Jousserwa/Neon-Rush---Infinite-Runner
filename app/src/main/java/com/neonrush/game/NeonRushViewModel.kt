@@ -716,18 +716,24 @@ fun freezeStreak() {
 
     fun runDailyRushChallenge(onComplete: (Boolean, Int) -> Unit) {
         viewModelScope.launch {
-            val prof = gameDao.getProfileDirect() ?: GameProfile()
-            val todayDate = SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(Date())
-            val attempts = if (prof.lastDailyRushDate == todayDate) prof.dailyAttemptsToday else 0
-            if (attempts >= 3) {
+            var newAttempts = -1
+            gameDao.updateProfile { prof ->
+                val todayDate = SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(Date())
+                val attempts = if (prof.lastDailyRushDate == todayDate) prof.dailyAttemptsToday else 0
+                if (attempts >= 3) {
+                    prof
+                } else {
+                    newAttempts = attempts + 1
+                    prof.copy(
+                        dailyAttemptsToday = attempts + 1,
+                        lastDailyRushDate = todayDate
+                    )
+                }
+            }
+            if (newAttempts < 0) {
                 onComplete(false, 0)
                 return@launch
             }
-            val updated = prof.copy(
-                dailyAttemptsToday = attempts + 1,
-                lastDailyRushDate = todayDate
-            )
-            gameDao.saveProfile(updated)
             val hardGhost = GhostChallengeEntity(
                 challengeId = "daily_hard_ghost",
                 playerName = "GlitchViper [VIRTUAL]",
@@ -736,7 +742,7 @@ fun freezeStreak() {
                 yPositionsCsv = ZoneGenerator.generateTelemetryCsv(350, 99)
             )
             startRacingSimulation(hardGhost)
-            onComplete(true, attempts + 1)
+            onComplete(true, newAttempts)
         }
     }
 
