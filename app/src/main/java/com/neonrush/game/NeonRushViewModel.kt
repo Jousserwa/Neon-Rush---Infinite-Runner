@@ -789,6 +789,7 @@ fun startRacingSimulation(ghost: GhostChallengeEntity, specialWorldId: Int? = nu
         simJob = viewModelScope.launch {
             val milestonesTriggered = mutableSetOf<Int>()
             val prof = gameDao.getProfileDirect() ?: GameProfile()
+            android.util.Log.d("GEM_DEBUG", "RUN START gems=${prof.gems}")
             var tick = 0
             val random = kotlin.random.Random(System.currentTimeMillis())
             var runStartTime = System.currentTimeMillis()
