@@ -886,8 +886,7 @@ fun startRacingSimulation(ghost: GhostChallengeEntity, specialWorldId: Int? = nu
                         soundEngine.playTone(990f, 400, "sine")
                         updatedMsg = "BOSS DEFEATED! Prestige Reward Cells gathered!"
                         val bossReward = nextZoneNumber * 12
-                        val currentGems = prof.gems + bossReward
-                        gameDao.saveProfile(prof.copy(gems = currentGems))
+                        gameDao.updateProfile { current -> current.copy(gems = current.gems + bossReward) }
                     }
                 }
                 var fuelLevelState = state.fuelLevelPercent
