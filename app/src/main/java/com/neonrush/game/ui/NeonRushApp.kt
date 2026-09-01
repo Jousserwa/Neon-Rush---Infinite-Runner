@@ -2827,7 +2827,7 @@ fun GameOverOverlayScreen(
                     fontFamily = FontFamily.Monospace
                 )
                 Text(
-                    text = "DEBUG: collected=${simState.collectedGemsCount} earned=${simState.gemsEarnedLastRun} totalGemsNow=${profile.gems}",
+                    text = "DEBUG: startGems=${simState.gemsAtRunStart} collected=${simState.collectedGemsCount} earned=${simState.gemsEarnedLastRun} totalGemsNow=${profile.gems}",
                     fontSize = 12.sp,
                     color = Color.Yellow,
                     fontFamily = FontFamily.Monospace
