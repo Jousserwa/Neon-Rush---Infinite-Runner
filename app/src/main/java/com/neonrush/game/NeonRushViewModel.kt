@@ -1111,10 +1111,13 @@ fun startRacingSimulation(ghost: GhostChallengeEntity, specialWorldId: Int? = nu
         }
     }
 
-    private suspend fun completeSimulationRun() {
+   private suspend fun completeSimulationRun() {
         val finalState = _simState.value
-        _simState.value = finalState.copy(isCompleted = true, feedbackMessage = "Sync terminal drift halt. Run finalized!")
-
+        _simState.value = finalState.copy(
+            isCompleted = true,
+            feedbackMessage = "Sync terminal drift halt. Run finalized!",
+            completeRunCallCount = finalState.completeRunCallCount + 1
+        )
         val todayMutation = DailyMutations.getActiveMutation()
         val isMonday = todayMutation == MutationDay.MONDAY
         val isFriday = todayMutation == MutationDay.FRIDAY
