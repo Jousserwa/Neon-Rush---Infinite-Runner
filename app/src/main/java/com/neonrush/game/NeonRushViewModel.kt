@@ -1119,6 +1119,7 @@ fun startRacingSimulation(ghost: GhostChallengeEntity, specialWorldId: Int? = nu
             feedbackMessage = "Sync terminal drift halt. Run finalized!",
             completeRunCallCount = finalState.completeRunCallCount + 1
         )
+
         val todayMutation = DailyMutations.getActiveMutation()
         val isMonday = todayMutation == MutationDay.MONDAY
         val isFriday = todayMutation == MutationDay.FRIDAY
@@ -1129,7 +1130,8 @@ fun startRacingSimulation(ghost: GhostChallengeEntity, specialWorldId: Int? = nu
             bonusGems = 55
         }
         val GEM_ECONOMY_RATE = (1f / 3f)
-        val gemsEarnedThisRun = (((finalState.collectedGemsCount + bonusGems + FridayBonus) * valMultiplier) * GEM_ECONOMY_RATE).toInt()
+        val gemsEarnedTotalSoFar = (((finalState.collectedGemsCount + bonusGems + FridayBonus) * valMultiplier) * GEM_ECONOMY_RATE).toInt()
+        val gemsToCreditNow = (gemsEarnedTotalSoFar - finalState.gemsAlreadyCreditedThisRun).coerceAtLeast(0)
 
         var isNewPB = false
         var usernameForLeaderboard = ""
@@ -1140,16 +1142,15 @@ fun startRacingSimulation(ghost: GhostChallengeEntity, specialWorldId: Int? = nu
             isNewPB = finalState.score > prof.bestScore
             usernameForLeaderboard = prof.username
             activeSkinForLeaderboard = prof.activeSkinId
-            android.util.Log.d("GEM_DEBUG", "collected=${finalState.collectedGemsCount} bonus=$bonusGems friday=$FridayBonus mult=$valMultiplier earned=$gemsEarnedThisRun profGemsBefore=${prof.gems}")
             val newTotalRuns = prof.totalRuns + 1
             val newAverageScore = ((prof.averageScore * prof.totalRuns) + finalState.score) / newTotalRuns
             val bestZoneLifetime = maxOf(prof.bestZoneReached, finalState.currentZoneNumber)
             val updated = prof.copy(
                 bestScore = if (isNewPB) finalState.score else prof.bestScore,
-                gems = prof.gems + gemsEarnedThisRun,
+                gems = prof.gems + gemsToCreditNow,
                 totalRuns = newTotalRuns,
                 averageScore = newAverageScore,
-                totalGemsEarned = prof.totalGemsEarned + gemsEarnedThisRun,
+                totalGemsEarned = prof.totalGemsEarned + gemsToCreditNow,
                 bestZoneReached = bestZoneLifetime
             )
             adsRemovedResult = updated.adsRemoved
@@ -1157,12 +1158,15 @@ fun startRacingSimulation(ghost: GhostChallengeEntity, specialWorldId: Int? = nu
                 updated,
                 zoneReached = finalState.currentZoneNumber,
                 score = finalState.score,
-                gemsThisRun = gemsEarnedThisRun,
+                gemsThisRun = gemsToCreditNow,
                 bestZoneLifetime = bestZoneLifetime
             )
         }
 
-        _simState.value = _simState.value.copy(gemsEarnedLastRun = gemsEarnedThisRun)
+        _simState.value = _simState.value.copy(
+            gemsEarnedLastRun = gemsToCreditNow,
+            gemsAlreadyCreditedThisRun = gemsEarnedTotalSoFar
+        )
 
         if (bonusGems == 55) {
             soundEngine.playUnlockSkin()
@@ -1182,7 +1186,6 @@ fun startRacingSimulation(ghost: GhostChallengeEntity, specialWorldId: Int? = nu
             soundEngine.playCollision()
         }
     }
-
     fun reviveSimulation() {
     val currentState = _simState.value
     if (currentState.reviveCount >= 2) return
