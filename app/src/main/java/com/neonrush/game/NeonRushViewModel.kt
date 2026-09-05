@@ -902,7 +902,7 @@ fun startRacingSimulation(ghost: GhostChallengeEntity, specialWorldId: Int? = nu
                                 bossZonesRewarded = (rewardedZones + nextZoneNumber.toString()).joinToString(",")
                             )
                         }
-       
+                    }
                 }
                 var fuelLevelState = state.fuelLevelPercent
                 var gemsGathered = state.collectedGemsCount
