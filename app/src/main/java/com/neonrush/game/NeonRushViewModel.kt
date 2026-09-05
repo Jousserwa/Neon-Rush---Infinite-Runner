@@ -82,6 +82,7 @@ data class SimulationState(
     val gemsAtRunStart: Int = -1,
     val completeRunCallCount: Int = 0,
     val gemsAlreadyCreditedThisRun: Int = 0,
+    val bossZonesRewarded: String = "",
     val ghostTierMode: Int = 1,
     val isTranscendenceUnlocked: Boolean = false,
     val currentMutationName: String = "",
