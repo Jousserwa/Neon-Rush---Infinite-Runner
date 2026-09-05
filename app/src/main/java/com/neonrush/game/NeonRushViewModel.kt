@@ -900,7 +900,8 @@ fun startRacingSimulation(ghost: GhostChallengeEntity, specialWorldId: Int? = nu
                             val bossReward = nextZoneNumber * 12
                             gameDao.updateProfile { current -> current.copy(gems = current.gems + bossReward) }
                             _simState.value = _simState.value.copy(
-                                bossZonesRewarded = (rewardedZones + nextZoneNumber.toString()).joinToString(",")
+                                bossZonesRewarded = (rewardedZones + nextZoneNumber.toString()).joinToString(","),
+                                bossGemsThisRun = _simState.value.bossGemsThisRun + bossReward
                             )
                         }
                     }
