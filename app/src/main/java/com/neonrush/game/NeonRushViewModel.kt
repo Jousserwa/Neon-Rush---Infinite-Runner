@@ -1141,14 +1141,15 @@ fun startRacingSimulation(ghost: GhostChallengeEntity, specialWorldId: Int? = nu
         }
         val GEM_ECONOMY_RATE = (1f / 3f)
         val gemsEarnedTotalSoFar = (((finalState.collectedGemsCount + bonusGems + FridayBonus) * valMultiplier) * GEM_ECONOMY_RATE).toInt()
-        val gemsToCreditNow = (gemsEarnedTotalSoFar - finalState.gemsAlreadyCreditedThisRun).coerceAtLeast(0)
 
         var isNewPB = false
         var usernameForLeaderboard = ""
         var activeSkinForLeaderboard = ""
         var adsRemovedResult = false
+        var gemsToCreditNow = 0
 
         val missionUpdated = gameDao.updateProfile { prof ->
+            gemsToCreditNow = (gemsEarnedTotalSoFar - prof.currentRunGemsCredited).coerceAtLeast(0)
             isNewPB = finalState.score > prof.bestScore
             usernameForLeaderboard = prof.username
             activeSkinForLeaderboard = prof.activeSkinId
@@ -1161,7 +1162,8 @@ fun startRacingSimulation(ghost: GhostChallengeEntity, specialWorldId: Int? = nu
                 totalRuns = newTotalRuns,
                 averageScore = newAverageScore,
                 totalGemsEarned = prof.totalGemsEarned + gemsToCreditNow,
-                bestZoneReached = bestZoneLifetime
+                bestZoneReached = bestZoneLifetime,
+                currentRunGemsCredited = gemsEarnedTotalSoFar
             )
             adsRemovedResult = updated.adsRemoved
             MissionManager.recordRunResult(
@@ -1173,7 +1175,7 @@ fun startRacingSimulation(ghost: GhostChallengeEntity, specialWorldId: Int? = nu
             )
         }
 
-        _simState.value = _simState.value.copy(
+        _simState.value = _simState.value.copy(gemsEarnedLastRun = gemsToCreditNow)
             gemsEarnedLastRun = gemsToCreditNow,
             gemsAlreadyCreditedThisRun = gemsEarnedTotalSoFar
         )
