@@ -894,16 +894,25 @@ fun startRacingSimulation(ghost: GhostChallengeEntity, specialWorldId: Int? = nu
                     }
                     bossHealthState -= 0.04f
                     if (bossHealthState <= 0f) {
-                        val rewardedZones = state.bossZonesRewarded.split(",").filter { it.isNotEmpty() }
-                        if (nextZoneNumber.toString() !in rewardedZones) {
+                        var wasNewlyRewarded = false
+                        var bossReward = 0
+                        gameDao.updateProfile { current ->
+                            val rewardedZones = current.currentRunBossZonesRewarded.split(",").filter { it.isNotEmpty() }
+                            if (nextZoneNumber.toString() !in rewardedZones) {
+                                wasNewlyRewarded = true
+                                bossReward = nextZoneNumber * 12
+                                current.copy(
+                                    gems = current.gems + bossReward,
+                                    currentRunBossZonesRewarded = (rewardedZones + nextZoneNumber.toString()).joinToString(",")
+                                )
+                            } else {
+                                current
+                            }
+                        }
+                        if (wasNewlyRewarded) {
                             soundEngine.playTone(990f, 400, "sine")
                             updatedMsg = "BOSS DEFEATED! Prestige Reward Cells gathered!"
-                            val bossReward = nextZoneNumber * 12
-                            gameDao.updateProfile { current -> current.copy(gems = current.gems + bossReward) }
-                            _simState.value = _simState.value.copy(
-                                bossZonesRewarded = (rewardedZones + nextZoneNumber.toString()).joinToString(","),
-                                bossGemsThisRun = _simState.value.bossGemsThisRun + bossReward
-                            )
+                            _simState.value = _simState.value.copy(bossGemsThisRun = _simState.value.bossGemsThisRun + bossReward)
                         }
                     }
                 }
