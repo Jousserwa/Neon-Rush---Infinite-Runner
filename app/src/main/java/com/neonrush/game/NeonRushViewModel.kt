@@ -892,11 +892,17 @@ fun startRacingSimulation(ghost: GhostChallengeEntity, specialWorldId: Int? = nu
                     }
                     bossHealthState -= 0.04f
                     if (bossHealthState <= 0f) {
-                        soundEngine.playTone(990f, 400, "sine")
-                        updatedMsg = "BOSS DEFEATED! Prestige Reward Cells gathered!"
-                        val bossReward = nextZoneNumber * 12
-                        gameDao.updateProfile { current -> current.copy(gems = current.gems + bossReward) }
-                    }
+                        val rewardedZones = state.bossZonesRewarded.split(",").filter { it.isNotEmpty() }
+                        if (nextZoneNumber.toString() !in rewardedZones) {
+                            soundEngine.playTone(990f, 400, "sine")
+                            updatedMsg = "BOSS DEFEATED! Prestige Reward Cells gathered!"
+                            val bossReward = nextZoneNumber * 12
+                            gameDao.updateProfile { current -> current.copy(gems = current.gems + bossReward) }
+                            _simState.value = _simState.value.copy(
+                                bossZonesRewarded = (rewardedZones + nextZoneNumber.toString()).joinToString(",")
+                            )
+                        }
+       
                 }
                 var fuelLevelState = state.fuelLevelPercent
                 var gemsGathered = state.collectedGemsCount
