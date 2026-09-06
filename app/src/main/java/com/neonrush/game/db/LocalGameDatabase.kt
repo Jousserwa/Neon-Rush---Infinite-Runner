@@ -205,6 +205,8 @@ class GameDao(context: Context) {
             put("weeklyRerollCount", profile.weeklyRerollCount)
             put("monthlyRerollCount", profile.monthlyRerollCount)
             put("specialWorldTier", profile.specialWorldTier)
+            put("currentRunGemsCredited", profile.currentRunGemsCredited)
+            put("currentRunBossZonesRewarded", profile.currentRunBossZonesRewarded)
         }
         db.insertWithOnConflict("game_profile", null, values, SQLiteDatabase.CONFLICT_REPLACE)
         _profileFlow.value = profile
