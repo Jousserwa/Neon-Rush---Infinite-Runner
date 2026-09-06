@@ -290,7 +290,9 @@ class GameDbHelper(context: Context) : SQLiteOpenHelper(context, "neon_rush_comp
                 dailyRerollCount INTEGER,
                 weeklyRerollCount INTEGER,
                 monthlyRerollCount INTEGER,
-                specialWorldTier INTEGER
+                specialWorldTier INTEGER,
+                currentRunGemsCredited INTEGER,
+                currentRunBossZonesRewarded TEXT
             )
         """)
         db.execSQL("""
