@@ -140,7 +140,9 @@ class GameDao(context: Context) {
                 dailyRerollCount = if (dailyRerollCountIdx != -1) cursor.getInt(dailyRerollCountIdx) else 0,
                 weeklyRerollCount = if (weeklyRerollCountIdx != -1) cursor.getInt(weeklyRerollCountIdx) else 0,
                 monthlyRerollCount = if (monthlyRerollCountIdx != -1) cursor.getInt(monthlyRerollCountIdx) else 0,
-                specialWorldTier = if (specialWorldTierIdx != -1) cursor.getInt(specialWorldTierIdx) else 0
+                specialWorldTier = if (specialWorldTierIdx != -1) cursor.getInt(specialWorldTierIdx) else 0,
+                currentRunGemsCredited = if (currentRunGemsCreditedIdx != -1) cursor.getInt(currentRunGemsCreditedIdx) else 0,
+                currentRunBossZonesRewarded = if (currentRunBossZonesRewardedIdx != -1) cursor.getString(currentRunBossZonesRewardedIdx) else ""
             )
             
             _profileFlow.value = profile
