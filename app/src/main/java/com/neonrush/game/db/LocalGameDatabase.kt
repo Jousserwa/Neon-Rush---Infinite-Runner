@@ -335,7 +335,7 @@ class GameDbHelper(context: Context) : SQLiteOpenHelper(context, "neon_rush_comp
         db.execSQL("ALTER TABLE game_profile ADD COLUMN weeklyRerollCount INTEGER DEFAULT 0")
         db.execSQL("ALTER TABLE game_profile ADD COLUMN monthlyRerollCount INTEGER DEFAULT 0")
     }
-    if (oldVersion < 10) {
+    if (oldVersion < 9) {
         db.execSQL("ALTER TABLE game_profile ADD COLUMN specialWorldTier INTEGER DEFAULT 0")
     }
     if (oldVersion < 10) {
