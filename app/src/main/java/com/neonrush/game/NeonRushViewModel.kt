@@ -942,7 +942,7 @@ fun startRacingSimulation(ghost: GhostChallengeEntity, specialWorldId: Int? = nu
                             when (elem.type) {
                                 "gem" -> {
                                     soundEngine.playGemCollect()
-                                    val multiFactor = if (isMondayGems) 2 else 1
+                                    gemsGathered += 1
                                     gemsGathered += multiFactor
                                     repeat(6) { i ->
                                         activeParticles.add(
