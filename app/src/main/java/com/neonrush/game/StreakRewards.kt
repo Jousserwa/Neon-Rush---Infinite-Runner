@@ -8,13 +8,13 @@ data class StreakReward(
 
 object StreakRewards {
     val ALL: List<StreakReward> = listOf(
-        StreakReward(1, 5, "Day 1"),
-        StreakReward(2, 8, "Day 2"),
-        StreakReward(3, 10, "Day 3"),
-        StreakReward(4, 15, "Day 4"),
-        StreakReward(5, 20, "Day 5"),
-        StreakReward(6, 25, "Day 6"),
-        StreakReward(7, 35, "Day 7 — Full Streak!")
+        StreakReward(1, 2, "Day 1"),
+        StreakReward(2, 4, "Day 2"),
+        StreakReward(3, 6, "Day 3"),
+        StreakReward(4, 8, "Day 4"),
+        StreakReward(5, 10, "Day 5"),
+        StreakReward(6, 12, "Day 6"),
+        StreakReward(7, 14, "Day 7 — Full Streak!")
     )
 
     fun rewardForDay(day: Int): StreakReward {
