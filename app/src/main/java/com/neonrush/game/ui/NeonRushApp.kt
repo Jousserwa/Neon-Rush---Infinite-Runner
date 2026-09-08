@@ -2761,7 +2761,7 @@ fun GameOverOverlayScreen(
 }
 
                 Button(
-                    onClick = { viewModel.reviveWithGems() },
+                    onClick = { viewModel.reviveWithGems(isPro) },
                     enabled = profile.gems >= viewModel.reviveCostForCurrentRun(),
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF9C27B0)),
                     shape = RoundedCornerShape(8.dp),
