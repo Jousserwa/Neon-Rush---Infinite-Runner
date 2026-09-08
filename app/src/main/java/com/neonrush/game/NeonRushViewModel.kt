@@ -943,8 +943,7 @@ fun startRacingSimulation(ghost: GhostChallengeEntity, specialWorldId: Int? = nu
                                 "gem" -> {
                                     soundEngine.playGemCollect()
                                     gemsGathered += 1
-                                    gemsGathered += multiFactor
-                                    repeat(6) { i ->
+                                      repeat(6) { i ->
                                         activeParticles.add(
                                             Particle(
                                                 id = "sp_${tick}_$i",
