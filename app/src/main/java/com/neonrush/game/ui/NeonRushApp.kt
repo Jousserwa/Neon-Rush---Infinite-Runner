@@ -2687,7 +2687,6 @@ fun GameOverOverlayScreen(
             showSummary = true
         }
     }
-
     Box(
         modifier = Modifier
             .fillMaxSize()
