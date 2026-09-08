@@ -1202,9 +1202,9 @@ fun startRacingSimulation(ghost: GhostChallengeEntity, specialWorldId: Int? = nu
             soundEngine.playCollision()
         }
     }
-    fun reviveSimulation() {
+    fun reviveSimulation(isPro: Boolean = false) {
     val currentState = _simState.value
-    if (currentState.reviveCount >= 2) return
+    if (!isPro && currentState.reviveCount >= 2) return
     val currentTick = currentState.tickIndex
     _simState.value = currentState.copy(
         isCompleted = false,
