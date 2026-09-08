@@ -355,10 +355,12 @@ fun reviveCostForCurrentRun(): Int {
     return when (_simState.value.reviveCount) {
         0 -> 20
         1 -> 25
-        else -> 30
+        2 -> 30
+        3 -> 40
+        4 -> 50
+        else -> 50 + 20 * (_simState.value.reviveCount - 4)
     }
 }
-
 fun reviveWithGems(isPro: Boolean) {
     viewModelScope.launch {
         val cost = reviveCostForCurrentRun()
