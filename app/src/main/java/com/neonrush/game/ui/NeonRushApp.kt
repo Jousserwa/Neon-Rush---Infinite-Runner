@@ -2687,6 +2687,12 @@ fun GameOverOverlayScreen(
             showSummary = true
         }
     }
+
+    LaunchedEffect(showSummary) {
+        if (showSummary) {
+            viewModel.finalizeRunStats()
+        }
+    }
     Box(
         modifier = Modifier
             .fillMaxSize()
