@@ -359,12 +359,12 @@ fun reviveCostForCurrentRun(): Int {
     }
 }
 
-fun reviveWithGems() {
+fun reviveWithGems(isPro: Boolean) {
     viewModelScope.launch {
         val cost = reviveCostForCurrentRun()
         var didRevive = false
         gameDao.updateProfile { prof ->
-            if (_simState.value.reviveCount < 2 && prof.gems >= cost) {
+            if ((isPro || _simState.value.reviveCount < 2) && prof.gems >= cost) {
                 didRevive = true
                 prof.copy(gems = prof.gems - cost)
             } else {
@@ -372,7 +372,7 @@ fun reviveWithGems() {
             }
         }
         if (didRevive) {
-            reviveSimulation()
+            reviveSimulation(isPro)
         }
     }
 }
