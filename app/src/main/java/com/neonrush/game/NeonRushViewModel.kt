@@ -1151,57 +1151,69 @@ fun startRacingSimulation(ghost: GhostChallengeEntity, specialWorldId: Int? = nu
         }
         val GEM_ECONOMY_RATE = (1f / 3f)
         val gemsEarnedTotalSoFar = (((finalState.collectedGemsCount + bonusGems + FridayBonus) * valMultiplier) * GEM_ECONOMY_RATE).toInt()
-
-        var isNewPB = false
-        var usernameForLeaderboard = ""
-        var activeSkinForLeaderboard = ""
-        var adsRemovedResult = false
         var gemsToCreditNow = 0
 
-        val missionUpdated = gameDao.updateProfile { prof ->
+        gameDao.updateProfile { prof ->
             gemsToCreditNow = (gemsEarnedTotalSoFar - prof.currentRunGemsCredited).coerceAtLeast(0)
-            isNewPB = finalState.score > prof.bestScore
-            usernameForLeaderboard = prof.username
-            activeSkinForLeaderboard = prof.activeSkinId
-            val newTotalRuns = prof.totalRuns + 1
-            val newAverageScore = ((prof.averageScore * prof.totalRuns) + finalState.score) / newTotalRuns
-            val bestZoneLifetime = maxOf(prof.bestZoneReached, finalState.currentZoneNumber)
-            val updated = prof.copy(
-                bestScore = if (isNewPB) finalState.score else prof.bestScore,
+            prof.copy(
                 gems = prof.gems + gemsToCreditNow,
-                totalRuns = newTotalRuns,
-                averageScore = newAverageScore,
                 totalGemsEarned = prof.totalGemsEarned + gemsToCreditNow,
-                bestZoneReached = bestZoneLifetime,
                 currentRunGemsCredited = gemsEarnedTotalSoFar
-            )
-            adsRemovedResult = updated.adsRemoved
-            MissionManager.recordRunResult(
-                updated,
-                zoneReached = finalState.currentZoneNumber,
-                score = finalState.score,
-                gemsThisRun = gemsToCreditNow,
-                bestZoneLifetime = bestZoneLifetime
             )
         }
 
         _simState.value = _simState.value.copy(gemsEarnedLastRun = gemsToCreditNow)
-             if (bonusGems == 55) {
+        if (bonusGems == 55) {
             soundEngine.playUnlockSkin()
         }
-        AnalyticsManager.logGameOver(
-            score = finalState.score,
-            isNewPB = isNewPB,
-            zoneReached = finalState.currentZoneNumber
-        )
-        if (!adsRemovedResult) {
-            AdMobManager.incrementGameOver()
-        }
-        if (isNewPB) {
-            soundEngine.playPersonalBestBroken()
-            FirebaseLeaderboardManager.submitScore(usernameForLeaderboard, finalState.score, activeSkinForLeaderboard)
-        } else {
-            soundEngine.playCollision()
+        soundEngine.playCollision()
+    }
+
+    fun finalizeRunStats() {
+        viewModelScope.launch {
+            val finalState = _simState.value
+            var isNewPB = false
+            var usernameForLeaderboard = ""
+            var activeSkinForLeaderboard = ""
+            var adsRemovedResult = false
+            var gemsThisSession = 0
+
+            gameDao.updateProfile { prof ->
+                isNewPB = finalState.score > prof.bestScore
+                usernameForLeaderboard = prof.username
+                activeSkinForLeaderboard = prof.activeSkinId
+                gemsThisSession = prof.currentRunGemsCredited
+                val newTotalRuns = prof.totalRuns + 1
+                val newAverageScore = ((prof.averageScore * prof.totalRuns) + finalState.score) / newTotalRuns
+                val bestZoneLifetime = maxOf(prof.bestZoneReached, finalState.currentZoneNumber)
+                val updated = prof.copy(
+                    bestScore = if (isNewPB) finalState.score else prof.bestScore,
+                    totalRuns = newTotalRuns,
+                    averageScore = newAverageScore,
+                    bestZoneReached = bestZoneLifetime
+                )
+                adsRemovedResult = updated.adsRemoved
+                MissionManager.recordRunResult(
+                    updated,
+                    zoneReached = finalState.currentZoneNumber,
+                    score = finalState.score,
+                    gemsThisRun = gemsThisSession,
+                    bestZoneLifetime = bestZoneLifetime
+                )
+            }
+
+            AnalyticsManager.logGameOver(
+                score = finalState.score,
+                isNewPB = isNewPB,
+                zoneReached = finalState.currentZoneNumber
+            )
+            if (!adsRemovedResult) {
+                AdMobManager.incrementGameOver()
+            }
+            if (isNewPB) {
+                soundEngine.playPersonalBestBroken()
+                FirebaseLeaderboardManager.submitScore(usernameForLeaderboard, finalState.score, activeSkinForLeaderboard)
+            }
         }
     }
     fun reviveSimulation(isPro: Boolean = false) {
