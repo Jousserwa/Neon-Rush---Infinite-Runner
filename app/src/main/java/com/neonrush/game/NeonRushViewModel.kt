@@ -336,8 +336,9 @@ fun doubleGemsForRun() {
     if (_simState.value.doubleGemsClaimed) return
     _simState.value = _simState.value.copy(doubleGemsClaimed = true)
     viewModelScope.launch {
-        val bonus = _simState.value.gemsEarnedLastRun
-        gameDao.updateProfile { prof -> prof.copy(gems = prof.gems + bonus) }
+        gameDao.updateProfile { prof ->
+            prof.copy(gems = prof.gems + prof.currentRunGemsCredited)
+        }
         soundEngine.playUnlockSkin()
     }
 }
