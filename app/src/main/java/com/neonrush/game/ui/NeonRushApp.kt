@@ -2853,7 +2853,7 @@ fun GameOverOverlayScreen(
         modifier = Modifier.fillMaxWidth()
     ) {
        Text(
-            text = "🎬 DOUBLE GEMS (${simState.gemsEarnedLastRun} 💎)",
+            text = "🎬 DOUBLE GEMS (${profile.currentRunGemsCredited} 💎)",
             color = Color.Black,
             fontFamily = FontFamily.Monospace,
             fontWeight = FontWeight.Bold
