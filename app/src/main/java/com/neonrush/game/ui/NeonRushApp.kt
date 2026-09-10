@@ -2986,8 +2986,8 @@ fun ProfileTab(profile: GameProfile, viewModel: NeonRushViewModel) {
                     modifier = Modifier.padding(bottom = 12.dp)
                 )
 
-                var soundEnabled by remember { mutableStateOf(true) }
-                var musicEnabled by remember { mutableStateOf(true) }
+                var soundEnabled by remember { mutableStateOf(viewModel.getSoundEffectsEnabled()) }
+                var musicEnabled by remember { mutableStateOf(viewModel.getAmbientEnabled()) }
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -2997,7 +2997,29 @@ fun ProfileTab(profile: GameProfile, viewModel: NeonRushViewModel) {
                     Text("Sound Effects", color = Color.White, fontFamily = FontFamily.Monospace)
                     Switch(
                         checked = soundEnabled,
-                        onCheckedChange = { soundEnabled = it },
+                        onCheckedChange = {
+                            soundEnabled = it
+                            viewModel.setSoundEffectsEnabled(it)
+                        },
+                        colors = SwitchDefaults.colors(
+                            checkedThumbColor = CyberPrimary,
+                            checkedTrackColor = CyberPrimary.copy(alpha = 0.5f)
+                        )
+                    )
+                }
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text("Music", color = Color.White, fontFamily = FontFamily.Monospace)
+                    Switch(
+                        checked = musicEnabled,
+                        onCheckedChange = {
+                            musicEnabled = it
+                            viewModel.setAmbientEnabled(it)
+                        },
                         colors = SwitchDefaults.colors(
                             checkedThumbColor = CyberPrimary,
                             checkedTrackColor = CyberPrimary.copy(alpha = 0.5f)
