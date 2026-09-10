@@ -202,10 +202,10 @@ class NeonRushViewModel(
         gameDao.updateProfile { prof -> MissionManager.recordAdWatched(prof) }
     }
 }
-    fun getSoundEffectsEnabled(): Boolean = soundEngine.getSoundEffectsEnabled()
-    fun setSoundEffectsEnabled(enabled: Boolean) = soundEngine.setSoundEffectsEnabled(enabled)
-    fun getAmbientEnabled(): Boolean = soundEngine.getAmbientEnabled()
-    fun setAmbientEnabled(enabled: Boolean) = soundEngine.setAmbientEnabled(enabled)
+    fun getSoundEffectsEnabled(): Boolean = NeonSoundEngine.getSoundEffectsEnabled()
+    fun setSoundEffectsEnabled(enabled: Boolean) = NeonSoundEngine.setSoundEffectsEnabled(enabled)
+    fun getAmbientEnabled(): Boolean = NeonSoundEngine.getAmbientEnabled()
+    fun setAmbientEnabled(enabled: Boolean) = NeonSoundEngine.setAmbientEnabled(enabled)
     fun purchaseStarterPack(activity: Activity) {
     RevenueCatManager.purchaseStarterPack(activity) { success ->
         if (success) {
