@@ -3016,25 +3016,6 @@ fun ProfileTab(profile: GameProfile, viewModel: NeonRushViewModel) {
                     Text("Music", color = Color.White, fontFamily = FontFamily.Monospace)
                     Switch(
                         checked = musicEnabled,
-                        onCheckedChange = {
-                            musicEnabled = it
-                            viewModel.setAmbientEnabled(it)
-                        },
-                        colors = SwitchDefaults.colors(
-                            checkedThumbColor = CyberPrimary,
-                            checkedTrackColor = CyberPrimary.copy(alpha = 0.5f)
-                        )
-                    )
-                }
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text("Music", color = Color.White, fontFamily = FontFamily.Monospace)
-                    Switch(
-                        checked = musicEnabled,
                         onCheckedChange = { musicEnabled = it },
                         colors = SwitchDefaults.colors(
                             checkedThumbColor = CyberPrimary,
