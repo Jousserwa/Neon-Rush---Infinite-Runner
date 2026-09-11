@@ -2734,7 +2734,6 @@ fun GameOverOverlayScreen(
         strokeWidth = 4.dp
     )
     Text(
-        Text(
         text = "$secondsLeft",
         fontSize = 22.sp,
         fontWeight = FontWeight.Bold,
