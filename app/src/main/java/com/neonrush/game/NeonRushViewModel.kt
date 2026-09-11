@@ -82,6 +82,7 @@ data class SimulationState(
     val gemsAtRunStart: Int = -1,
     val completeRunCallCount: Int = 0,
     val gemsAlreadyCreditedThisRun: Int = 0,
+    val dailyBonusLabel: String = "",
     val bossZonesRewarded: String = "",
     val bossGemsThisRun: Int = 0,
     val ghostTierMode: Int = 1,
