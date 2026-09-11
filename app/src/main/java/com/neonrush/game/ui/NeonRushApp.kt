@@ -2738,19 +2738,11 @@ fun GameOverOverlayScreen(
         fontSize = 22.sp,
         fontWeight = FontWeight.Bold,
         color = CyberPrimary,
-        fontFamily = FontFamily.Monospace
+        fontFamily =(simState.dailyBonusLabel.isNotEmpty()) FontFamily.Monospace
     )
 }
 
-                if (simState.dailyBonusLabel.isNotEmpty()) {
-                    Text(
-                        text = simState.dailyBonusLabel,
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color(0xFFFFD23F),
-                        fontFamily = FontFamily.Monospace
-                    )
-                }
+                
 
                 if (!isPro) {
     Button(
