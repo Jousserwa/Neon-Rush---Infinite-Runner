@@ -1151,6 +1151,11 @@ fun startRacingSimulation(ghost: GhostChallengeEntity, specialWorldId: Int? = nu
         val isFriday = todayMutation == MutationDay.FRIDAY
         val valMultiplier = if (isMonday) 2 else 1
         val FridayBonus = if (isFriday) 5 else 0
+        val dailyBonusLabel = when {
+            isMonday -> "⚡ DOUBLE GEMS DAY: 2x rewards applied!"
+            isFriday -> "🌅 GOLDEN HOUR: +5 bonus gems applied!"
+            else -> ""
+        }
         var bonusGems = 0
         if (finalState.activeGhost?.challengeId == "daily_hard_ghost" && finalState.score >= dailyChallengeGoal) {
             bonusGems = 55
