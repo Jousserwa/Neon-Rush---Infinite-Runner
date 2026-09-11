@@ -95,7 +95,7 @@ dependencies {
     // implementation("com.ironsource.sdk:mediationsdk:8.0.0")
 
     // RevenueCat - IAP & Subscriptions
-    implementation("com.revenuecat.purchases:purchases:8.20.0")
+    implementation("com.revenuecat.purchases:purchases:9.16.0")
 
     // Offer Wall for non-payers (Tapjoy / ironSource)
     // implementation("com.tapjoy:tapjoy-android-sdk:13.2.0")
