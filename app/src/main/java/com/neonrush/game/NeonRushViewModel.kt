@@ -1173,7 +1173,7 @@ fun startRacingSimulation(ghost: GhostChallengeEntity, specialWorldId: Int? = nu
             )
         }
 
-        _simState.value = _simState.value.copy(gemsEarnedLastRun = gemsToCreditNow)
+        _simState.value = _simState.value.copy(gemsEarnedLastRun = gemsToCreditNow, dailyBonusLabel = dailyBonusLabel)
         if (bonusGems == 55) {
             soundEngine.playUnlockSkin()
         }
