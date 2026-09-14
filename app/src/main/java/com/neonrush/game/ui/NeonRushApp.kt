@@ -2824,13 +2824,6 @@ fun GameOverOverlayScreen(
                     color = CyberSecondary,
                     fontFamily = FontFamily.Monospace
                 )
-                Text(
-                 text = "DEBUG: startGems=${simState.gemsAtRunStart} collected=${simState.collectedGemsCount} earned=${profile.currentRunGemsCredited} bossGems=${simState.bossGemsThisRun} totalGemsNow=${profile.gems} callCount=${simState.completeRunCallCount}",
-                    fontSize = 12.sp,
-                    color = Color.Yellow,
-                    fontFamily = FontFamily.Monospace
-                )
-
                 if (simState.dailyBonusLabel.isNotEmpty()) {
                     Text(
                         text = simState.dailyBonusLabel,
