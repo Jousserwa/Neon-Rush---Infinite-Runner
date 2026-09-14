@@ -867,14 +867,7 @@ fun ArcadeHomeView(
                 fontFamily = FontFamily.Monospace
             )
         }
-        Text(
-            text = "DEBUG HOME: gems=${profile.gems}",
-            fontSize = 10.sp,
-            color = Color.Yellow,
-            fontFamily = FontFamily.Monospace
-        )
-
-        val activeMutation = DailyMutations.getActiveMutation()
+          val activeMutation = DailyMutations.getActiveMutation()
         Box(
             modifier = Modifier
                 .fillMaxWidth()
