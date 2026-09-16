@@ -18,7 +18,7 @@ object RevenueCatManager {
     private const val TAG = "RevenueCatManager"
     
     // YOUR REAL REVENUECAT API KEY
-    private const val REVENUECAT_API_KEY = "goog_sveqtpBHLaPtuWlJfUvRySdYocO "
+    private const val REVENUECAT_API_KEY = "goog_sveqtpBHLaPtuWlJfUvRySdYocO"
     
     // Product IDs
 const val PRODUCT_ID_PRO_MONTHLY = "neon_rush_pro:monthly"
