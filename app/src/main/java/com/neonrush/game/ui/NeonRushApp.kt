@@ -121,6 +121,11 @@ private fun hexToColor(hex: String): Color {
     }
 }
 
+// How strongly to dim the whole parallax stack so gameplay elements (pickups,
+// obstacles, the pilot) stay readable against busier background art. 0f =
+// no dimming, 1f = fully black. Tune to taste.
+private const val BACKGROUND_SCRIM_ALPHA = 0.32f
+
 @Composable
 private fun ParallaxWorldBackground(worldId: Int, distanceMeters: Float, fallbackColorHex: String) {
     val layers = worldBackgroundLayers[worldId]
@@ -137,6 +142,7 @@ private fun ParallaxWorldBackground(worldId: Int, distanceMeters: Float, fallbac
                         colors = listOf(themeColor.copy(alpha = 0.35f), Color(0xFF030206))
                     )
                 )
+                .background(Color.Black.copy(alpha = BACKGROUND_SCRIM_ALPHA))
         )
         return
     }
@@ -177,6 +183,9 @@ private fun ParallaxWorldBackground(worldId: Int, distanceMeters: Float, fallbac
                 }
             }
         }
+
+        // Dim the whole stack uniformly so gameplay elements read clearly on top.
+        drawRect(color = Color.Black.copy(alpha = BACKGROUND_SCRIM_ALPHA))
     }
 }
 // ---------------------------------------------------------------------------
