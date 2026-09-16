@@ -78,6 +78,109 @@ import com.neonrush.game.MissionTier
 import com.neonrush.game.MissionManager
 import com.neonrush.game.MissionTemplate
 import com.neonrush.game.Worlds
+
+// --- Parallax world backgrounds -------------------------------------------
+// Each world can define either a single static background (speedFactor = 0f,
+// old behavior) or a stack of depth layers that scroll at different rates to
+// sell a 2.5D sense of depth. Layer order = back to front; front layers get
+// a higher speedFactor so they scroll faster than the ones behind them.
+private data class BgLayer(val res: Int, val speedFactor: Float)
+
+// Tune this to taste: higher = more scroll movement per meter traveled.
+private const val PARALLAX_PX_PER_METER = 3f
+
+private val worldBackgroundLayers: Map<Int, List<BgLayer>> = mapOf(
+    1 to listOf(
+        BgLayer(R.drawable.bg_world1_l1_sky, 0.02f),
+        BgLayer(R.drawable.bg_world1_l2_sky_elements, 0.06f),
+        BgLayer(R.drawable.bg_world1_l3_far_world, 0.18f),
+        BgLayer(R.drawable.bg_world1_l4_world_ground, 0.45f),
+        BgLayer(R.drawable.bg_world1_l5_foreground, 0.85f)
+    ),
+    // Worlds 2-5 keep their original single static background until they get
+    // the same 5-layer treatment — speedFactor 0f means "don't scroll".
+    2 to listOf(BgLayer(R.drawable.bg_world2_derelict_signal, 0f)),
+    3 to listOf(BgLayer(R.drawable.bg_world3_cell_block_zero, 0f)),
+    4 to listOf(BgLayer(R.drawable.bg_world4_green_hell, 0f)),
+    5 to listOf(BgLayer(R.drawable.bg_world5_red_protocol, 0f))
+    // Special-mode worlds 6 (Signal Fracture), 7 (Frozen Veil), and 8 (Apex
+    // Signal) have no entry yet — ParallaxWorldBackground falls back to a
+    // themed color gradient for any world id missing here. Add a 6/7/8 entry
+    // (single image or a 5-layer list, same as world 1) once their art exists.
+)
+
+// Parses a "#RRGGBB" (or "#AARRGGBB") hex string, e.g. ZoneDNA.environmentColor,
+// into a Compose Color. Falls back to a neutral cyber-purple if parsing fails.
+private fun hexToColor(hex: String): Color {
+    return try {
+        val clean = hex.removePrefix("#")
+        val argb = if (clean.length == 6) "FF$clean" else clean
+        Color(argb.toLong(16))
+    } catch (e: Exception) {
+        Color(0xFF9D00FF)
+    }
+}
+
+@Composable
+private fun ParallaxWorldBackground(worldId: Int, distanceMeters: Float, fallbackColorHex: String) {
+    val layers = worldBackgroundLayers[worldId]
+    if (layers == null) {
+        // No dedicated art for this world yet (currently: special-mode worlds
+        // 6-8, and any future world before its layers are added to the map
+        // above). Show a themed gradient instead of leaving the screen blank.
+        val themeColor = hexToColor(fallbackColorHex)
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(themeColor.copy(alpha = 0.35f), Color(0xFF030206))
+                    )
+                )
+        )
+        return
+    }
+    // Loaded per-recomposition to match this file's existing imageResource
+    // pattern (see pilot/obstacle bitmaps below). Wrap in remember(worldId)
+    // if you want to avoid reloading these every frame.
+    val bitmaps = layers.map { ImageBitmap.imageResource(id = it.res) }
+
+    Canvas(modifier = Modifier.fillMaxSize()) {
+        val cw = size.width
+        val ch = size.height
+
+        layers.forEachIndexed { idx, layer ->
+            val bmp = bitmaps[idx]
+            // Scale each layer to fill the canvas height, preserving aspect.
+            val displayWidth = ch * (bmp.width.toFloat() / bmp.height.toFloat())
+
+            if (layer.speedFactor == 0f) {
+                // Static layer: single centered/cropped draw, no scrolling.
+                drawImage(
+                    image = bmp,
+                    dstOffset = IntOffset(((cw - displayWidth) / 2f).roundToInt(), 0),
+                    dstSize = IntSize(displayWidth.roundToInt(), ch.roundToInt())
+                )
+            } else {
+                val scrollPx = distanceMeters * layer.speedFactor * PARALLAX_PX_PER_METER
+                var x = (-scrollPx).mod(displayWidth) - displayWidth
+                // Tile enough copies to cover the full canvas width. Note:
+                // these images aren't seamless-tiling art, so a soft seam can
+                // show at the loop point — most visible on faster layers.
+                while (x < cw) {
+                    drawImage(
+                        image = bmp,
+                        dstOffset = IntOffset(x.roundToInt(), 0),
+                        dstSize = IntSize(displayWidth.roundToInt(), ch.roundToInt())
+                    )
+                    x += displayWidth
+                }
+            }
+        }
+    }
+}
+// ---------------------------------------------------------------------------
+
 @Composable
 fun NeonRushApp(viewModel: NeonRushViewModel) {
     val activeProfile by viewModel.profile.collectAsState(initial = GameProfile())
@@ -2174,39 +2277,11 @@ val ghostMarkerImg = ImageBitmap.imageResource(id = R.drawable.marker_ghost_riva
                 onShowPaywall()
             }
         }
-        when (currentWorld.id) {
-            1 -> Image(
-                painter = painterResource(id = R.drawable.bg_world1_blackout_front),
-                contentDescription = null,
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop
-            )
-            2 -> Image(
-                painter = painterResource(id = R.drawable.bg_world2_derelict_signal),
-                contentDescription = null,
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop
-            )
-            3 -> Image(
-                painter = painterResource(id = R.drawable.bg_world3_cell_block_zero),
-                contentDescription = null,
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop
-            )
-            4 -> Image(
-                painter = painterResource(id = R.drawable.bg_world4_green_hell),
-                contentDescription = null,
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop
-            )
-            5 -> Image(
-                painter = painterResource(id = R.drawable.bg_world5_red_protocol),
-                contentDescription = null,
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop
-            )
-            else -> {}
-        }
+        ParallaxWorldBackground(
+            worldId = currentWorld.id,
+            distanceMeters = simState.distanceMeters,
+            fallbackColorHex = simState.zoneDNA.environmentColor
+        )
         Column(
             modifier = Modifier
                 .fillMaxSize()
