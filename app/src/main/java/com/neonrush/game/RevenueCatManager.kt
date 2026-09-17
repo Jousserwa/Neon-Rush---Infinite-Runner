@@ -180,6 +180,11 @@ val isAdsRemoved: StateFlow<Boolean> = _isAdsRemoved.asStateFlow()
                                 purchaseParams,
                                 object : PurchaseCallback {
                                     override fun onCompleted(storeTransaction: StoreTransaction, customerInfo: com.revenuecat.purchases.CustomerInfo) {
+    AnalyticsManager.logPurchaseCompleted(productId)
+    val hasAdsRemoved = customerInfo.entitlements.active.containsKey("remove_ads")
+    _isAdsRemoved.value = hasAdsRemoved
+    onResult(true)
+}
                                         AnalyticsManager.logPurchaseCompleted(productId)
                                         onResult(true)
                                     }
