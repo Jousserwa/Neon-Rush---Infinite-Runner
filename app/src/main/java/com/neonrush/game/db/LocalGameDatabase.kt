@@ -111,6 +111,8 @@ class GameDao(context: Context) {
             val currentRunGemsCreditedIdx = cursor.getColumnIndex("currentRunGemsCredited")
             val currentRunBossZonesRewardedIdx = cursor.getColumnIndex("currentRunBossZonesRewarded")
             val currentRunMilestonesRewardedIdx = cursor.getColumnIndex("currentRunMilestonesRewarded")
+            val checkpointsReachedCsvIdx = cursor.getColumnIndex("checkpointsReachedCsv")
+            val checkpointsActivatedCsvIdx = cursor.getColumnIndex("checkpointsActivatedCsv")
             val profile = GameProfile(
                 id = 1,
                 username = if (usernameIdx != -1) cursor.getString(usernameIdx) else "NeonPilot_99",
