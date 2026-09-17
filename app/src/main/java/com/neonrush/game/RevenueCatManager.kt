@@ -219,22 +219,24 @@ fun purchaseStarterPack(activity: Activity, onResult: (Boolean) -> Unit) {
 }
 
     fun restorePurchases(onResult: (Boolean) -> Unit) {
-        try {
-            Purchases.sharedInstance.restorePurchases(
-                object : ReceiveCustomerInfoCallback {
-                    override fun onReceived(customerInfo: com.revenuecat.purchases.CustomerInfo) {
-                        val hasPro = customerInfo.entitlements.active.containsKey("Neon Rush Pro")
-                        _isPro.value = hasPro
-                        onResult(true)
-                    }
-
-                    override fun onError(error: PurchasesError) {
-                        onResult(false)
-                    }
+    try {
+        Purchases.sharedInstance.restorePurchases(
+            object : ReceiveCustomerInfoCallback {
+                override fun onReceived(customerInfo: com.revenuecat.purchases.CustomerInfo) {
+                    val hasPro = customerInfo.entitlements.active.containsKey("Neon Rush Pro")
+                    _isPro.value = hasPro
+                    val hasAdsRemoved = customerInfo.entitlements.active.containsKey("remove_ads")
+                    _isAdsRemoved.value = hasAdsRemoved
+                    onResult(true)
                 }
-            )
-        } catch (e: Exception) {
-            onResult(false)
-        }
+
+                override fun onError(error: PurchasesError) {
+                    onResult(false)
+                }
+            }
+        )
+    } catch (e: Exception) {
+        onResult(false)
     }
 }
+
