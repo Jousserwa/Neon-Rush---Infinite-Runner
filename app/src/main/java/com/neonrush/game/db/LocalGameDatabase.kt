@@ -19,7 +19,6 @@ data class GameProfile(
     val currentRunMilestonesRewarded: String = "",
     val checkpointsReachedCsv: String = "",
     val checkpointsActivatedCsv: String = "",
-    val
     val transcendenceCount: Int = 0,
     val activeSkinId: String = "cyan_diamond",
     val unlockedSkinsCsv: String = "cyan_diamond,purple_square,green_triangle",
