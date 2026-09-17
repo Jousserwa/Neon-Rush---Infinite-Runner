@@ -88,7 +88,7 @@ const val STARTER_PACK_GEMS_AMOUNT = 250
             Purchases.sharedInstance.getOfferings(
                 object : ReceiveOfferingsCallback {
                     override fun onReceived(offerings: com.revenuecat.purchases.Offerings) {
-                        val monthlyPackage = offerings.current?.getPackage("monthly")
+                        val monthlyPackage = offerings.current?.getPackage("$rc_monthly")
                         if (monthlyPackage != null) {
                             val purchaseParams = com.revenuecat.purchases.PurchaseParams.Builder(activity, monthlyPackage).build()
                             Purchases.sharedInstance.purchase(
