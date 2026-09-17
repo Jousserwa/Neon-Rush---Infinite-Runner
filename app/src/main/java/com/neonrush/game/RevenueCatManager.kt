@@ -185,11 +185,8 @@ val isAdsRemoved: StateFlow<Boolean> = _isAdsRemoved.asStateFlow()
     _isAdsRemoved.value = hasAdsRemoved
     onResult(true)
 }
-                                        AnalyticsManager.logPurchaseCompleted(productId)
-                                        onResult(true)
-                                    }
-
-                                    override fun onError(error: PurchasesError, userCancelled: Boolean) {
+                                        
+ override fun onError(error: PurchasesError, userCancelled: Boolean) {
                                         onResult(false)
                                     }
                                 }
