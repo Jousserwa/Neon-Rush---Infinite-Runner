@@ -217,6 +217,8 @@ class GameDao(context: Context) {
             put("currentRunGemsCredited", profile.currentRunGemsCredited)
             put("currentRunBossZonesRewarded", profile.currentRunBossZonesRewarded)
             put("currentRunMilestonesRewarded", profile.currentRunMilestonesRewarded)
+            put("checkpointsReachedCsv", profile.checkpointsReachedCsv)
+            put("checkpointsActivatedCsv", profile.checkpointsActivatedCsv)
         }
         db.insertWithOnConflict("game_profile", null, values, SQLiteDatabase.CONFLICT_REPLACE)
         _profileFlow.value = profile
