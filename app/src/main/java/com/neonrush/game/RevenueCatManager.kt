@@ -66,24 +66,26 @@ val isAdsRemoved: StateFlow<Boolean> = _isAdsRemoved.asStateFlow()
     }
 
     private fun checkSubscriptionStatus() {
-        try {
-            Purchases.sharedInstance.getCustomerInfo(
-                object : ReceiveCustomerInfoCallback {
-                    override fun onReceived(customerInfo: com.revenuecat.purchases.CustomerInfo) {
-                        val hasPro = customerInfo.entitlements.active.containsKey("Neon Rush Pro")
-                        _isPro.value = hasPro
-                        Log.d(TAG, "Pro status: $hasPro")
-                    }
-
-                    override fun onError(error: PurchasesError) {
-                        Log.e(TAG, "Error fetching customer info: ${error.message}")
-                    }
+    try {
+        Purchases.sharedInstance.getCustomerInfo(
+            object : ReceiveCustomerInfoCallback {
+                override fun onReceived(customerInfo: com.revenuecat.purchases.CustomerInfo) {
+                    val hasPro = customerInfo.entitlements.active.containsKey("Neon Rush Pro")
+                    _isPro.value = hasPro
+                    val hasAdsRemoved = customerInfo.entitlements.active.containsKey("remove_ads")
+                    _isAdsRemoved.value = hasAdsRemoved
+                    Log.d(TAG, "Pro status: $hasPro, AdsRemoved: $hasAdsRemoved")
                 }
-            )
-        } catch (e: Exception) {
-            Log.e(TAG, "Error checking subscription: ${e.message}")
-        }
+
+                override fun onError(error: PurchasesError) {
+                    Log.e(TAG, "Error fetching customer info: ${error.message}")
+                }
+            }
+        )
+    } catch (e: Exception) {
+        Log.e(TAG, "Error checking subscription: ${e.message}")
     }
+}
 
     fun purchaseProSubscription(activity: Activity, onResult: (Boolean) -> Unit) {
         try {
