@@ -92,7 +92,7 @@ val isAdsRemoved: StateFlow<Boolean> = _isAdsRemoved.asStateFlow()
             Purchases.sharedInstance.getOfferings(
                 object : ReceiveOfferingsCallback {
                     override fun onReceived(offerings: com.revenuecat.purchases.Offerings) {
-                        val monthlyPackage = offerings.current?.getPackage("$rc_monthly")
+                        val monthlyPackage = offerings.current?.getPackage("\$rc_monthly")
                         if (monthlyPackage != null) {
                             val purchaseParams = com.revenuecat.purchases.PurchaseParams.Builder(activity, monthlyPackage).build()
                             Purchases.sharedInstance.purchase(
