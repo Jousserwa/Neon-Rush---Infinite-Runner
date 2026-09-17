@@ -45,6 +45,8 @@ const val STARTER_PACK_GEMS_AMOUNT = 250
 
     private val _isPro = MutableStateFlow(false)
     val isPro: StateFlow<Boolean> = _isPro.asStateFlow()
+    private val _isAdsRemoved = MutableStateFlow(false)
+val isAdsRemoved: StateFlow<Boolean> = _isAdsRemoved.asStateFlow()
 
     private var isInitialized = false
 
