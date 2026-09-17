@@ -239,4 +239,5 @@ fun purchaseStarterPack(activity: Activity, onResult: (Boolean) -> Unit) {
         onResult(false)
     }
 }
+}
 
