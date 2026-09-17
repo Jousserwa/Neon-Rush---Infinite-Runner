@@ -149,7 +149,9 @@ class GameDao(context: Context) {
                 specialWorldTier = if (specialWorldTierIdx != -1) cursor.getInt(specialWorldTierIdx) else 0,
                 currentRunGemsCredited = if (currentRunGemsCreditedIdx != -1) cursor.getInt(currentRunGemsCreditedIdx) else 0,
                 currentRunBossZonesRewarded = if (currentRunBossZonesRewardedIdx != -1) cursor.getString(currentRunBossZonesRewardedIdx) else "",
-                currentRunMilestonesRewarded = if (currentRunMilestonesRewardedIdx != -1) cursor.getString(currentRunMilestonesRewardedIdx) else ""
+                currentRunMilestonesRewarded = if (currentRunMilestonesRewardedIdx != -1) cursor.getString(currentRunMilestonesRewardedIdx) else "",
+                checkpointsReachedCsv = if (checkpointsReachedCsvIdx != -1) cursor.getString(checkpointsReachedCsvIdx) else "",
+                checkpointsActivatedCsv = if (checkpointsActivatedCsvIdx != -1) cursor.getString(checkpointsActivatedCsvIdx) else ""
             )
             
             _profileFlow.value = profile
