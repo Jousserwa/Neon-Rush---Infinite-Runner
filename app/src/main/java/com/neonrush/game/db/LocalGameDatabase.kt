@@ -351,5 +351,8 @@ class GameDbHelper(context: Context) : SQLiteOpenHelper(context, "neon_rush_comp
         db.execSQL("ALTER TABLE game_profile ADD COLUMN currentRunGemsCredited INTEGER DEFAULT 0")
         db.execSQL("ALTER TABLE game_profile ADD COLUMN currentRunBossZonesRewarded TEXT DEFAULT ''")
     }
+    if (oldVersion < 11) {
+        db.execSQL("ALTER TABLE game_profile ADD COLUMN currentRunMilestonesRewarded TEXT DEFAULT ''")
+    }
 }
 }
