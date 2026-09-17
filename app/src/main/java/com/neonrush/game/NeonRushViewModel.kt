@@ -1277,7 +1277,18 @@ fun startRacingSimulation(ghost: GhostChallengeEntity, specialWorldId: Int? = nu
                 }
                 val tickDistanceOffset = speedInPx * 3.6f
                 val nextDistance = state.distanceMeters + tickDistanceOffset
-                val nextZoneNumber = (nextDistance / 500f).toInt() + 1
+                val nextDistance = state.distanceMeters + tickDistanceOffset
+                val zoneM = (-575.0 + kotlin.math.sqrt(330625.0 + 300.0 * nextDistance)) / 150.0
+                val nextZoneNumber = (kotlin.math.floor(zoneM).toInt() + 1).coerceAtLeast(1)
+                var activeDna = ZoneGenerator.generateZone(nextZoneNumber, random.nextLong())
+                if (state.specialWorldId != null) activeDna = overrideEnvironment(activeDna, state.specialWorldId)
+                var updatedMsg = state.feedbackMessage
+                if (nextZoneNumber != state.currentZoneNumber) {
+                    soundEngine.playTone(660f, 300, "sawtooth")
+                    updatedMsg = "ENTERING: ${activeDna.environmentName} ${activeDna.environmentEmoji}"
+                } else if (state.feedbackMessage.startsWith("ENTERING") && tick - state.lastZoneTransitionTick > 25) {
+                    updatedMsg = "SYNCHRONIZED WITH ${activeDna.environmentName}"
+                }
                 val activeDna = ZoneGenerator.generateZone(nextZoneNumber, random.nextLong())
                 var updatedMsg = state.feedbackMessage
                 if (nextZoneNumber != state.currentZoneNumber) {
