@@ -806,7 +806,7 @@ fun startRacingSimulation(ghost: GhostChallengeEntity, specialWorldId: Int? = nu
             val milestonesTriggered = mutableSetOf<Int>()
             val prof = gameDao.getProfileDirect() ?: GameProfile()
             _simState.value = _simState.value.copy(gemsAtRunStart = prof.gems)
-            gameDao.updateProfile { p -> p.copy(currentRunGemsCredited = 0, currentRunBossZonesRewarded = "") }
+            gameDao.updateProfile { p -> p.copy(currentRunGemsCredited = 0, currentRunBossZonesRewarded = "", currentRunMilestonesRewarded = "") }
             var tick = 0
             val random = kotlin.random.Random(System.currentTimeMillis())
             var runStartTime = System.currentTimeMillis()
