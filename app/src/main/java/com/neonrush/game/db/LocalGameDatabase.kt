@@ -14,11 +14,12 @@ data class GameProfile(
     val username: String = "NeonPilot_99",
     val bestScore: Int = 0,
     val gems: Int = 120, // Starter gems
-    val currentRunGemsCredited: Int = 0,
+   val currentRunGemsCredited: Int = 0,
+    val currentRunBossZonesRewarded: String = "",
     val currentRunMilestonesRewarded: String = "",
     val checkpointsReachedCsv: String = "",
     val checkpointsActivatedCsv: String = "",
-    val currentRunMilestonesRewarded: String = "",
+    val
     val transcendenceCount: Int = 0,
     val activeSkinId: String = "cyan_diamond",
     val unlockedSkinsCsv: String = "cyan_diamond,purple_square,green_triangle",
