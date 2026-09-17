@@ -1288,14 +1288,7 @@ fun startRacingSimulation(ghost: GhostChallengeEntity, specialWorldId: Int? = nu
                 } else if (state.feedbackMessage.startsWith("ENTERING") && tick - state.lastZoneTransitionTick > 25) {
                     updatedMsg = "SYNCHRONIZED WITH ${activeDna.environmentName}"
                 }
-                val activeDna = ZoneGenerator.generateZone(nextZoneNumber, random.nextLong())
-                var updatedMsg = state.feedbackMessage
-                if (nextZoneNumber != state.currentZoneNumber) {
-                    soundEngine.playTone(660f, 300, "sawtooth")
-                    updatedMsg = "ENTERING: ${activeDna.environmentName} ${activeDna.environmentEmoji}"
-                } else if (state.feedbackMessage.startsWith("ENTERING") && tick - state.lastZoneTransitionTick > 25) {
-                    updatedMsg = "SYNCHRONIZED WITH ${activeDna.environmentName}"
-                }
+                
                 val updatedElements = mutableListOf<VisualTrackElement>()
                 val pullActive = state.activePowerupDurations.containsKey("PU2") || activeDna.mechanicIds.contains(4)
                 for (elem in state.activeTrackElements) {
