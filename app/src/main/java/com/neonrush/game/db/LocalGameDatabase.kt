@@ -16,6 +16,7 @@ data class GameProfile(
     val gems: Int = 120, // Starter gems
     val currentRunGemsCredited: Int = 0,
     val currentRunBossZonesRewarded: String = "",
+    val currentRunMilestonesRewarded: String = "",
     val transcendenceCount: Int = 0,
     val activeSkinId: String = "cyan_diamond",
     val unlockedSkinsCsv: String = "cyan_diamond,purple_square,green_triangle",
