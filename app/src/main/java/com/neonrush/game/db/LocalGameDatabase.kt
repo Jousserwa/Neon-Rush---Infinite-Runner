@@ -299,9 +299,11 @@ class GameDbHelper(context: Context) : SQLiteOpenHelper(context, "neon_rush_comp
                 specialWorldTier INTEGER,
                 currentRunGemsCredited INTEGER,
                 currentRunBossZonesRewarded TEXT,
-                currentRunMilestonesRewarded TEXT
+               currentRunMilestonesRewarded TEXT,
+                checkpointsReachedCsv TEXT,
+                checkpointsActivatedCsv TEXT
             )
-        """)
+        """) 
         db.execSQL("""
             CREATE TABLE ghost_challenges (
                 challengeId TEXT PRIMARY KEY,
