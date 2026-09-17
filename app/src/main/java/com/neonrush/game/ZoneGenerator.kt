@@ -158,7 +158,8 @@ object ZoneGenerator {
     }
 
     fun getZoneInfoForDistance(distanceMeters: Float, seed: Long): ZoneInfo {
-        val zone = (distanceMeters / 500f).toInt() + 1
+        val m = (-575.0 + kotlin.math.sqrt(330625.0 + 300.0 * distanceMeters)) / 150.0
+        val zone = (kotlin.math.floor(m).toInt() + 1).coerceAtLeast(1)
         val dna = generateZone(zone, seed)
         return ZoneInfo(
             level = zone,
