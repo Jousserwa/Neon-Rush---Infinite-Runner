@@ -852,6 +852,30 @@ fun startRacingSimulation(ghost: GhostChallengeEntity, specialWorldId: Int? = nu
                 if (nextZoneNumber != state.currentZoneNumber) {
                     soundEngine.playTone(660f, 300, "sawtooth")
                     updatedMsg = "ENTERING: ${activeDna.environmentName} ${activeDna.environmentEmoji}"
+
+                    val isMilestone25 = nextZoneNumber % 25 == 0
+                    val isMilestone10 = nextZoneNumber % 10 == 0
+                    if (isMilestone25 || isMilestone10) {
+                        var milestoneWasNew = false
+                        var milestoneGemsAwarded = 0
+                        gameDao.updateProfile { current ->
+                            val rewarded = current.currentRunMilestonesRewarded.split(",").filter { it.isNotEmpty() }
+                            if (nextZoneNumber.toString() !in rewarded) {
+                                milestoneWasNew = true
+                                milestoneGemsAwarded = if (isMilestone25) 5 else 2
+                                current.copy(
+                                    gems = current.gems + milestoneGemsAwarded,
+                                    currentRunMilestonesRewarded = (rewarded + nextZoneNumber.toString()).joinToString(",")
+                                )
+                            } else {
+                                current
+                            }
+                        }
+                        if (milestoneWasNew) {
+                            updatedMsg = "🏆 MILESTONE! Zone $nextZoneNumber reached (+$milestoneGemsAwarded 💎)"
+                            soundEngine.playUnlockSkin()
+                        }
+                    }
                 } else if (state.feedbackMessage.startsWith("ENTERING") && tick - state.lastZoneTransitionTick > 25) {
                     updatedMsg = "SYNCHRONIZED WITH ${activeDna.environmentName}"
                 }
