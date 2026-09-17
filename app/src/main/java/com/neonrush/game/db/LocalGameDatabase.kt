@@ -360,5 +360,9 @@ class GameDbHelper(context: Context) : SQLiteOpenHelper(context, "neon_rush_comp
     if (oldVersion < 11) {
         db.execSQL("ALTER TABLE game_profile ADD COLUMN currentRunMilestonesRewarded TEXT DEFAULT ''")
     }
+    if (oldVersion < 12) {
+        db.execSQL("ALTER TABLE game_profile ADD COLUMN checkpointsReachedCsv TEXT DEFAULT ''")
+        db.execSQL("ALTER TABLE game_profile ADD COLUMN checkpointsActivatedCsv TEXT DEFAULT ''")
+    }
 }
 }
