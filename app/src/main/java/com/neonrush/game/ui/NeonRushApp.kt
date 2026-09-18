@@ -2383,6 +2383,31 @@ val ghostMarkerImg = ImageBitmap.imageResource(id = R.drawable.marker_ghost_riva
                 }
             }
 
+            androidx.compose.animation.AnimatedVisibility(
+                visible = simState.tickIndex < 167 && profile.fuelTiersOwned > 0,
+                enter = androidx.compose.animation.fadeIn(animationSpec = androidx.compose.animation.core.tween(500)),
+                exit = androidx.compose.animation.fadeOut(animationSpec = androidx.compose.animation.core.tween(800)),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 6.dp)
+                        .background(CyberSurface.copy(alpha = 0.55f), RoundedCornerShape(8.dp))
+                        .border(1.dp, CyberPrimary.copy(alpha = 0.25f), RoundedCornerShape(8.dp))
+                        .padding(vertical = 6.dp, horizontal = 12.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "⛽ CURRENT LONGEVITY: +${profile.fuelTiersOwned * 20}%",
+                        color = CyberPrimary,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 12.sp,
+                        fontFamily = FontFamily.Monospace
+                    )
+                }
+            }
+
             Spacer(modifier = Modifier.height(12.dp))
 
             Box(
