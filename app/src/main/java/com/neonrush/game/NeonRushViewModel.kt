@@ -1354,7 +1354,7 @@ fun startRacingSimulation(ghost: GhostChallengeEntity, specialWorldId: Int? = nu
                 }
                 val tickDistanceOffset = speedInPx * 3.6f
                 val nextDistance = state.distanceMeters + tickDistanceOffset
-                val zoneM = (-575.0 + kotlin.math.sqrt(330625.0 + 300.0 * nextDistance)) / 150.0
+                val zoneM = (-776.25 + kotlin.math.sqrt(602564.0625 + 405.0 * nextDistance)) / 202.5
                 val nextZoneNumber = (kotlin.math.floor(zoneM).toInt() + 1).coerceAtLeast(1)
                 var activeDna = ZoneGenerator.generateZone(nextZoneNumber, random.nextLong())
                 if (state.specialWorldId != null) activeDna = overrideEnvironment(activeDna, state.specialWorldId)
