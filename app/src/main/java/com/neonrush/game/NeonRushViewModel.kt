@@ -778,26 +778,66 @@ fun startSpecialModeRun(ghost: GhostChallengeEntity) {
     }
 }
 
-fun startRacingSimulation(ghost: GhostChallengeEntity, specialWorldId: Int? = null) {
+fun startFromCheckpoint(checkpointZone: Int) {
+    viewModelScope.launch {
+        var canStart = false
+        gameDao.updateProfile { prof ->
+            val activated = prof.checkpointsActivatedCsv.split(",").filter { it.isNotEmpty() }
+            if (checkpointZone.toString() in activated) {
+                canStart = true
+                prof
+            } else {
+                val cost = checkpointZone * 3
+                if (prof.gems >= cost) {
+                    canStart = true
+                    prof.copy(
+                        gems = prof.gems - cost,
+                        checkpointsActivatedCsv = (activated + checkpointZone.toString()).joinToString(",")
+                    )
+                } else {
+                    prof
+                }
+            }
+        }
+        if (canStart) {
+            val checkpointGhost = com.neonrush.game.db.GhostChallengeEntity(
+                "ghost_cyberrunner",
+                "CyberRunner",
+                850,
+                4,
+                ZoneGenerator.generateTelemetryCsv(850, 111)
+            )
+            startRacingSimulation(checkpointGhost, null, checkpointZone)
+        }
+    }
+}
+
+fun startRacingSimulation(ghost: GhostChallengeEntity, specialWorldId: Int? = null, startFromZone: Int = 1) {
     simJob?.cancel()
-    var startupDna = ZoneGenerator.generateZone(1, 42)
+    var startupDna = ZoneGenerator.generateZone(startFromZone, 42)
     if (specialWorldId != null) startupDna = overrideEnvironment(startupDna, specialWorldId)
     val todayMutation = DailyMutations.getActiveMutation()
     val isFirstLucky = (System.currentTimeMillis() - lastPlayTime) > 3 * 24 * 3600 * 1000L
+    val startingDistance = if (startFromZone > 1) {
+        val m = (startFromZone - 1).toDouble()
+        (75.0 * m * m + 575.0 * m).toFloat()
+    } else 0f
     _simState.value = SimulationState(
         activeGhost = ghost,
         isStarted = true,
         isCompleted = false,
         tickIndex = 0,
+        distanceMeters = startingDistance,
         ghostYPath = ZoneGenerator.parseTelemetry(ghost.yPositionsCsv),
         userYPath = parseTelemetryFromSimParameters(),
         feedbackMessage = if (isFirstLucky) "LUCKY DRIFT ENGAGED (SLOWER SPEED, MORE POWERUPS)!" else "Synchronizing procedural light grid pathways...",
-        currentZoneNumber = 1,
+        currentZoneNumber = startFromZone,
         zoneDNA = startupDna,
         activeTrackElements = emptyList(),
         activePowerupDurations = emptyMap(),
         currentMutationName = todayMutation.title,
         specialWorldId = specialWorldId
+    )
     )
         soundEngine.setHomeScreenActiveState(false)
         soundEngine.playThrusterCharge()
