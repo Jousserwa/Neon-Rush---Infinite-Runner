@@ -1220,6 +1220,46 @@ fun ArcadeHomeView(
             }
         }
 
+        if (profile.checkpointsReachedCsv.isNotEmpty()) {
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = "🏁 CHECKPOINTS",
+                color = CyberSecondary,
+                fontWeight = FontWeight.Bold,
+                fontSize = 12.sp,
+                fontFamily = FontFamily.Monospace
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .horizontalScroll(rememberScrollState()),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                val reachedZones = profile.checkpointsReachedCsv.split(",").filter { it.isNotEmpty() }.map { it.toInt() }.sorted()
+                val activatedZones = profile.checkpointsActivatedCsv.split(",").filter { it.isNotEmpty() }.map { it.toInt() }
+                for (cp in reachedZones) {
+                    val isActivated = cp in activatedZones
+                    val cost = cp * 3
+                    Button(
+                        onClick = { viewModel.startFromCheckpoint(cp) },
+                        colors = ButtonDefaults.buttonColors(containerColor = if (isActivated) CyberPrimary else CyberSurface),
+                        shape = RoundedCornerShape(8.dp),
+                        modifier = Modifier.border(1.dp, CyberPrimary.copy(alpha = 0.4f), RoundedCornerShape(8.dp))
+                    ) {
+                        Text(
+                            text = if (isActivated) "Zone $cp ✓" else "Zone $cp (${cost}💎)",
+                            color = if (isActivated) Color.Black else Color.White,
+                            fontFamily = FontFamily.Monospace,
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+        }
+
         Row(
             modifier = Modifier
                 .fillMaxWidth()
