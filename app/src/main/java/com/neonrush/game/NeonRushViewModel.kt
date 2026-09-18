@@ -1336,6 +1336,10 @@ fun startRacingSimulation(ghost: GhostChallengeEntity, specialWorldId: Int? = nu
                         }
                     }
 
+                    val isMilestone25 = nextZoneNumber % 25 == 0
+                    val isMilestone10 = nextZoneNumber % 10 == 0
+                    if (isMilestone25 || isMilestone10) {
+
                         var milestoneWasNew = false
                         var milestoneGemsAwarded = 0
                         gameDao.updateProfile { current ->
