@@ -373,5 +373,8 @@ class GameDbHelper(context: Context) : SQLiteOpenHelper(context, "neon_rush_comp
         db.execSQL("ALTER TABLE game_profile ADD COLUMN checkpointsReachedCsv TEXT DEFAULT ''")
         db.execSQL("ALTER TABLE game_profile ADD COLUMN checkpointsActivatedCsv TEXT DEFAULT ''")
     }
+    if (oldVersion < 13) {
+        db.execSQL("ALTER TABLE game_profile ADD COLUMN fuelTiersOwned INTEGER DEFAULT 0")
+    }
 }
 }
