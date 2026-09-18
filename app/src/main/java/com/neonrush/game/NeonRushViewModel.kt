@@ -1611,7 +1611,9 @@ fun startRacingSimulation(ghost: GhostChallengeEntity, specialWorldId: Int? = nu
                         AnalyticsManager.logScoreMilestone(ms)
                     }
                 }
-                fuelLevelState = (fuelLevelState - 1)
+                if ((tick * 10) % (10 + prof.fuelTiersOwned * 2) < 10) {
+                    fuelLevelState = (fuelLevelState - 1)
+                }
                 if (fuelLevelState <= 0) {
                     _simState.value = state.copy(isCompleted = true, score = nextScore)
                     break
