@@ -853,6 +853,19 @@ fun startRacingSimulation(ghost: GhostChallengeEntity, specialWorldId: Int? = nu
                     soundEngine.playTone(660f, 300, "sawtooth")
                     updatedMsg = "ENTERING: ${activeDna.environmentName} ${activeDna.environmentEmoji}"
 
+                    val isCheckpointZone = nextZoneNumber % 50 == 0
+                    if (isCheckpointZone) {
+                        gameDao.updateProfile { current ->
+                            val reached = current.checkpointsReachedCsv.split(",").filter { it.isNotEmpty() }
+                            if (nextZoneNumber.toString() !in reached) {
+                                updatedMsg = "🏁 CHECKPOINT SAVED: Zone $nextZoneNumber!"
+                                current.copy(checkpointsReachedCsv = (reached + nextZoneNumber.toString()).joinToString(","))
+                            } else {
+                                current
+                            }
+                        }
+                    }
+
                     val isMilestone25 = nextZoneNumber % 25 == 0
                     val isMilestone10 = nextZoneNumber % 10 == 0
                     if (isMilestone25 || isMilestone10) {
