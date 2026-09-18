@@ -308,7 +308,8 @@ class GameDbHelper(context: Context) : SQLiteOpenHelper(context, "neon_rush_comp
                 currentRunBossZonesRewarded TEXT,
                currentRunMilestonesRewarded TEXT,
                 checkpointsReachedCsv TEXT,
-                checkpointsActivatedCsv TEXT
+               checkpointsActivatedCsv TEXT,
+                fuelTiersOwned INTEGER
             )
         """) 
         db.execSQL("""
