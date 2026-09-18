@@ -2339,12 +2339,13 @@ val ghostMarkerImg = ImageBitmap.imageResource(id = R.drawable.marker_ghost_riva
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             // Telemetry top panel
-            Row(
+            
+                Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(CyberSurface, RoundedCornerShape(8.dp))
-                    .border(1.dp, CyberPrimary.copy(alpha = 0.2f), RoundedCornerShape(8.dp))
-                    .padding(12.dp),
+                    .background(CyberSurface.copy(alpha = 0.55f), RoundedCornerShape(8.dp))
+                    .border(1.dp, CyberPrimary.copy(alpha = 0.25f), RoundedCornerShape(8.dp))
+                    .padding(8.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
