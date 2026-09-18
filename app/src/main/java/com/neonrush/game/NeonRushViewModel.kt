@@ -838,7 +838,7 @@ fun startRacingSimulation(ghost: GhostChallengeEntity, specialWorldId: Int? = nu
         currentMutationName = todayMutation.title,
         specialWorldId = specialWorldId
     )
-    )
+    
         soundEngine.setHomeScreenActiveState(false)
         soundEngine.playThrusterCharge()
         AnalyticsManager.logGameStart()
