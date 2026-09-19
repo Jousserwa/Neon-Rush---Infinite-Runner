@@ -1270,7 +1270,7 @@ fun ArcadeHomeView(
                 .border(1.dp, CyberPrimary.copy(alpha = 0.4f), RoundedCornerShape(8.dp))
         ) {
             Text(
-                text = "⛽ UPGRADE FUEL TANK →",
+                text = "⛽ UPGRADE FUEL TANK",
                 color = CyberPrimary,
                 fontFamily = FontFamily.Monospace,
                 fontWeight = FontWeight.Bold,
