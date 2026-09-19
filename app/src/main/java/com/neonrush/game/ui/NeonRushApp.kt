@@ -1289,7 +1289,7 @@ fun ArcadeHomeView(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(44.dp),
+                .height(48.dp),
             horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             Button(
@@ -1299,7 +1299,7 @@ fun ArcadeHomeView(
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxHeight()
-                    .border(1.dp, CyberPrimary.copy(alpha = 0.4f), RoundedCornerShape(12.dp))
+                    .border(1.dp, CyberPrimary.copy(alpha = 0.35f), RoundedCornerShape(12.dp))
                     .testTag("quick_global_button")
             ) {
                 Row(
