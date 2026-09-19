@@ -1261,6 +1261,24 @@ fun ArcadeHomeView(
             Spacer(modifier = Modifier.height(8.dp))
         }
 
+        Button(
+            onClick = onNavigateToSkins,
+            colors = ButtonDefaults.buttonColors(containerColor = CyberSurface),
+            shape = RoundedCornerShape(8.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .border(1.dp, CyberPrimary.copy(alpha = 0.4f), RoundedCornerShape(8.dp))
+        ) {
+            Text(
+                text = "⛽ UPGRADE FUEL TANK →",
+                color = CyberPrimary,
+                fontFamily = FontFamily.Monospace,
+                fontWeight = FontWeight.Bold,
+                fontSize = 13.sp
+            )
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+
         Row(
             modifier = Modifier
                 .fillMaxWidth()
