@@ -2438,17 +2438,16 @@ val ghostMarkerImg = ImageBitmap.imageResource(id = R.drawable.marker_ghost_riva
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp),
+                .padding(horizontal = 12.dp, vertical = 4.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             // Telemetry top panel
-            
-                Row(
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(CyberSurface.copy(alpha = 0.55f), RoundedCornerShape(8.dp))
-                    .border(1.dp, CyberPrimary.copy(alpha = 0.25f), RoundedCornerShape(8.dp))
-                    .padding(8.dp),
+                    .background(CyberSurface.copy(alpha = 0.55f), RoundedCornerShape(6.dp))
+                    .border(1.dp, CyberPrimary.copy(alpha = 0.25f), RoundedCornerShape(6.dp))
+                    .padding(horizontal = 8.dp, vertical = 3.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -2457,13 +2456,13 @@ val ghostMarkerImg = ImageBitmap.imageResource(id = R.drawable.marker_ghost_riva
                         text = "STORM ZONE: " + simState.currentZoneName,
                         color = CyberPrimary,
                         fontWeight = FontWeight.Bold,
-                        fontSize = 12.sp,
+                        fontSize = 9.sp,
                         fontFamily = FontFamily.Monospace
                     )
                     Text(
                         text = "${simState.distanceMeters.toInt()}m",
                         color = Color.White.copy(alpha = 0.7f),
-                        fontSize = 11.sp,
+                        fontSize = 8.sp,
                         fontFamily = FontFamily.Monospace
                     )
                 }
@@ -2473,14 +2472,14 @@ val ghostMarkerImg = ImageBitmap.imageResource(id = R.drawable.marker_ghost_riva
                         text = "${simState.speedKmh} KM/H",
                         color = CyberSecondary,
                         fontWeight = FontWeight.Bold,
-                        fontSize = 15.sp,
+                        fontSize = 11.sp,
                         fontFamily = FontFamily.Monospace
                     )
                     Text(
                         text = "${simState.score} PTS",
                         color = Color.White,
                         fontWeight = FontWeight.Bold,
-                        fontSize = 12.sp,
+                        fontSize = 9.sp,
                         fontFamily = FontFamily.Monospace
                     )
                 }
