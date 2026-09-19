@@ -209,7 +209,18 @@ class NeonRushViewModel(
     fun setAmbientEnabled(enabled: Boolean) = NeonSoundEngine.setAmbientEnabled(enabled)
     fun purchaseStarterPack(activity: Activity) {
     RevenueCatManager.purchaseStarterPack(activity) { success ->
-    fun purchaseFuelTier(activity: Activity, tier: Int, productId: String) {
+        if (success) {
+            viewModelScope.launch {
+                gameDao.updateProfile { prof -> prof.copy(gems = prof.gems + RevenueCatManager.STARTER_PACK_GEMS_AMOUNT) }
+                soundEngine.playUnlockSkin()
+            }
+        } else {
+            _purchaseErrorEvent.tryEmit("Purchase failed. Please try again.")
+        }
+    }
+}
+
+fun purchaseFuelTier(activity: Activity, tier: Int, productId: String) {
     viewModelScope.launch {
         val prof = gameDao.getProfileDirect() ?: GameProfile()
         if (prof.fuelTiersOwned != tier - 1) {
@@ -231,16 +242,6 @@ class NeonRushViewModel(
             } else {
                 _purchaseErrorEvent.tryEmit("Purchase failed. Please try again.")
             }
-        }
-    }
-}
-        if (success) {
-            viewModelScope.launch {
-                gameDao.updateProfile { prof -> prof.copy(gems = prof.gems + RevenueCatManager.STARTER_PACK_GEMS_AMOUNT) }
-                soundEngine.playUnlockSkin()
-            }
-        } else {
-            _purchaseErrorEvent.tryEmit("Purchase failed. Please try again.")
         }
     }
 }
