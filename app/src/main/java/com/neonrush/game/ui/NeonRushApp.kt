@@ -1319,10 +1319,9 @@ fun ArcadeHomeView(
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxHeight()
-                    .border(1.dp, CyberSecondary.copy(alpha = 0.4f), RoundedCornerShape(12.dp))
+                    .border(1.dp, CyberSecondary.copy(alpha = 0.35f), RoundedCornerShape(12.dp))
                     .testTag("quick_skins_button")
             ) {
-                
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center
