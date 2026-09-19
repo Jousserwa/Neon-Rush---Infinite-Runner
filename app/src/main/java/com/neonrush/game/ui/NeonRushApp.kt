@@ -1345,18 +1345,19 @@ fun ArcadeHomeView(
             colors = ButtonDefaults.buttonColors(
                 containerColor = if (specialWorld != null) Color(0xFF9C27B0) else CyberSurface
             ),
-            shape = RoundedCornerShape(8.dp),
+            shape = RoundedCornerShape(12.dp),
+            contentPadding = PaddingValues(vertical = 12.dp, horizontal = 12.dp),
             modifier = Modifier
                 .fillMaxWidth()
-                .height(48.dp)
-                .border(1.dp, Color(0xFF9C27B0).copy(alpha = 0.5f), RoundedCornerShape(8.dp))
+                .border(1.dp, Color(0xFF9C27B0).copy(alpha = 0.35f), RoundedCornerShape(12.dp))
         ) {
             Text(
                 text = if (specialWorld != null) "⚡ ENTER ${specialWorld.title}" else "🔒 COMPLETE DAILY MISSIONS TO UNLOCK",
                 color = Color.White,
                 fontFamily = FontFamily.Monospace,
                 fontWeight = FontWeight.Bold,
-                fontSize = 12.sp
+                fontSize = 11.sp,
+                textAlign = TextAlign.Center
             )
         }
 
