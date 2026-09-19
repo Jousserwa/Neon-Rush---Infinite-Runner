@@ -216,7 +216,7 @@ class NeonRushViewModel(
             _purchaseErrorEvent.tryEmit("Purchase your tiers in order.")
             return@launch
         }
-        RevenueCatManager.purchaseFuelTier(activity, productId) { success ->
+        RevenueCatManager.purchaseGemPack(activity, productId) { success ->
             if (success) {
                 viewModelScope.launch {
                     gameDao.updateProfile { p ->
