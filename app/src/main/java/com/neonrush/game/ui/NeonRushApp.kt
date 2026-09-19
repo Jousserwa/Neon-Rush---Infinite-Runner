@@ -1795,6 +1795,84 @@ fun SkinsDeckTab(viewModel: NeonRushViewModel, profile: GameProfile) {
             .fillMaxSize()
             .verticalScroll(androidx.compose.foundation.rememberScrollState())
     ) {
+        Text(
+            text = "⛽ FUEL TANK UPGRADES",
+            color = CyberSecondary,
+            fontWeight = FontWeight.Bold,
+            fontSize = 14.sp,
+            fontFamily = FontFamily.Monospace,
+            modifier = Modifier.padding(bottom = 4.dp)
+        )
+        if (profile.fuelTiersOwned > 0) {
+            Text(
+                text = "Current longevity: +${profile.fuelTiersOwned * 20}%",
+                color = CyberPrimary,
+                fontSize = 12.sp,
+                fontFamily = FontFamily.Monospace,
+                modifier = Modifier.padding(bottom = 6.dp)
+            )
+        }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .horizontalScroll(androidx.compose.foundation.rememberScrollState()),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            val tierPrices = listOf("$2.99", "$4.99", "$7.99", "$11.99", "$15.99")
+            val tierProductIds = listOf("fuel_tier_1", "fuel_tier_2", "fuel_tier_3", "fuel_tier_4", "fuel_tier_5")
+            for (i in 1..5) {
+                val isOwned = profile.fuelTiersOwned >= i
+                val isBuyable = profile.fuelTiersOwned == i - 1
+                Button(
+                    onClick = {
+                        if (isBuyable && activity != null) {
+                            viewModel.purchaseFuelTier(activity, i, tierProductIds[i - 1])
+                        }
+                    },
+                    enabled = isBuyable || isOwned,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = when {
+                            isOwned -> CyberPrimary
+                            isBuyable -> CyberSurface
+                            else -> CyberSurface.copy(alpha = 0.4f)
+                        }
+                    ),
+                    shape = RoundedCornerShape(8.dp),
+                    modifier = Modifier.border(
+                        1.dp,
+                        if (isBuyable) CyberPrimary else CyberPrimary.copy(alpha = 0.25f),
+                        RoundedCornerShape(8.dp)
+                    )
+                ) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(
+                            text = if (isOwned) "TIER $i ✓" else "TIER $i",
+                            color = if (isOwned) Color.Black else Color.White,
+                            fontFamily = FontFamily.Monospace,
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text(
+                            text = "+${i * 20}%",
+                            color = if (isOwned) Color.Black else CyberSecondary,
+                            fontFamily = FontFamily.Monospace,
+                            fontSize = 10.sp
+                        )
+                        if (!isOwned) {
+                            Text(
+                                text = tierPrices[i - 1],
+                                color = if (isBuyable) CyberPrimary else Color.Gray,
+                                fontFamily = FontFamily.Monospace,
+                                fontSize = 10.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
+                }
+            }
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+
         Row(
             modifier = Modifier
                 .fillMaxWidth()
