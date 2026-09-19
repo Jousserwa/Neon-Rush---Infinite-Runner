@@ -1193,7 +1193,7 @@ fun ArcadeHomeView(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(52.dp)
-                .androidx.compose.ui.draw.shadow(
+                .shadow(
                     elevation = 16.dp,
                     shape = RoundedCornerShape(12.dp),
                     ambientColor = Color(0xFFFF0055),
