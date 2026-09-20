@@ -91,9 +91,9 @@ fun FuelBar(
 
     Box(
         modifier = modifier
-            .clip(RoundedCornerShape(8.dp))
-            .background(Color(0xFF14141C))
-            .border(1.dp, baseColor.copy(alpha = pulseAlpha), RoundedCornerShape(8.dp))
+            .clip(RoundedCornerShape(12.dp))
+            .background(Color(0xFF14141C).copy(alpha = 0.15f))
+            .border(1.dp, baseColor.copy(alpha = pulseAlpha * 0.5f), RoundedCornerShape(12.dp))
             .clickable(enabled = !capReached) {
                 haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                 onRefuel()
@@ -104,7 +104,7 @@ fun FuelBar(
             modifier = Modifier
                 .fillMaxHeight()
                 .fillMaxWidth(fraction = (fuelPercent / 100f).coerceIn(0f, 1f))
-                .background(baseColor.copy(alpha = pulseAlpha * 0.35f))
+                .background(baseColor.copy(alpha = pulseAlpha * 0.25f))
         )
 
         Text(
@@ -117,6 +117,13 @@ fun FuelBar(
             fontFamily = FontFamily.Monospace,
             fontSize = 10.sp,
             fontWeight = FontWeight.Bold,
+            style = androidx.compose.ui.text.TextStyle(
+                shadow = androidx.compose.ui.graphics.Shadow(
+                    color = Color.Black,
+                    offset = androidx.compose.ui.geometry.Offset(1f, 1f),
+                    blurRadius = 6f
+                )
+            ),
             modifier = Modifier.align(Alignment.Center)
         )
     }
