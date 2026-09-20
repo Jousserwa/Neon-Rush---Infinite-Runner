@@ -2526,9 +2526,6 @@ val ghostMarkerImg = ImageBitmap.imageResource(id = R.drawable.marker_ghost_riva
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxWidth()
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(Color(0xFF020104).copy(alpha = 0.25f))
-                    .border(2.dp, CyberPrimary, RoundedCornerShape(12.dp))
             ) {
                 Box(
                     modifier = Modifier
