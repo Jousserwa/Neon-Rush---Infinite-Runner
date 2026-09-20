@@ -2894,14 +2894,22 @@ val ghostMarkerImg = ImageBitmap.imageResource(id = R.drawable.marker_ghost_riva
 ) {
     Button(
         onClick = { viewModel.resetSimulation() },
-        colors = ButtonDefaults.buttonColors(containerColor = CyberSurface),
-        shape = RoundedCornerShape(8.dp),
+        colors = ButtonDefaults.buttonColors(containerColor = CyberSurface.copy(alpha = 0.5f)),
+        shape = RoundedCornerShape(12.dp),
         modifier = Modifier
             .weight(0.3f)
             .fillMaxHeight()
-            .border(1.dp, CyberPrimary.copy(alpha = 0.4f), RoundedCornerShape(8.dp))
+            .border(1.dp, CyberPrimary.copy(alpha = 0.35f), RoundedCornerShape(12.dp))
     ) {
-        Text("QUIT", color = Color.White, fontFamily = FontFamily.Monospace, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+        Text(
+            "QUIT",
+            color = Color.White,
+            fontFamily = FontFamily.Monospace,
+            fontSize = 12.sp,
+            fontWeight = FontWeight.Bold,
+            style = TextStyle(shadow = Shadow(color = Color.Black, offset = Offset(1f, 1f), blurRadius = 6f))
+        )
+    }
     }
 
     FuelBar(
