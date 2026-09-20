@@ -2910,8 +2910,7 @@ val ghostMarkerImg = ImageBitmap.imageResource(id = R.drawable.marker_ghost_riva
             style = TextStyle(shadow = Shadow(color = Color.Black, offset = Offset(1f, 1f), blurRadius = 6f))
         )
     }
-    }
-
+    
     FuelBar(
     fuelPercent = simState.fuelLevelPercent,
     refillCount = simState.fuelRefillCount,
