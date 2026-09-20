@@ -1319,27 +1319,52 @@ fun ArcadeHomeView(
 
         val specialWorld = Worlds.specialWorldForTier(profile.specialWorldTier)
         var showSpecialLockInfo by remember { mutableStateOf(false) }
-        Button(
-            onClick = {
-                if (specialWorld != null) onStartSpecialMode() else showSpecialLockInfo = true
-            },
-            colors = ButtonDefaults.buttonColors(
-                containerColor = if (specialWorld != null) Color(0xFF9C27B0) else CyberSurface
-            ),
-            shape = RoundedCornerShape(12.dp),
-            contentPadding = PaddingValues(vertical = 12.dp, horizontal = 12.dp),
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .border(1.dp, Color(0xFF9C27B0).copy(alpha = 0.35f), RoundedCornerShape(12.dp))
+                .height(48.dp),
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            Text(
-                text = if (specialWorld != null) "⚡ ENTER ${specialWorld.title}" else "🔒 COMPLETE DAILY MISSIONS TO UNLOCK",
-                color = Color.White,
-                fontFamily = FontFamily.Monospace,
-                fontWeight = FontWeight.Bold,
-                fontSize = 11.sp,
-                textAlign = TextAlign.Center
-            )
+            Button(
+                onClick = onNavigateToSkins,
+                colors = ButtonDefaults.buttonColors(containerColor = CyberSurface),
+                shape = RoundedCornerShape(12.dp),
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxHeight()
+                    .border(1.dp, CyberPrimary.copy(alpha = 0.35f), RoundedCornerShape(12.dp))
+            ) {
+                Text(
+                    text = "⛽ FUEL TANK",
+                    color = CyberPrimary,
+                    fontFamily = FontFamily.Monospace,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 11.sp
+                )
+            }
+
+            Button(
+                onClick = {
+                    if (specialWorld != null) onStartSpecialMode() else showSpecialLockInfo = true
+                },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = if (specialWorld != null) Color(0xFF9C27B0) else CyberSurface
+                ),
+                shape = RoundedCornerShape(12.dp),
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxHeight()
+                    .border(1.dp, Color(0xFF9C27B0).copy(alpha = 0.35f), RoundedCornerShape(12.dp))
+            ) {
+                Text(
+                    text = if (specialWorld != null) "⚡ WORLD" else "🔒 MISSIONS",
+                    color = Color.White,
+                    fontFamily = FontFamily.Monospace,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 11.sp,
+                    textAlign = TextAlign.Center
+                )
+            }
         }
 
         if (showSpecialLockInfo) {
