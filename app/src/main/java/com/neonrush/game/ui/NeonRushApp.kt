@@ -3100,6 +3100,16 @@ fun GameOverOverlayScreen(
                         fontFamily = FontFamily.Monospace
                     )
                 }
+                if (profile.fuelTiersOwned < 5) {
+                    Text(
+                        text = "⛽ Out of fuel again? Upgrade your Fuel Tank for longer runs — permanent!",
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = CyberPrimary,
+                        fontFamily = FontFamily.Monospace,
+                        textAlign = TextAlign.Center
+                    )
+                }
 
                 if (!isPro) {
     Button(
