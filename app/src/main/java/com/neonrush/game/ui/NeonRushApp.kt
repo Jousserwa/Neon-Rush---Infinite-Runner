@@ -2455,25 +2455,26 @@ val ghostMarkerImg = ImageBitmap.imageResource(id = R.drawable.marker_ghost_riva
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(CyberSurface.copy(alpha = 0.55f), RoundedCornerShape(6.dp))
-                    .border(1.dp, CyberPrimary.copy(alpha = 0.25f), RoundedCornerShape(6.dp))
                     .padding(horizontal = 8.dp, vertical = 3.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                val hudShadow = Shadow(color = Color.Black, offset = Offset(1f, 1f), blurRadius = 6f)
                 Column {
                     Text(
                         text = "STORM ZONE: " + simState.currentZoneName,
                         color = CyberPrimary,
                         fontWeight = FontWeight.Bold,
                         fontSize = 9.sp,
-                        fontFamily = FontFamily.Monospace
+                        fontFamily = FontFamily.Monospace,
+                        style = TextStyle(shadow = hudShadow)
                     )
                     Text(
                         text = "${simState.distanceMeters.toInt()}m",
                         color = Color.White.copy(alpha = 0.7f),
                         fontSize = 8.sp,
-                        fontFamily = FontFamily.Monospace
+                        fontFamily = FontFamily.Monospace,
+                        style = TextStyle(shadow = hudShadow)
                     )
                 }
 
@@ -2483,18 +2484,19 @@ val ghostMarkerImg = ImageBitmap.imageResource(id = R.drawable.marker_ghost_riva
                         color = CyberSecondary,
                         fontWeight = FontWeight.Bold,
                         fontSize = 11.sp,
-                        fontFamily = FontFamily.Monospace
+                        fontFamily = FontFamily.Monospace,
+                        style = TextStyle(shadow = hudShadow)
                     )
                     Text(
                         text = "${simState.score} PTS",
                         color = Color.White,
                         fontWeight = FontWeight.Bold,
                         fontSize = 9.sp,
-                        fontFamily = FontFamily.Monospace
+                        fontFamily = FontFamily.Monospace,
+                        style = TextStyle(shadow = hudShadow)
                     )
                 }
             }
-
             androidx.compose.animation.AnimatedVisibility(
                 visible = simState.tickIndex < 167 && profile.fuelTiersOwned > 0,
                 enter = androidx.compose.animation.fadeIn(animationSpec = androidx.compose.animation.core.tween(500)),
