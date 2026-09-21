@@ -45,9 +45,12 @@ jobs:
           path: app/build/outputs/bundle/release/app-release.aab
       - name: Build Signed Release APK
         run: ./gradlew :app:assembleRelease --no-daemon
+      - name: Decode Consistent Debug Keystore
+        run: |
+          base64 --decode < debug.keystore.base64 > app/debug.keystore
+
       - name: Build Debug APK
         run: ./gradlew :app:assembleDebug --no-daemon
-
       - name: Upload Debug APK Artifact
         uses: actions/upload-artifact@v4
         with:
