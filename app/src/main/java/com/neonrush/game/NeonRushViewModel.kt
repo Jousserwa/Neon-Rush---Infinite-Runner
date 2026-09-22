@@ -680,7 +680,15 @@ fun freezeStreak() {
         }
     }
 
-    private fun spawnObstacleForSet(obstacleSetId: Int, tick: Int, rand: kotlin.random.Random, ghostY: Int): List<VisualTrackElement> {
+    private fun isBlinkHazardVisible(elem: VisualTrackElement, tick: Int): Boolean {
+        if (elem.subType != "BLINK_HAZARD") return true
+        val spawnTick = elem.id.removePrefix("blink_").substringBefore("_").toIntOrNull() ?: return true
+        val cycleLength = 25 // ~1s visible (8 ticks) + ~2s invisible (17 ticks) at 120ms/tick
+        val phase = ((tick - spawnTick) % cycleLength + cycleLength) % cycleLength
+        return phase < 8
+    }
+
+    private fun spawnObstacleForSet(obstacleSetId: Int, tick: Int, rand: kotlin.random.Random, ghostY: Int, zoneNumber: Int = 1): List<VisualTrackElement> {
         val elements = mutableListOf<VisualTrackElement>()
         val baseId = "obs_${tick}_"
         when (obstacleSetId) {
@@ -718,6 +726,16 @@ fun freezeStreak() {
                 elements.add(VisualTrackElement("${baseId}tu2", 1.2f, ghostY + 20, "obstacle", "TUNNEL_BOTTOM"))
             }
             else -> elements.add(VisualTrackElement("${baseId}st", 1.2f, ghostY + rand.nextInt(-12, 12).coerceIn(15, 85), "obstacle", "STANDARD"))
+        }
+        // BLINK STRIKE: a new, per-world "creature" hazard that flickers
+        // visible (~1s) then near-invisible (~2s), like lightning. It cannot
+        // be neutralized by shields/invincibility/ghost mode while visible —
+        // dodging it is the only way past. Gated to zone 4+ so tutorial zones
+        // stay calm. kindIdx (0-4) gives 5 silhouette/color variants per world.
+        if (zoneNumber >= 4 && rand.nextInt(100) < 20) {
+            val kindIdx = rand.nextInt(0, 5)
+            val hazardY = (ghostY + rand.nextInt(-25, 25)).coerceIn(15, 85)
+            elements.add(VisualTrackElement("blink_${tick}_${kindIdx}", 1.2f, hazardY, "obstacle", "BLINK_HAZARD"))
         }
         return elements
     }
@@ -982,7 +1000,7 @@ fun startRacingSimulation(ghost: GhostChallengeEntity, specialWorldId: Int? = nu
                 val spacingVal = (activeDna.obstacleSpacingAndDensity / (12f * spacingBias * liveDifficultyMultiplier * selectedDifficulty.spacingMultiplier)).coerceAtLeast(4f).toInt()
                 if (tick % spacingVal == 0) {
                     val targetGhostY = state.ghostYPath.getOrNull(tick % state.ghostYPath.size.coerceAtLeast(1)) ?: 50
-                    val obstacles = spawnObstacleForSet(activeDna.obstacleSetId, tick, random, targetGhostY)
+                    val obstacles = spawnObstacleForSet(activeDna.obstacleSetId, tick, random, targetGhostY, nextZoneNumber)
                     updatedElements.addAll(obstacles)
                     if (random.nextFloat() < activeDna.powerupDensity) {
                         val puType = chooseProceduralPowerupType(random, isSundayLegendary)
@@ -1045,6 +1063,7 @@ fun startRacingSimulation(ghost: GhostChallengeEntity, specialWorldId: Int? = nu
                 var hasShield = nextDurationsMap.containsKey("PU1")
                 var hitThisTick = false
                 for (elem in updatedElements) {
+                    if (!isBlinkHazardVisible(elem, tick)) continue
                     val isAligned = elem.xOffsetFraction >= 0.16f && elem.xOffsetFraction <= 0.26f
                     if (isAligned) {
                         val verticalDist = Math.abs(userY - elem.yMatchPos)
@@ -1123,8 +1142,10 @@ fun startRacingSimulation(ghost: GhostChallengeEntity, specialWorldId: Int? = nu
                                 }
                                 "obstacle", "bullet" -> {
     val hasReviveShield = tick < state.shieldUntilTick
-    if (hasInvincibility || hasGhostMode || hasReviveShield) {
-                                    } else if (hasShield) {
+    val isUnstoppableHazard = elem.subType == "BLINK_HAZARD"
+    if (hasReviveShield) {
+                                    } else if ((hasInvincibility || hasGhostMode) && !isUnstoppableHazard) {
+                                    } else if (hasShield && !isUnstoppableHazard) {
                                         soundEngine.playShieldBreak()
                                         nextDurationsMap.remove("PU1")
                                         hasShield = false
@@ -1132,7 +1153,7 @@ fun startRacingSimulation(ghost: GhostChallengeEntity, specialWorldId: Int? = nu
                                     } else {
                                         soundEngine.playCollision()
                                         fuelLevelState = (fuelLevelState - 20).coerceAtLeast(0)
-                                        updatedMsg = "WARNING: IMPACT DETECTED! HULL INTEGRITY LOST"
+                                        updatedMsg = if (isUnstoppableHazard) "BLINK STRIKE HIT: NO SHIELD CAN STOP IT" else "WARNING: IMPACT DETECTED! HULL INTEGRITY LOST"
                                         hitObstaclesHistory.add(elem.subType)
                                         hitThisTick = true
                                         repeat(10) { i ->
@@ -1456,7 +1477,7 @@ fun startRacingSimulation(ghost: GhostChallengeEntity, specialWorldId: Int? = nu
                 val spacingVal = (activeDna.obstacleSpacingAndDensity / 12f).coerceAtLeast(4f).toInt()
                 if (tick % spacingVal == 0) {
                     val targetGhostY = state.ghostYPath.getOrNull(tick % state.ghostYPath.size.coerceAtLeast(1)) ?: 50
-                    val obstacles = spawnObstacleForSet(activeDna.obstacleSetId, tick, random, targetGhostY)
+                    val obstacles = spawnObstacleForSet(activeDna.obstacleSetId, tick, random, targetGhostY, nextZoneNumber)
                     updatedElements.addAll(obstacles)
                     if (random.nextFloat() < activeDna.powerupDensity) {
                         val puType = chooseProceduralPowerupType(random, isSundayLegendary)
@@ -1500,6 +1521,7 @@ fun startRacingSimulation(ghost: GhostChallengeEntity, specialWorldId: Int? = nu
                 val hasGhostMode = nextDurationsMap.containsKey("PU4") || activeDna.mechanicIds.contains(3)
                 var hasShield = nextDurationsMap.containsKey("PU1")
                 for (elem in updatedElements) {
+                    if (!isBlinkHazardVisible(elem, tick)) continue
                     val isAligned = elem.xOffsetFraction >= 0.16f && elem.xOffsetFraction <= 0.26f
                     if (isAligned) {
                         val verticalDist = Math.abs(userY - elem.yMatchPos)
@@ -1574,8 +1596,9 @@ fun startRacingSimulation(ghost: GhostChallengeEntity, specialWorldId: Int? = nu
                                     }
                                 }
                                 "obstacle", "bullet" -> {
-                                    if (hasInvincibility || hasGhostMode) {
-                                    } else if (hasShield) {
+                                    val isUnstoppableHazard = elem.subType == "BLINK_HAZARD"
+                                    if ((hasInvincibility || hasGhostMode) && !isUnstoppableHazard) {
+                                    } else if (hasShield && !isUnstoppableHazard) {
                                         soundEngine.playShieldBreak()
                                         nextDurationsMap.remove("PU1")
                                         hasShield = false
@@ -1583,7 +1606,7 @@ fun startRacingSimulation(ghost: GhostChallengeEntity, specialWorldId: Int? = nu
                                     } else {
                                         soundEngine.playCollision()
                                         fuelLevelState = (fuelLevelState - 20).coerceAtLeast(0)
-                                        updatedMsg = "IMPACT IMPACT!"
+                                        updatedMsg = if (isUnstoppableHazard) "BLINK STRIKE HIT: NO SHIELD CAN STOP IT" else "IMPACT IMPACT!"
                                         repeat(10) { i ->
                                             activeParticles.add(
                                                 Particle(
