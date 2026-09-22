@@ -73,9 +73,12 @@ object ZoneGenerator {
     Triple("TRANSCENDENT", "✨", "#FFFFFF")
 )
     fun calculateSpeed(zone: Int): Float {
-        // Grace period: zones 1-3 stay flat so new players get their bearings
-        val effectiveZone = (zone - 3).coerceIn(0, 100) // cap growth so speed plateaus instead of declining
-        val speed = 3.0f + (effectiveZone * 0.3f) - (effectiveZone * effectiveZone * 0.0015f)
+        // Grace period trimmed to just zone 1, so the ramp (and tension) kicks
+        // in almost immediately instead of staying flat through zone 3.
+        val effectiveZone = (zone - 1).coerceIn(0, 100) // cap growth so speed plateaus instead of declining
+        // Higher base (was 3.0) and steeper per-zone climb (was 0.3) for a
+        // faster, more tense start and medium-tier pace.
+        val speed = 4.0f + (effectiveZone * 0.38f) - (effectiveZone * effectiveZone * 0.0015f)
         return speed.coerceAtMost(22.0f)
     }
 
