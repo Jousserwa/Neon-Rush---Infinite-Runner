@@ -87,7 +87,7 @@ import com.neonrush.game.Worlds
 // old behavior) or a stack of depth layers that scroll at different rates to
 // sell a 2.5D sense of depth. Layer order = back to front; front layers get
 // a higher speedFactor so they scroll faster than the ones behind them.
-private data class BgLayer(val res: Int, val speedFactor: Float)
+private data class BgLayer(val res: Int, val speedFactor: Float, val seamless: Boolean = true)
 
 // Tune this to taste: higher = more scroll movement per meter traveled.
 private const val PARALLAX_PX_PER_METER = 3f
@@ -100,22 +100,21 @@ private val worldBackgroundLayers: Map<Int, List<BgLayer>> = mapOf(
         BgLayer(R.drawable.bg_world1_l4_world_ground, 0.45f),
         BgLayer(R.drawable.bg_world1_l5_foreground, 0.85f)
     ),
-    // World 2 (Derelict Signal) now has its own 3-layer parallax stack:
-    // deep-space sky in back, the derelict hull/window frame in the middle
-    // (its cutout lets the sky layer show through), and the debris-strewn
-    // platform floor up front, closest to the player.
+    // World 2 (Derelict Signal): real 3-layer parallax depth restored. This
+    // art is a centered "hero scene" (not an edge-to-edge tiling strip), so
+    // seamless=false tells the renderer to pan each layer back and forth
+    // within its own bounds instead of repeating it — that repeat was what
+    // exposed the empty transparent margins as a seam before.
     2 to listOf(
-        BgLayer(R.drawable.bg_world2_l1_sky, 0.02f),
-        BgLayer(R.drawable.bg_world2_l2_derelict_hull, 0.35f),
-        BgLayer(R.drawable.bg_world2_l3_platform_debris, 0.85f)
+        BgLayer(R.drawable.bg_world2_l1_sky, 0.02f, seamless = false),
+        BgLayer(R.drawable.bg_world2_l2_derelict_hull, 0.35f, seamless = false),
+        BgLayer(R.drawable.bg_world2_l3_platform_debris, 0.85f, seamless = false)
     ),
-    // World 3 (Cell Block Zero) gets the same 3-layer parallax treatment:
-    // burning skyline far back, the prison walls/guard towers as the mid
-    // structure, and the debris-strewn road up front, closest to the player.
+    // World 3 (Cell Block Zero): same real-depth fix.
     3 to listOf(
-        BgLayer(R.drawable.bg_world3_l1_sky, 0.02f),
-        BgLayer(R.drawable.bg_world3_l2_cell_block, 0.35f),
-        BgLayer(R.drawable.bg_world3_l3_road_debris, 0.85f)
+        BgLayer(R.drawable.bg_world3_l1_sky, 0.02f, seamless = false),
+        BgLayer(R.drawable.bg_world3_l2_cell_block, 0.35f, seamless = false),
+        BgLayer(R.drawable.bg_world3_l3_road_debris, 0.85f, seamless = false)
     ),
     // Worlds 4-5 keep their original single static background until they get
     // the same layered treatment — speedFactor 0f means "don't scroll".
@@ -185,12 +184,11 @@ private fun ParallaxWorldBackground(worldId: Int, distanceMeters: Float, fallbac
                     dstOffset = IntOffset(((cw - displayWidth) / 2f).roundToInt(), 0),
                     dstSize = IntSize(displayWidth.roundToInt(), ch.roundToInt())
                 )
-            } else {
+            } else if (layer.seamless) {
+                // Seamless tiling strip art (e.g. World 1): content spans
+                // edge-to-edge, so repeating copies side by side loops cleanly.
                 val scrollPx = distanceMeters * layer.speedFactor * PARALLAX_PX_PER_METER
                 var x = (-scrollPx).mod(displayWidth) - displayWidth
-                // Tile enough copies to cover the full canvas width. Note:
-                // these images aren't seamless-tiling art, so a soft seam can
-                // show at the loop point — most visible on faster layers.
                 while (x < cw) {
                     drawImage(
                         image = bmp,
@@ -198,6 +196,33 @@ private fun ParallaxWorldBackground(worldId: Int, distanceMeters: Float, fallbac
                         dstSize = IntSize(displayWidth.roundToInt(), ch.roundToInt())
                     )
                     x += displayWidth
+                }
+            } else {
+                // Non-seamless "hero scene" art (centered content, transparent
+                // margins): repeating it side by side would expose the empty
+                // margins as a seam, so instead pan the single oversized copy
+                // back and forth within its own bounds. Each layer's distinct
+                // speedFactor still produces real multi-plane depth — it just
+                // never wraps/repeats.
+                val scrollPx = distanceMeters * layer.speedFactor * PARALLAX_PX_PER_METER
+                val panRange = (displayWidth - cw).coerceAtLeast(0f)
+                if (panRange <= 0f) {
+                    // Image isn't wide enough to pan (narrower than the
+                    // screen even at full-height scale) — just center it.
+                    drawImage(
+                        image = bmp,
+                        dstOffset = IntOffset(((cw - displayWidth) / 2f).roundToInt(), 0),
+                        dstSize = IntSize(displayWidth.roundToInt(), ch.roundToInt())
+                    )
+                } else {
+                    val cycle = panRange * 2f
+                    val raw = (scrollPx % cycle + cycle) % cycle
+                    val pan = if (raw > panRange) cycle - raw else raw
+                    drawImage(
+                        image = bmp,
+                        dstOffset = IntOffset((-pan).roundToInt(), 0),
+                        dstSize = IntSize(displayWidth.roundToInt(), ch.roundToInt())
+                    )
                 }
             }
         }
