@@ -100,10 +100,25 @@ private val worldBackgroundLayers: Map<Int, List<BgLayer>> = mapOf(
         BgLayer(R.drawable.bg_world1_l4_world_ground, 0.45f),
         BgLayer(R.drawable.bg_world1_l5_foreground, 0.85f)
     ),
-    // Worlds 2-5 keep their original single static background until they get
-    // the same 5-layer treatment — speedFactor 0f means "don't scroll".
-    2 to listOf(BgLayer(R.drawable.bg_world2_derelict_signal, 0f)),
-    3 to listOf(BgLayer(R.drawable.bg_world3_cell_block_zero, 0f)),
+    // World 2 (Derelict Signal) now has its own 3-layer parallax stack:
+    // deep-space sky in back, the derelict hull/window frame in the middle
+    // (its cutout lets the sky layer show through), and the debris-strewn
+    // platform floor up front, closest to the player.
+    2 to listOf(
+        BgLayer(R.drawable.bg_world2_l1_sky, 0.02f),
+        BgLayer(R.drawable.bg_world2_l2_derelict_hull, 0.35f),
+        BgLayer(R.drawable.bg_world2_l3_platform_debris, 0.85f)
+    ),
+    // World 3 (Cell Block Zero) gets the same 3-layer parallax treatment:
+    // burning skyline far back, the prison walls/guard towers as the mid
+    // structure, and the debris-strewn road up front, closest to the player.
+    3 to listOf(
+        BgLayer(R.drawable.bg_world3_l1_sky, 0.02f),
+        BgLayer(R.drawable.bg_world3_l2_cell_block, 0.35f),
+        BgLayer(R.drawable.bg_world3_l3_road_debris, 0.85f)
+    ),
+    // Worlds 4-5 keep their original single static background until they get
+    // the same layered treatment — speedFactor 0f means "don't scroll".
     4 to listOf(BgLayer(R.drawable.bg_world4_green_hell, 0f)),
     5 to listOf(BgLayer(R.drawable.bg_world5_red_protocol, 0f))
     // Special-mode worlds 6 (Signal Fracture), 7 (Frozen Veil), and 8 (Apex
