@@ -2592,9 +2592,9 @@ val ghostMarkerImg = ImageBitmap.imageResource(id = R.drawable.marker_ghost_riva
                             when (elem.type) {
                                 "gem" -> {
                                     val pulse = 1f + 0.15f * sin(simState.tickIndex * 0.3f)
-                                    val baseSize = ch * 0.06f
-                                    val w = baseSize * (gemImg.width.toFloat() / gemImg.height.toFloat()) * pulse
-                                    val h = baseSize * pulse
+                                    val baseSize = ch * 0.07f * pulse
+                                    val w = baseSize * (gemImg.width.toFloat() / gemImg.height.toFloat())
+                                    val h = baseSize
                                     drawImage(
                                         image = gemImg,
                                         dstOffset = IntOffset((x - w / 2f).roundToInt(), (y - h / 2f).roundToInt()),
@@ -2603,7 +2603,7 @@ val ghostMarkerImg = ImageBitmap.imageResource(id = R.drawable.marker_ghost_riva
                                 }
                                 "fuel" -> {
                                     val angle = (simState.tickIndex * 6f) % 360f
-                                    val baseSize = ch * 0.055f
+                                    val baseSize = ch * 0.065f
                                     val w = baseSize * (coinImg.width.toFloat() / coinImg.height.toFloat())
                                     rotate(degrees = angle, pivot = Offset(x, y)) {
                                         drawImage(
@@ -2630,7 +2630,7 @@ val ghostMarkerImg = ImageBitmap.imageResource(id = R.drawable.marker_ghost_riva
         else -> puScoreX2Img
     }
     val pulse = 1f + 0.15f * sin(simState.tickIndex * 0.3f)
-    val baseSize = ch * 0.07f * pulse
+    val baseSize = ch * 0.08f * pulse
     val w = baseSize * (puImg.width.toFloat() / puImg.height.toFloat())
     drawImage(
         image = puImg,
@@ -2644,31 +2644,31 @@ val ghostMarkerImg = ImageBitmap.imageResource(id = R.drawable.marker_ghost_riva
                                         "PILLAR_TOP" -> {
                                             drawRect(
                                                 color = obsColor,
-                                                topLeft = Offset(x - cw * 0.025f, 0f),
-                                                size = Size(cw * 0.05f, y)
+                                                topLeft = Offset(x - cw * 0.029f, 0f),
+                                                size = Size(cw * 0.058f, y)
                                             )
                                             drawRect(
                                                 color = Color.White.copy(alpha = 0.4f),
-                                                topLeft = Offset(x - cw * 0.025f, 0f),
-                                                size = Size(cw * 0.05f, y),
+                                                topLeft = Offset(x - cw * 0.029f, 0f),
+                                                size = Size(cw * 0.058f, y),
                                                 style = Stroke(1.dp.toPx())
                                             )
                                         }
                                         "PILLAR_BOTTOM" -> {
                                             drawRect(
                                                 color = obsColor,
-                                                topLeft = Offset(x - cw * 0.025f, y),
-                                                size = Size(cw * 0.05f, ch - y)
+                                                topLeft = Offset(x - cw * 0.029f, y),
+                                                size = Size(cw * 0.058f, ch - y)
                                             )
                                             drawRect(
                                                 color = Color.White.copy(alpha = 0.4f),
-                                                topLeft = Offset(x - cw * 0.025f, y),
-                                                size = Size(cw * 0.05f, ch - y),
+                                                topLeft = Offset(x - cw * 0.029f, y),
+                                                size = Size(cw * 0.058f, ch - y),
                                                 style = Stroke(1.dp.toPx())
                                             )
                                         }
                                         "STALACTITE" -> {
-                                            val baseSize = ch * 0.09f
+                                            val baseSize = ch * 0.105f
                                             val w = baseSize * (spikesFlippedImg.width.toFloat() / spikesFlippedImg.height.toFloat())
                                             val glowPulse = 0.7f + 0.3f * sin(simState.tickIndex * 0.4f)
                                             drawImage(
@@ -2679,7 +2679,7 @@ val ghostMarkerImg = ImageBitmap.imageResource(id = R.drawable.marker_ghost_riva
                                             )
                                         }
                                         "STALAGMITE" -> {
-                                            val baseSize = ch * 0.09f
+                                            val baseSize = ch * 0.105f
                                             val w = baseSize * (spikesImg.width.toFloat() / spikesImg.height.toFloat())
                                             val glowPulse = 0.7f + 0.3f * sin(simState.tickIndex * 0.4f)
                                             drawImage(
@@ -2691,7 +2691,7 @@ val ghostMarkerImg = ImageBitmap.imageResource(id = R.drawable.marker_ghost_riva
                                         }
                                         "LASER" -> {
                                             val glowPulse = 0.6f + 0.4f * sin(simState.tickIndex * 0.5f)
-                                            val h = ch * 0.22f
+                                            val h = ch * 0.25f
                                             val w = h * (laserImg.width.toFloat() / laserImg.height.toFloat())
                                             drawImage(
                                                 image = laserImg,
@@ -2702,7 +2702,7 @@ val ghostMarkerImg = ImageBitmap.imageResource(id = R.drawable.marker_ghost_riva
                                         }
                                         "BLADE" -> {
                                             val angle = (simState.tickIndex * 12f) % 360f
-                                            val size = ch * 0.08f
+                                            val size = ch * 0.095f
                                             rotate(degrees = angle, pivot = Offset(x, y)) {
                                                 drawImage(
                                                     image = sawbladeImg,
@@ -2712,7 +2712,7 @@ val ghostMarkerImg = ImageBitmap.imageResource(id = R.drawable.marker_ghost_riva
                                             }
                                         }
                                         "BARRIER" -> {
-                                            val baseSize = ch * 0.16f
+                                            val baseSize = ch * 0.185f
                                             val w = baseSize * (barrierImg.width.toFloat() / barrierImg.height.toFloat())
                                             drawImage(
                                                 image = barrierImg,
@@ -2722,7 +2722,7 @@ val ghostMarkerImg = ImageBitmap.imageResource(id = R.drawable.marker_ghost_riva
                                         }
                                         "ZAP_FIELD" -> {
                                             val glowPulse = 0.6f + 0.4f * sin(simState.tickIndex * 0.5f)
-                                            val baseSize = ch * 0.15f
+                                            val baseSize = ch * 0.175f
                                             val w = baseSize * (zapFieldImg.width.toFloat() / zapFieldImg.height.toFloat())
                                             drawImage(
                                                 image = zapFieldImg,
@@ -2734,7 +2734,7 @@ val ghostMarkerImg = ImageBitmap.imageResource(id = R.drawable.marker_ghost_riva
                                         "PHANTOM" -> {
                                             val bob = sin(simState.tickIndex * 0.2f) * ch * 0.015f
                                             val flicker = 0.5f + 0.5f * sin(simState.tickIndex * 0.3f)
-                                            val baseSize = ch * 0.16f
+                                            val baseSize = ch * 0.185f
                                             val w = baseSize * (phantomImg.width.toFloat() / phantomImg.height.toFloat())
                                             drawImage(
                                                 image = phantomImg,
@@ -2745,7 +2745,7 @@ val ghostMarkerImg = ImageBitmap.imageResource(id = R.drawable.marker_ghost_riva
                                         }
                                         "SPLITTER" -> {
                                             val angle = (simState.tickIndex * 8f) % 360f
-                                            val baseSize = ch * 0.13f
+                                            val baseSize = ch * 0.15f
                                             val w = baseSize * (splitterImg.width.toFloat() / splitterImg.height.toFloat())
                                             rotate(degrees = angle, pivot = Offset(x, y)) {
                                                 drawImage(
@@ -2756,7 +2756,7 @@ val ghostMarkerImg = ImageBitmap.imageResource(id = R.drawable.marker_ghost_riva
                                             }
                                         }
                                         "TUNNEL_TOP" -> {
-                                            val baseSize = ch * 0.18f
+                                            val baseSize = ch * 0.20f
                                             val w = baseSize * (tunnelTopImg.width.toFloat() / tunnelTopImg.height.toFloat())
                                             drawImage(
                                                 image = tunnelTopImg,
@@ -2765,7 +2765,7 @@ val ghostMarkerImg = ImageBitmap.imageResource(id = R.drawable.marker_ghost_riva
                                             )
                                         }
                                         "TUNNEL_BOTTOM" -> {
-                                            val baseSize = ch * 0.18f
+                                            val baseSize = ch * 0.20f
                                             val w = baseSize * (tunnelBottomImg.width.toFloat() / tunnelBottomImg.height.toFloat())
                                             drawImage(
                                                 image = tunnelBottomImg,
@@ -2773,9 +2773,51 @@ val ghostMarkerImg = ImageBitmap.imageResource(id = R.drawable.marker_ghost_riva
                                                 dstSize = IntSize(w.roundToInt(), baseSize.roundToInt())
                                             )
                                         }
+                                        "BLINK_HAZARD" -> {
+                                            val idParts = elem.id.split("_")
+                                            val spawnTick = idParts.getOrNull(1)?.toIntOrNull() ?: 0
+                                            val kindIdx = idParts.getOrNull(2)?.toIntOrNull() ?: 0
+                                            val cycleLength = 25
+                                            val phase = ((simState.tickIndex - spawnTick) % cycleLength + cycleLength) % cycleLength
+                                            val isVisible = phase < 8
+                                            val hazardColor = hexToColor(simState.zoneDNA.environmentColor)
+                                            val baseSize = ch * 0.15f
+                                            if (isVisible) {
+                                                val flicker = 0.75f + 0.25f * sin(simState.tickIndex * 0.9f)
+                                                drawCircle(
+                                                    color = hazardColor.copy(alpha = 0.28f * flicker),
+                                                    radius = baseSize * 0.65f,
+                                                    center = Offset(x, y)
+                                                )
+                                                val spread = baseSize * (0.35f + 0.05f * kindIdx)
+                                                val boltPath = Path().apply {
+                                                    moveTo(x - spread * 0.3f, y - baseSize * 0.5f)
+                                                    lineTo(x + spread * 0.15f, y - baseSize * 0.1f)
+                                                    lineTo(x - spread * 0.05f, y)
+                                                    lineTo(x + spread * 0.3f, y + baseSize * 0.5f)
+                                                    lineTo(x, y + baseSize * 0.05f)
+                                                    lineTo(x - spread * 0.25f, y + baseSize * 0.15f)
+                                                    close()
+                                                }
+                                                drawPath(path = boltPath, color = hazardColor.copy(alpha = 0.9f * flicker))
+                                                drawPath(
+                                                    path = boltPath,
+                                                    color = Color.White.copy(alpha = 0.5f * flicker),
+                                                    style = Stroke(1.dp.toPx())
+                                                )
+                                            } else {
+                                                // Faint telltale during the "invisible" phase: harmless to touch,
+                                                // but gives sharp-eyed players a way to track its lane.
+                                                drawCircle(
+                                                    color = hazardColor.copy(alpha = 0.10f),
+                                                    radius = baseSize * 0.4f,
+                                                    center = Offset(x, y)
+                                                )
+                                            }
+                                        }
                                         else -> {
                                             val bob = sin(simState.tickIndex * 0.2f) * ch * 0.015f
-                                            val baseSize = ch * 0.14f
+                                            val baseSize = ch * 0.16f
                                             val w = baseSize * (standardImg.width.toFloat() / standardImg.height.toFloat())
                                             drawImage(
                                                 image = standardImg,
@@ -2848,7 +2890,7 @@ val ghostMarkerImg = ImageBitmap.imageResource(id = R.drawable.marker_ghost_riva
                         val frameIdx = (simState.tickIndex / 3) % pilotFrames.size
                         val currentFrameImg = pilotFrames[frameIdx]
 
-                        val displayHeight = ch * 0.20f
+                        val displayHeight = ch * 0.23f
                         val aspect = currentFrameImg.width.toFloat() / currentFrameImg.height.toFloat()
                         val displayWidth = displayHeight * aspect
 
