@@ -2933,7 +2933,7 @@ fun GameOverOverlayScreen(
     onShowPaywall: () -> Unit
 ) {
     val activity = LocalContext.current as? Activity
-    val revivesExhausted = if (isPro) false else simState.reviveCount >= 2
+    val revivesExhausted = if (isPro) false else simState.reviveCount >= 3
     var showSummary by remember(simState.reviveCount) { mutableStateOf(revivesExhausted) }
     var secondsLeft by remember(simState.reviveCount) { mutableStateOf(5) }
 
