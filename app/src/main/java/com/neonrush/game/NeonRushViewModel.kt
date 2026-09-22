@@ -398,7 +398,7 @@ fun reviveWithGems(isPro: Boolean) {
         val cost = reviveCostForCurrentRun()
         var didRevive = false
         gameDao.updateProfile { prof ->
-            if ((isPro || _simState.value.reviveCount < 2) && prof.gems >= cost) {
+            if ((isPro || _simState.value.reviveCount < 3) && prof.gems >= cost) {
                 didRevive = true
                 prof.copy(gems = prof.gems - cost)
             } else {
@@ -428,7 +428,7 @@ fun onFuelTierChanged(tier: String) {
 fun refuelWithGems(isPro: Boolean) {
     viewModelScope.launch {
         val current = _simState.value
-        if (!isPro && current.fuelRefillCount >= 3) return@launch
+        if (!isPro && current.fuelRefillCount >= 6) return@launch
         val cost = fuelRefillCostForCurrentRun()
         var didRefuel = false
         gameDao.updateProfile { prof ->
@@ -1334,7 +1334,7 @@ fun startRacingSimulation(ghost: GhostChallengeEntity, specialWorldId: Int? = nu
     }
     fun reviveSimulation(isPro: Boolean = false) {
     val currentState = _simState.value
-    if (!isPro && currentState.reviveCount >= 2) return
+    if (!isPro && currentState.reviveCount >= 3) return
     val currentTick = currentState.tickIndex
     _simState.value = currentState.copy(
         isCompleted = false,
@@ -1342,7 +1342,7 @@ fun startRacingSimulation(ghost: GhostChallengeEntity, specialWorldId: Int? = nu
         feedbackMessage = "Revive code accepted! Launching drone boosters...",
         reviveCount = currentState.reviveCount + 1,
         shieldUntilTick = currentTick + 25, // ~3 seconds of invulnerability at 120ms/tick
-        fuelRefillCount = 0 // fresh life = fresh set of 3 refuels
+        fuelRefillCount = 0 // fresh life = fresh set of 6 refuels
     )
     simJob?.cancel()
     soundEngine.playRevive()
