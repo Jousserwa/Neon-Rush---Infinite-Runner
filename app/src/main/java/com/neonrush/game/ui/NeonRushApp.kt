@@ -2450,6 +2450,24 @@ val puZoneSkipImg = ImageBitmap.imageResource(id = R.drawable.powerup_zone_skip)
 val puLegendaryAuraImg = ImageBitmap.imageResource(id = R.drawable.powerup_legendary_aura)
 val bulletImg = ImageBitmap.imageResource(id = R.drawable.hazard_bullet_boss)
 val ghostMarkerImg = ImageBitmap.imageResource(id = R.drawable.marker_ghost_rival)
+// Blink Strike hazard creatures (kindIdx 0-4). All 5 now have real art.
+val blinkWolfImg = ImageBitmap.imageResource(id = R.drawable.hazard_blink_wolf)
+val blinkRaptorImg = ImageBitmap.imageResource(id = R.drawable.hazard_blink_raptor)
+val blinkHornetImg = ImageBitmap.imageResource(id = R.drawable.hazard_blink_hornet)
+val blinkArachnidImg = ImageBitmap.imageResource(id = R.drawable.hazard_blink_arachnid)
+val blinkWraithImg = ImageBitmap.imageResource(id = R.drawable.hazard_blink_wraith)
+// Boss characters — one per world. Previously there was no boss sprite at
+// all, only its bullets; this map gives each world its own boss art.
+val bossImagesByWorld = mapOf(
+    1 to ImageBitmap.imageResource(id = R.drawable.boss_blackout_front),
+    2 to ImageBitmap.imageResource(id = R.drawable.boss_derelict_signal),
+    3 to ImageBitmap.imageResource(id = R.drawable.boss_cell_block_zero),
+    4 to ImageBitmap.imageResource(id = R.drawable.boss_green_hell),
+    5 to ImageBitmap.imageResource(id = R.drawable.boss_red_protocol),
+    6 to ImageBitmap.imageResource(id = R.drawable.boss_signal_fracture),
+    7 to ImageBitmap.imageResource(id = R.drawable.boss_frozen_veil),
+    8 to ImageBitmap.imageResource(id = R.drawable.boss_apex_signal)
+)
     
     val textMeasurer = rememberTextMeasurer()
     var previousScoreForPopups by remember { mutableStateOf(simState.score) }
@@ -2807,6 +2825,15 @@ val ghostMarkerImg = ImageBitmap.imageResource(id = R.drawable.marker_ghost_riva
                                             val isVisible = phase < 8
                                             val hazardColor = hexToColor(simState.zoneDNA.environmentColor)
                                             val baseSize = ch * 0.15f
+                                            // All 5 variants now have real generated creature art.
+                                            val creatureImg = when (kindIdx) {
+                                                0 -> blinkWolfImg
+                                                1 -> blinkRaptorImg
+                                                2 -> blinkHornetImg
+                                                3 -> blinkArachnidImg
+                                                4 -> blinkWraithImg
+                                                else -> null
+                                            }
                                             if (isVisible) {
                                                 val flicker = 0.75f + 0.25f * sin(simState.tickIndex * 0.9f)
                                                 drawCircle(
@@ -2814,22 +2841,32 @@ val ghostMarkerImg = ImageBitmap.imageResource(id = R.drawable.marker_ghost_riva
                                                     radius = baseSize * 0.65f,
                                                     center = Offset(x, y)
                                                 )
-                                                val spread = baseSize * (0.35f + 0.05f * kindIdx)
-                                                val boltPath = Path().apply {
-                                                    moveTo(x - spread * 0.3f, y - baseSize * 0.5f)
-                                                    lineTo(x + spread * 0.15f, y - baseSize * 0.1f)
-                                                    lineTo(x - spread * 0.05f, y)
-                                                    lineTo(x + spread * 0.3f, y + baseSize * 0.5f)
-                                                    lineTo(x, y + baseSize * 0.05f)
-                                                    lineTo(x - spread * 0.25f, y + baseSize * 0.15f)
-                                                    close()
+                                                if (creatureImg != null) {
+                                                    val cw2 = baseSize * (creatureImg.width.toFloat() / creatureImg.height.toFloat())
+                                                    drawImage(
+                                                        image = creatureImg,
+                                                        dstOffset = IntOffset((x - cw2 / 2f).roundToInt(), (y - baseSize / 2f).roundToInt()),
+                                                        dstSize = IntSize(cw2.roundToInt(), baseSize.roundToInt()),
+                                                        alpha = flicker
+                                                    )
+                                                } else {
+                                                    val spread = baseSize * (0.35f + 0.05f * kindIdx)
+                                                    val boltPath = Path().apply {
+                                                        moveTo(x - spread * 0.3f, y - baseSize * 0.5f)
+                                                        lineTo(x + spread * 0.15f, y - baseSize * 0.1f)
+                                                        lineTo(x - spread * 0.05f, y)
+                                                        lineTo(x + spread * 0.3f, y + baseSize * 0.5f)
+                                                        lineTo(x, y + baseSize * 0.05f)
+                                                        lineTo(x - spread * 0.25f, y + baseSize * 0.15f)
+                                                        close()
+                                                    }
+                                                    drawPath(path = boltPath, color = hazardColor.copy(alpha = 0.9f * flicker))
+                                                    drawPath(
+                                                        path = boltPath,
+                                                        color = Color.White.copy(alpha = 0.5f * flicker),
+                                                        style = Stroke(1.dp.toPx())
+                                                    )
                                                 }
-                                                drawPath(path = boltPath, color = hazardColor.copy(alpha = 0.9f * flicker))
-                                                drawPath(
-                                                    path = boltPath,
-                                                    color = Color.White.copy(alpha = 0.5f * flicker),
-                                                    style = Stroke(1.dp.toPx())
-                                                )
                                             } else {
                                                 // Faint telltale during the "invisible" phase: harmless to touch,
                                                 // but gives sharp-eyed players a way to track its lane.
@@ -2894,6 +2931,58 @@ val ghostMarkerImg = ImageBitmap.imageResource(id = R.drawable.marker_ghost_riva
                         }
 
                         val userY = ch * (simState.userYPos / 100f)
+
+                        if (simState.bossActive) {
+                            val bossImg = bossImagesByWorld[currentWorld.id] ?: bossImagesByWorld[1]!!
+                            val bossX = cw * 0.88f
+                            val bossYPx = ch * (simState.bossY / 100f)
+                            val bossDisplayHeight = ch * 0.32f
+                            val bossDisplayWidth = bossDisplayHeight * (bossImg.width.toFloat() / bossImg.height.toFloat())
+                            val bossFlicker = 0.9f + 0.1f * sin(simState.tickIndex * 0.5f)
+                            drawImage(
+                                image = bossImg,
+                                dstOffset = IntOffset(
+                                    (bossX - bossDisplayWidth / 2f).roundToInt(),
+                                    (bossYPx - bossDisplayHeight / 2f).roundToInt()
+                                ),
+                                dstSize = IntSize(bossDisplayWidth.roundToInt(), bossDisplayHeight.roundToInt()),
+                                alpha = bossFlicker
+                            )
+
+                            // Boss health bar, top-center of the screen.
+                            val barWidth = cw * 0.6f
+                            val barHeight = ch * 0.018f
+                            val barLeft = (cw - barWidth) / 2f
+                            val barTop = ch * 0.1f
+                            drawRect(
+                                color = Color.Black.copy(alpha = 0.5f),
+                                topLeft = Offset(barLeft, barTop),
+                                size = Size(barWidth, barHeight)
+                            )
+                            drawRect(
+                                color = Color(0xFFFF3355),
+                                topLeft = Offset(barLeft, barTop),
+                                size = Size(barWidth * simState.bossHealth.coerceIn(0f, 1f), barHeight)
+                            )
+                            drawRect(
+                                color = Color.White.copy(alpha = 0.6f),
+                                topLeft = Offset(barLeft, barTop),
+                                size = Size(barWidth, barHeight),
+                                style = Stroke(1.dp.toPx())
+                            )
+                            val bossLabel = textMeasurer.measure(
+                                "BOSS",
+                                style = TextStyle(
+                                    color = Color.White,
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            )
+                            drawText(
+                                textLayoutResult = bossLabel,
+                                topLeft = Offset(cw / 2f - bossLabel.size.width / 2f, barTop - bossLabel.size.height - 4.dp.toPx())
+                            )
+                        }
 
                         if (simState.activePowerupDurations.containsKey("PU1")) {
                             drawCircle(
