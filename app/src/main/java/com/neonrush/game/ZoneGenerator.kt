@@ -75,27 +75,41 @@ object ZoneGenerator {
     fun calculateSpeed(zone: Int): Float {
         // Grace period trimmed to just zone 1, so the ramp (and tension) kicks
         // in almost immediately instead of staying flat through zone 3.
-        val effectiveZone = (zone - 1).coerceIn(0, 100) // cap growth so speed plateaus instead of declining
-        // Higher base (was 3.0) and steeper per-zone climb (was 0.3) for a
-        // faster, more tense start and medium-tier pace.
-        val speed = 4.0f + (effectiveZone * 0.38f) - (effectiveZone * effectiveZone * 0.0015f)
-        return speed.coerceAtMost(22.0f)
+        val effectiveZone = (zone - 1).coerceAtLeast(0) // no upper clamp — see below
+        // Asymptotic curve: approaches SPEED_CEILING but never actually
+        // reaches it, so speed is *always* technically still climbing, even
+        // at extreme zone numbers, instead of hitting a permanent flat wall
+        // (the old formula capped hard at zone ~100 forever after).
+        val floor = 4.0f
+        val ceiling = 26.0f
+        val progress = 1f - exp(-effectiveZone / 150f)
+        return floor + (ceiling - floor) * progress
     }
 
     fun selectEnvironment(zone: Int): Int {
-    if (zone >= 100) return 18 // Transcendent is now the 19th environment (0-indexed 18)
-    val world = Worlds.worldForZone(zone)
-    return if (world.environmentIds.isNotEmpty()) {
-        world.environmentIds[zone % world.environmentIds.size]
-    } else {
-        (zone * 7 + 13) % 15 // fallback, shouldn't normally trigger
+        val world = Worlds.worldForZone(zone)
+        return if (zone <= world.endZone && world.environmentIds.isNotEmpty()) {
+            // Inside a designed world's actual zone range: use its curated
+            // environment list, same as before.
+            world.environmentIds[zone % world.environmentIds.size]
+        } else {
+            // True endless territory (worldForZone falls back to World 5 for
+            // any zone past 40, which only has 3 environments — that was
+            // silently capping variety at zone 41, then a hardcoded override
+            // froze on a single environment forever past zone 100, which was
+            // worse). Cycle through every environment instead, forever.
+            ((zone * 41 + 7) % ENVIRONMENTS.size)
+        }
     }
-}
     fun selectMechanics(zone: Int, random: Random): List<Int> {
         val count = when {
-            zone >= 100 -> 3
-            zone >= 50 -> 2
-            else -> 1
+            zone < 50 -> 1
+            zone < 100 -> 2
+            // Past zone 100, keep adding one more simultaneous mechanic every
+            // 150 zones instead of freezing at 3 forever — pushes the point
+            // where mechanic variety stops mattering from ~zone 100 out to
+            // ~zone 850, safety-capped at 6 so it never becomes unplayable.
+            else -> (3 + (zone - 100) / 150).coerceAtMost(6)
         }
         if (zone in 1..4) return emptyList() // Tutorial zones: no forced hard mechanic
         if (zone == 5) return listOf(5) // ZM6 Slow Motion (5)
@@ -129,9 +143,15 @@ object ZoneGenerator {
         val rhythmicPattern = List(5 + (zone % 6)) { rand.nextInt(10, 30) }
         val density = (0.15f + (zone * 0.012f)).coerceAtMost(0.75f)
         
-        // Spacing: Zone 1: 292px, Zone 10: 220px, Zone 25: 100px. Minimum 80px
+        // Spacing: asymptotically tightens toward a floor (never a hard clamp
+        // that goes flat forever), plus a slow oscillation so extreme-zone
+        // spacing keeps subtly varying instead of sitting dead-flat forever.
         val effectiveZoneForSpacing = (zone - 3).coerceAtLeast(0)
-        val obstacleSpacing = (320 - (effectiveZoneForSpacing * 5)).coerceAtLeast(110)
+        val spacingFloor = 95f
+        val spacingProgress = 1f - exp(-effectiveZoneForSpacing / 120f)
+        val baseSpacing = 320f - (320f - spacingFloor) * spacingProgress
+        val breathing = sin(zone * 0.02f) * 12f
+        val obstacleSpacing = (baseSpacing + breathing).roundToInt().coerceAtLeast(spacingFloor.toInt())
         
         return ZoneDNA(
             zoneNumber = zone,
