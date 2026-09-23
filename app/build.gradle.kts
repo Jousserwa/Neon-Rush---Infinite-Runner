@@ -13,8 +13,8 @@ android {
         applicationId = "com.neonrushinfinite.game"
         minSdk = 24
         targetSdk = 34
-        versionCode = 20
-        versionName = "1.1.0"
+        versionCode = 21
+        versionName = "1.1.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -27,7 +27,6 @@ android {
             keyPassword = "android"
         }
         create("release") {
-            // Points directly to the file decoded by GitHub Actions
             storeFile = file("release.keystore")
             storePassword = System.getenv("KEYSTORE_PASSWORD") ?: "android"
             keyAlias = System.getenv("KEY_ALIAS") ?: "androiddebugkey"
@@ -42,21 +41,19 @@ android {
         release {
             isMinifyEnabled = true
             isShrinkResources = true
-            signingConfig = signingConfigs.getByName("release") // <-- THIS SIGNS THE AAB
+            signingConfig = signingConfigs.getByName("release")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
         }
     }
-        debug {
-            isMinifyEnabled = false
-        }
-    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
+
     kotlinOptions {
         jvmTarget = "17"
     }
