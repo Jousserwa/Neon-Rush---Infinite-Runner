@@ -215,9 +215,11 @@ private fun ParallaxWorldBackground(worldId: Int, distanceMeters: Float, fallbac
                         dstSize = IntSize(displayWidth.roundToInt(), ch.roundToInt())
                     )
                 } else {
-                    val cycle = panRange * 2f
-                    val raw = (scrollPx % cycle + cycle) % cycle
-                    val pan = if (raw > panRange) cycle - raw else raw
+                    // One-directional pan only, matching travel direction —
+                    // clamp and hold at the edge once reached instead of
+                    // reversing. A ping-pong reverse looked like the pilot
+                    // was running backward whenever a layer bounced back.
+                    val pan = scrollPx.coerceIn(0f, panRange)
                     drawImage(
                         image = bmp,
                         dstOffset = IntOffset((-pan).roundToInt(), 0),
