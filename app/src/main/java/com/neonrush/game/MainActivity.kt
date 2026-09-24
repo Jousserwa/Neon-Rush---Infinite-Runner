@@ -41,14 +41,14 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Start the real-time audio engine and haptics service.
+        // Start real-time audio, analytics, ads, and billing services
         NeonSoundEngine.init(applicationContext)
         NeonSoundEngine.setHomeActive(false)
         AnalyticsManager.initialize(applicationContext)
         FirebaseLeaderboardManager.initialize(applicationContext)
         AdMobManager.initialize(applicationContext)
         
-        // Initialize RevenueCat SDK on startup
+        // Initialize RevenueCat SDK
         RevenueCatManager.initialize(applicationContext)
 
         val defaultHandler = Thread.getDefaultUncaughtExceptionHandler()
@@ -60,7 +60,7 @@ class MainActivity : ComponentActivity() {
                     .putString(crashKey, sw.toString())
                     .apply()
             } catch (e: Exception) {
-                // ignore, nothing more we can do here
+                // Ignore fallback exceptions
             }
             defaultHandler?.uncaughtException(thread, throwable)
         }
