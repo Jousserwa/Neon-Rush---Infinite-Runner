@@ -37,6 +37,7 @@ android {
     buildTypes {
         debug {
             isMinifyEnabled = false
+            applicationIdSuffix = ".debug"
         }
         release {
             isMinifyEnabled = true
@@ -108,15 +109,9 @@ dependencies {
 
     // Ads
     implementation("com.google.android.gms:play-services-ads:23.0.0")
-    // IronSource / AppLovin MAX Mediation (uncomment when ready to maximize eCPM)
-    // implementation("com.applovin:applovin-sdk:12.3.0")
-    // implementation("com.ironsource.sdk:mediationsdk:8.0.0")
 
     // RevenueCat - IAP & Subscriptions
     implementation("com.revenuecat.purchases:purchases:9.16.0")
-
-    // Offer Wall for non-payers (Tapjoy / ironSource)
-    // implementation("com.tapjoy:tapjoy-android-sdk:13.2.0")
 
     // Image Loading (for remote assets, future-proofing)
     implementation("io.coil-kt:coil-compose:2.5.0")
