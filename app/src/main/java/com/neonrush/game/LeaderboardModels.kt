@@ -17,5 +17,6 @@ data class SocialComment(
     val id: String = "",
     val author: String = "Anonymous",
     val text: String = "",
-    val timestamp: Long = System.currentTimeMillis()
+    val timestamp: Long = System.currentTimeMillis(),
+    val zone: String = ""
 )
