@@ -13,7 +13,7 @@ import com.revenuecat.purchases.purchaseWith
 
 object RevenueCatManager {
     private const val TAG = "RevenueCatManager"
-    private const val REVENUECAT_API_KEY = "goog_sveqtpBHLaPtuW1JfUvRySdYoc0" // Your RevenueCat Key
+    private const val REVENUECAT_API_KEY = "goog_sveqtpBHLaPtuW1JfUvRySdYoc0"
 
     private var currentOfferingPackages: List<Package> = emptyList()
 
@@ -42,61 +42,70 @@ object RevenueCatManager {
                     Log.d(TAG, "Offerings loaded: ${currentOfferingPackages.size} packages ready")
                     onResult?.invoke(true)
                 } else {
-                    Log.e(TAG, "No current offering configured in RevenueCat")
+                    Log.e(TAG, "No current offering configured in RevenueCat dashboard")
                     onResult?.invoke(false)
                 }
             }
         )
     }
 
-    // Purchase any package by package identifier (e.g. "$rc_monthly", "$rc_annual", "gems_pack", "skin_pack")
     fun purchasePackage(
         activity: Activity,
         packageIdentifier: String,
         onSuccess: (CustomerInfo) -> Unit,
         onError: (String) -> Unit
     ) {
+        // Find matching package by Package Identifier or Product ID
         val pkgToPurchase = currentOfferingPackages.find { 
-            it.identifier == packageIdentifier || it.product.id.contains(packageIdentifier)
+            it.identifier == packageIdentifier || 
+            it.product.id == packageIdentifier ||
+            it.product.id.contains(packageIdentifier)
         }
 
         if (pkgToPurchase != null) {
-            Purchases.sharedInstance.purchase(
-                PurchaseParams.Builder(activity, pkgToPurchase).build(),
-                onError = { error, userCancelled ->
-                    if (!userCancelled) {
-                        Log.e(TAG, "Purchase failed: ${error.message}")
-                        onError(error.message)
-                    }
-                },
-                onSuccess = { _, customerInfo ->
-                    Log.d(TAG, "Purchase successful!")
-                    onSuccess(customerInfo)
-                }
-            )
+            executePurchaseCall(activity, pkgToPurchase, onSuccess, onError)
         } else {
-            // Fallback: If packages aren't loaded yet, try refreshing once
+            // Refresh offerings if list was empty on app start
             fetchOfferings { success ->
                 if (success) {
                     val retryPkg = currentOfferingPackages.find { 
-                        it.identifier == packageIdentifier || it.product.id.contains(packageIdentifier) 
+                        it.identifier == packageIdentifier || 
+                        it.product.id == packageIdentifier ||
+                        it.product.id.contains(packageIdentifier)
                     }
                     if (retryPkg != null) {
-                        Purchases.sharedInstance.purchase(
-                            PurchaseParams.Builder(activity, retryPkg).build(),
-                            onError = { error, userCancelled ->
-                                if (!userCancelled) onError(error.message)
-                            },
-                            onSuccess = { _, customerInfo -> onSuccess(customerInfo) }
-                        )
+                        executePurchaseCall(activity, retryPkg, onSuccess, onError)
                     } else {
-                        onError("Package $packageIdentifier not found in RevenueCat offerings.")
+                        onError("Package identifier '$packageIdentifier' not found in RevenueCat current offering.")
                     }
                 } else {
-                    onError("Unable to connect to Play Store billing. Please try again.")
+                    onError("Unable to load store billing info. Check connection.")
                 }
             }
         }
+    }
+
+    private fun executePurchaseCall(
+        activity: Activity,
+        pkg: Package,
+        onSuccess: (CustomerInfo) -> Unit,
+        onError: (String) -> Unit
+    ) {
+        val params = PurchaseParams.Builder(activity, pkg).build()
+        
+        Purchases.sharedInstance.purchase(
+            params,
+            onError = { error, userCancelled ->
+                if (!userCancelled) {
+                    Log.e(TAG, "Purchase Error: ${error.message}")
+                    onError(error.message)
+                }
+            },
+            onSuccess = { _, customerInfo ->
+                Log.d(TAG, "Purchase completed successfully")
+                onSuccess(customerInfo)
+            }
+        )
     }
 
     fun isProActive(customerInfo: CustomerInfo): Boolean {
