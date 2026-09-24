@@ -96,7 +96,7 @@ object RevenueCatManager {
         Purchases.sharedInstance.purchase(
             params,
             object : PurchaseCallback {
-                override fun COMPLETED(storeTransaction: StoreTransaction, customerInfo: CustomerInfo) {
+                override fun onCompleted(storeTransaction: StoreTransaction, customerInfo: CustomerInfo) {
                     Log.d(TAG, "Purchase completed successfully")
                     onSuccess(customerInfo)
                 }
