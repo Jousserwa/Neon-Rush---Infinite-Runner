@@ -29,6 +29,10 @@ data class GameProfile(
     val lastDailyRushDate: String = "",
     val activePilotSkinId: String = "default",
     val unlockedPilotSkinsCsv: String = "default",
+    // Tracks which worlds have actually been beaten (comma-separated world
+    // ids), used to gate New Game+ worlds behind real completion rather than
+    // just a Pro purchase.
+    val completedWorldsCsv: String = "",
     val currentStreak: Int = 0,
     val lastStreakLoginDate: String = "",
     val totalRuns: Int = 0,
@@ -89,6 +93,7 @@ class GameDao(context: Context) {
             val dateIdx = cursor.getColumnIndex("lastDailyRushDate")
             val activePilotSkinIdx = cursor.getColumnIndex("activePilotSkinId")
             val unlockedPilotSkinsIdx = cursor.getColumnIndex("unlockedPilotSkinsCsv")
+            val completedWorldsIdx = cursor.getColumnIndex("completedWorldsCsv")
             val currentStreakIdx = cursor.getColumnIndex("currentStreak")
             val lastStreakLoginIdx = cursor.getColumnIndex("lastStreakLoginDate")
             val totalRunsIdx = cursor.getColumnIndex("totalRuns")
@@ -129,6 +134,7 @@ class GameDao(context: Context) {
                 lastDailyRushDate = if (dateIdx != -1) cursor.getString(dateIdx) else "",
                 activePilotSkinId = if (activePilotSkinIdx != -1) cursor.getString(activePilotSkinIdx) else "default",
                 unlockedPilotSkinsCsv = if (unlockedPilotSkinsIdx != -1) cursor.getString(unlockedPilotSkinsIdx) else "default",
+                completedWorldsCsv = if (completedWorldsIdx != -1) cursor.getString(completedWorldsIdx) else "",
                 currentStreak = if (currentStreakIdx != -1) cursor.getInt(currentStreakIdx) else 0,
                 lastStreakLoginDate = if (lastStreakLoginIdx != -1) cursor.getString(lastStreakLoginIdx) else "",
                 totalRuns = if (totalRunsIdx != -1) cursor.getInt(totalRunsIdx) else 0,
@@ -201,6 +207,7 @@ class GameDao(context: Context) {
             put("lastDailyRushDate", profile.lastDailyRushDate)
             put("activePilotSkinId", profile.activePilotSkinId)
             put("unlockedPilotSkinsCsv", profile.unlockedPilotSkinsCsv)
+            put("completedWorldsCsv", profile.completedWorldsCsv)
             put("currentStreak", profile.currentStreak)
             put("lastStreakLoginDate", profile.lastStreakLoginDate)
             put("totalRuns", profile.totalRuns)
@@ -270,7 +277,7 @@ class GameDao(context: Context) {
     }
 }
 
-class GameDbHelper(context: Context) : SQLiteOpenHelper(context, "neon_rush_companion.db", null, 13) {
+class GameDbHelper(context: Context) : SQLiteOpenHelper(context, "neon_rush_companion.db", null, 14) {
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL("""
             CREATE TABLE game_profile (
@@ -312,7 +319,8 @@ class GameDbHelper(context: Context) : SQLiteOpenHelper(context, "neon_rush_comp
                currentRunMilestonesRewarded TEXT,
                 checkpointsReachedCsv TEXT,
                checkpointsActivatedCsv TEXT,
-                fuelTiersOwned INTEGER
+                fuelTiersOwned INTEGER,
+                completedWorldsCsv TEXT
             )
         """) 
         db.execSQL("""
@@ -379,6 +387,9 @@ class GameDbHelper(context: Context) : SQLiteOpenHelper(context, "neon_rush_comp
     }
     if (oldVersion < 13) {
         db.execSQL("ALTER TABLE game_profile ADD COLUMN fuelTiersOwned INTEGER DEFAULT 0")
+    }
+    if (oldVersion < 14) {
+        db.execSQL("ALTER TABLE game_profile ADD COLUMN completedWorldsCsv TEXT DEFAULT ''")
     }
 }
 }
