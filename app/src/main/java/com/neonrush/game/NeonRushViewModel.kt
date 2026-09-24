@@ -1043,6 +1043,36 @@ fun startRacingSimulation(ghost: GhostChallengeEntity, specialWorldId: Int? = nu
                             updatedMsg = "BOSS DEFEATED! Prestige Reward Cells gathered!"
                             _simState.value = _simState.value.copy(bossGemsThisRun = _simState.value.bossGemsThisRun + bossReward)
                         }
+                        // Special/prestige worlds (6-11) don't have a real
+                        // zone-range ending (endZone=999, never naturally
+                        // reached), so defeating their boss is what actually
+                        // marks the world "completed" — this is what gates
+                        // New Game+ worlds 9-11 behind having beaten World 8.
+                        if (state.specialWorldId != null) {
+                            val specialWorld = (Worlds.SPECIAL_WORLDS + Worlds.NEW_GAME_PLUS)
+                                .find { it.environmentIds.contains(state.specialWorldId) }
+                            if (specialWorld != null) {
+                                var wasNewCompletion = false
+                                gameDao.updateProfile { current ->
+                                    val completed = current.completedWorldsCsv.split(",").filter { it.isNotEmpty() }.toMutableSet()
+                                    if (completed.add(specialWorld.id.toString())) {
+                                        wasNewCompletion = true
+                                        current.copy(completedWorldsCsv = completed.joinToString(","))
+                                    } else {
+                                        current
+                                    }
+                                }
+                                if (wasNewCompletion) {
+                                    val rewardSkinId = when (specialWorld.id) {
+                                        9 -> "echo_drift"
+                                        10 -> "relic_core"
+                                        11 -> "signal_zero"
+                                        else -> null
+                                    }
+                                    rewardSkinId?.let { unlockPilotSkinFromStory(it) }
+                                }
+                            }
+                        }
                     }
                 }
                 var fuelLevelState = state.fuelLevelPercent
@@ -1502,6 +1532,34 @@ fun startRacingSimulation(ghost: GhostChallengeEntity, specialWorldId: Int? = nu
                     if (bossHealthState <= 0f) {
                         soundEngine.playTone(990f, 400, "sine")
                         updatedMsg = "BOSS DEFEATED!"
+                        // Same completion tracking as the main loop: this is
+                        // what marks a special/prestige world "beaten" since
+                        // its zone range never naturally ends.
+                        if (state.specialWorldId != null) {
+                            val specialWorld = (Worlds.SPECIAL_WORLDS + Worlds.NEW_GAME_PLUS)
+                                .find { it.environmentIds.contains(state.specialWorldId) }
+                            if (specialWorld != null) {
+                                var wasNewCompletion = false
+                                gameDao.updateProfile { current ->
+                                    val completed = current.completedWorldsCsv.split(",").filter { it.isNotEmpty() }.toMutableSet()
+                                    if (completed.add(specialWorld.id.toString())) {
+                                        wasNewCompletion = true
+                                        current.copy(completedWorldsCsv = completed.joinToString(","))
+                                    } else {
+                                        current
+                                    }
+                                }
+                                if (wasNewCompletion) {
+                                    val rewardSkinId = when (specialWorld.id) {
+                                        9 -> "echo_drift"
+                                        10 -> "relic_core"
+                                        11 -> "signal_zero"
+                                        else -> null
+                                    }
+                                    rewardSkinId?.let { unlockPilotSkinFromStory(it) }
+                                }
+                            }
+                        }
                     }
                 }
                 var fuelLevelState = state.fuelLevelPercent
