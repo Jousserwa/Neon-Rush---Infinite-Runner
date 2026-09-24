@@ -95,7 +95,12 @@ data class SimulationState(
     val reviveCount: Int = 0,
     val shieldUntilTick: Int = -1,
     val fuelRefillCount: Int = 0,
-    val specialWorldId: Int? = null
+    val specialWorldId: Int? = null,
+    // Combo: consecutive tight-precision ticks (rawError < 8), resets to 0 on
+    // any obstacle/bullet hit. Rewards sustained skill, not just survival —
+    // a second, independent progression axis alongside gems.
+    val comboStreak: Int = 0,
+    val peakComboStreak: Int = 0
 )
 class NeonRushViewModel(
     private val gameDao: GameDao,
@@ -725,6 +730,7 @@ fun freezeStreak() {
                 elements.add(VisualTrackElement("${baseId}tu1", 1.2f, ghostY - 20, "obstacle", "TUNNEL_TOP"))
                 elements.add(VisualTrackElement("${baseId}tu2", 1.2f, ghostY + 20, "obstacle", "TUNNEL_BOTTOM"))
             }
+            23 -> elements.add(VisualTrackElement("${baseId}dr", 1.2f, ghostY + rand.nextInt(-15, 15).coerceIn(15, 85), "obstacle", "DRONE"))
             else -> elements.add(VisualTrackElement("${baseId}st", 1.2f, ghostY + rand.nextInt(-12, 12).coerceIn(15, 85), "obstacle", "STANDARD"))
         }
         // BLINK STRIKE: a new, per-world "creature" hazard that flickers
@@ -1225,6 +1231,12 @@ fun startRacingSimulation(ghost: GhostChallengeEntity, specialWorldId: Int? = nu
                 val targetGhostY = state.ghostYPath.getOrNull(tick % state.ghostYPath.size.coerceAtLeast(1)) ?: 50
                 val processedGhostY = if (activeDna.mechanicIds.contains(2)) 100 - targetGhostY else targetGhostY
                 val rawError = Math.abs(userY - processedGhostY)
+                // Combo streak: any hit resets it to 0; sustained tight
+                // tracking (rawError < 8) keeps building it. This is a skill
+                // axis independent of gems/powerups — it rewards getting
+                // better at the game, not just playing it longer.
+                val nextComboStreak = if (hitThisTick) 0 else if (rawError < 8) state.comboStreak + 1 else state.comboStreak
+                val nextPeakComboStreak = maxOf(state.peakComboStreak, nextComboStreak)
                 var tickScore = when {
                     rawError < 8 -> if (isWednesdayPower) 30 else 18
                     rawError < 18 -> if (isWednesdayPower) 15 else 10
@@ -1233,6 +1245,9 @@ fun startRacingSimulation(ghost: GhostChallengeEntity, specialWorldId: Int? = nu
                 var multi = 1.0f
                 if (isFridayGolden) multi *= 3.0f
                 multi += (prof.transcendenceCount * 0.05f)
+                // Combo bonus: +0.5% per streak tick, capped at +100% (streak
+                // 200, roughly 24 seconds of sustained precision at 120ms/tick).
+                multi *= (1f + (nextComboStreak.coerceAtMost(200) * 0.005f))
                 if (nextDurationsMap.containsKey("PU6")) {
                     multi *= 5.0f
                 } else if (nextDurationsMap.containsKey("PU5")) {
@@ -1265,6 +1280,8 @@ fun startRacingSimulation(ghost: GhostChallengeEntity, specialWorldId: Int? = nu
                     tickIndex = tick,
                     ghostYPos = processedGhostY,
                     score = nextScore,
+                    comboStreak = nextComboStreak,
+                    peakComboStreak = nextPeakComboStreak,
                     currentZoneName = activeDna.name,
                     speedKmh = (speedInPx * 40).toInt(),
                     distanceMeters = nextDistance,
@@ -1353,11 +1370,13 @@ fun startRacingSimulation(ghost: GhostChallengeEntity, specialWorldId: Int? = nu
                 val newTotalRuns = prof.totalRuns + 1
                 val newAverageScore = ((prof.averageScore * prof.totalRuns) + finalState.score) / newTotalRuns
                 val bestZoneLifetime = maxOf(prof.bestZoneReached, finalState.currentZoneNumber)
+                val bestComboLifetime = maxOf(prof.bestComboStreak, finalState.peakComboStreak)
                 val updated = prof.copy(
                     bestScore = if (isNewPB) finalState.score else prof.bestScore,
                     totalRuns = newTotalRuns,
                     averageScore = newAverageScore,
-                    bestZoneReached = bestZoneLifetime
+                    bestZoneReached = bestZoneLifetime,
+                    bestComboStreak = bestComboLifetime
                 )
                 adsRemovedResult = updated.adsRemoved
                 MissionManager.recordRunResult(
@@ -1578,6 +1597,7 @@ fun startRacingSimulation(ghost: GhostChallengeEntity, specialWorldId: Int? = nu
                 val hasInvincibility = nextDurationsMap.containsKey("PU7") || nextDurationsMap.containsKey("PU12")
                 val hasGhostMode = nextDurationsMap.containsKey("PU4") || activeDna.mechanicIds.contains(3)
                 var hasShield = nextDurationsMap.containsKey("PU1")
+                var hitThisTick = false
                 for (elem in updatedElements) {
                     if (!isBlinkHazardVisible(elem, tick)) continue
                     val isAligned = elem.xOffsetFraction >= 0.16f && elem.xOffsetFraction <= 0.26f
@@ -1665,6 +1685,7 @@ fun startRacingSimulation(ghost: GhostChallengeEntity, specialWorldId: Int? = nu
                                         soundEngine.playCollision()
                                         fuelLevelState = (fuelLevelState - 20).coerceAtLeast(0)
                                         updatedMsg = if (isUnstoppableHazard) "BLINK STRIKE HIT: NO SHIELD CAN STOP IT" else "IMPACT IMPACT!"
+                                        hitThisTick = true
                                         repeat(10) { i ->
                                             activeParticles.add(
                                                 Particle(
@@ -1695,6 +1716,8 @@ fun startRacingSimulation(ghost: GhostChallengeEntity, specialWorldId: Int? = nu
                 val targetGhostY = state.ghostYPath.getOrNull(tick % state.ghostYPath.size.coerceAtLeast(1)) ?: 50
                 val processedGhostY = if (activeDna.mechanicIds.contains(2)) 100 - targetGhostY else targetGhostY
                 val rawError = Math.abs(userY - processedGhostY)
+                val nextComboStreak = if (hitThisTick) 0 else if (rawError < 8) state.comboStreak + 1 else state.comboStreak
+                val nextPeakComboStreak = maxOf(state.peakComboStreak, nextComboStreak)
                 var tickScore = when {
                     rawError < 8 -> if (isWednesdayPower) 30 else 18
                     rawError < 18 -> if (isWednesdayPower) 15 else 10
@@ -1703,6 +1726,7 @@ fun startRacingSimulation(ghost: GhostChallengeEntity, specialWorldId: Int? = nu
                 var multi = 1.0f
                 if (isFridayGolden) multi *= 3.0f
                 multi += (prof.transcendenceCount * 0.05f)
+                multi *= (1f + (nextComboStreak.coerceAtMost(200) * 0.005f))
                 if (nextDurationsMap.containsKey("PU6")) {
                     multi *= 5.0f
                 } else if (nextDurationsMap.containsKey("PU5")) {
@@ -1736,6 +1760,8 @@ fun startRacingSimulation(ghost: GhostChallengeEntity, specialWorldId: Int? = nu
                     tickIndex = tick,
                     ghostYPos = processedGhostY,
                     score = nextScore,
+                    comboStreak = nextComboStreak,
+                    peakComboStreak = nextPeakComboStreak,
                     currentZoneName = activeDna.name,
                     speedKmh = (speedInPx * 40).toInt(),
                     distanceMeters = nextDistance,
