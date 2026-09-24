@@ -9,7 +9,6 @@ import com.revenuecat.purchases.PurchaseParams
 import com.revenuecat.purchases.Purchases
 import com.revenuecat.purchases.PurchasesConfiguration
 import com.revenuecat.purchases.getOfferingsWith
-import com.revenuecat.purchases.purchaseWith
 
 object RevenueCatManager {
     private const val TAG = "RevenueCatManager"
@@ -55,7 +54,6 @@ object RevenueCatManager {
         onSuccess: (CustomerInfo) -> Unit,
         onError: (String) -> Unit
     ) {
-        // Find matching package by Package Identifier or Product ID
         val pkgToPurchase = currentOfferingPackages.find { 
             it.identifier == packageIdentifier || 
             it.product.id == packageIdentifier ||
@@ -65,7 +63,6 @@ object RevenueCatManager {
         if (pkgToPurchase != null) {
             executePurchaseCall(activity, pkgToPurchase, onSuccess, onError)
         } else {
-            // Refresh offerings if list was empty on app start
             fetchOfferings { success ->
                 if (success) {
                     val retryPkg = currentOfferingPackages.find { 
@@ -76,7 +73,7 @@ object RevenueCatManager {
                     if (retryPkg != null) {
                         executePurchaseCall(activity, retryPkg, onSuccess, onError)
                     } else {
-                        onError("Package identifier '$packageIdentifier' not found in RevenueCat current offering.")
+                        onError("Package identifier '$packageIdentifier' not found in RevenueCat offerings.")
                     }
                 } else {
                     onError("Unable to load store billing info. Check connection.")
