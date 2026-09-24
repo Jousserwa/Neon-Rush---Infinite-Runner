@@ -1,15 +1,15 @@
 package com.neonrush.game
 
 data class LeaderboardPilot(
-    val id: String = "",
+    val id: Int = 0,
     val name: String = "Unknown Pilot",
-    val score: String = "0",
-    val bestScore: String = "0",
+    val score: Long = 0L,
+    val bestScore: Long = 0L,
     val activeZone: String = "",
     val activeSkinId: String = "default_skin",
     val isFollowed: Boolean = false,
     val isBot: Boolean = false,
-    val rank: Long = 0L,
+    val rank: Int = 0,
     val challengeId: String? = null
 )
 
