@@ -70,7 +70,10 @@ object ZoneGenerator {
     Triple("SIGNAL FRACTURE", "🧬", "#E000FF"),
     Triple("FROZEN VEIL", "🧊", "#7FDBFF"),
     Triple("APEX SIGNAL", "🗼", "#FFD700"),
-    Triple("TRANSCENDENT", "✨", "#FFFFFF")
+    Triple("TRANSCENDENT", "✨", "#FFFFFF"),
+    Triple("GHOST PROTOCOL", "👻", "#00FFC8"),
+    Triple("DEEP ARCHIVE", "💾", "#33FF33"),
+    Triple("LAST TRANSMISSION", "📡", "#FFF8E7")
 )
     fun calculateSpeed(zone: Int): Float {
         // Grace period trimmed to just zone 1, so the ramp (and tension) kicks
@@ -88,16 +91,18 @@ object ZoneGenerator {
 
     fun selectEnvironment(zone: Int): Int {
         val world = Worlds.worldForZone(zone)
-        return if (zone <= world.endZone && world.environmentIds.isNotEmpty()) {
-            // Inside a designed world's actual zone range: use its curated
-            // environment list, same as before.
+        return if (zone in world.startZone..world.endZone && world.environmentIds.isNotEmpty()) {
+            // Genuinely inside a designed world/phase's own zone range: use
+            // its curated environment list, same as before. Full range
+            // membership (not just zone <= endZone) matters now that ALL has
+            // many non-contiguous phase bands (zones 1-40, 100-179, 300-459,
+            // 700-939) with gaps between them — a looser check would
+            // wrongly match a "gap" zone against whichever phase the
+            // worldForZone fallback happens to return.
             world.environmentIds[zone % world.environmentIds.size]
         } else {
-            // True endless territory (worldForZone falls back to World 5 for
-            // any zone past 40, which only has 3 environments — that was
-            // silently capping variety at zone 41, then a hardcoded override
-            // froze on a single environment forever past zone 100, which was
-            // worse). Cycle through every environment instead, forever.
+            // True endless/gap territory: cycle through every environment
+            // instead of freezing on or narrowly looping one world's set.
             ((zone * 41 + 7) % ENVIRONMENTS.size)
         }
     }
