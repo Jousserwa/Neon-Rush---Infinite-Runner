@@ -33,6 +33,9 @@ data class GameProfile(
     // ids), used to gate New Game+ worlds behind real completion rather than
     // just a Pro purchase.
     val completedWorldsCsv: String = "",
+    // Lifetime best combo streak achieved — a skill-progression stat
+    // independent of gems/score, the "mastery" track.
+    val bestComboStreak: Int = 0,
     val currentStreak: Int = 0,
     val lastStreakLoginDate: String = "",
     val totalRuns: Int = 0,
@@ -94,6 +97,7 @@ class GameDao(context: Context) {
             val activePilotSkinIdx = cursor.getColumnIndex("activePilotSkinId")
             val unlockedPilotSkinsIdx = cursor.getColumnIndex("unlockedPilotSkinsCsv")
             val completedWorldsIdx = cursor.getColumnIndex("completedWorldsCsv")
+            val bestComboStreakIdx = cursor.getColumnIndex("bestComboStreak")
             val currentStreakIdx = cursor.getColumnIndex("currentStreak")
             val lastStreakLoginIdx = cursor.getColumnIndex("lastStreakLoginDate")
             val totalRunsIdx = cursor.getColumnIndex("totalRuns")
@@ -135,6 +139,7 @@ class GameDao(context: Context) {
                 activePilotSkinId = if (activePilotSkinIdx != -1) cursor.getString(activePilotSkinIdx) else "default",
                 unlockedPilotSkinsCsv = if (unlockedPilotSkinsIdx != -1) cursor.getString(unlockedPilotSkinsIdx) else "default",
                 completedWorldsCsv = if (completedWorldsIdx != -1) cursor.getString(completedWorldsIdx) else "",
+                bestComboStreak = if (bestComboStreakIdx != -1) cursor.getInt(bestComboStreakIdx) else 0,
                 currentStreak = if (currentStreakIdx != -1) cursor.getInt(currentStreakIdx) else 0,
                 lastStreakLoginDate = if (lastStreakLoginIdx != -1) cursor.getString(lastStreakLoginIdx) else "",
                 totalRuns = if (totalRunsIdx != -1) cursor.getInt(totalRunsIdx) else 0,
@@ -208,6 +213,7 @@ class GameDao(context: Context) {
             put("activePilotSkinId", profile.activePilotSkinId)
             put("unlockedPilotSkinsCsv", profile.unlockedPilotSkinsCsv)
             put("completedWorldsCsv", profile.completedWorldsCsv)
+            put("bestComboStreak", profile.bestComboStreak)
             put("currentStreak", profile.currentStreak)
             put("lastStreakLoginDate", profile.lastStreakLoginDate)
             put("totalRuns", profile.totalRuns)
@@ -277,7 +283,7 @@ class GameDao(context: Context) {
     }
 }
 
-class GameDbHelper(context: Context) : SQLiteOpenHelper(context, "neon_rush_companion.db", null, 14) {
+class GameDbHelper(context: Context) : SQLiteOpenHelper(context, "neon_rush_companion.db", null, 15) {
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL("""
             CREATE TABLE game_profile (
@@ -320,7 +326,8 @@ class GameDbHelper(context: Context) : SQLiteOpenHelper(context, "neon_rush_comp
                 checkpointsReachedCsv TEXT,
                checkpointsActivatedCsv TEXT,
                 fuelTiersOwned INTEGER,
-                completedWorldsCsv TEXT
+                completedWorldsCsv TEXT,
+                bestComboStreak INTEGER
             )
         """) 
         db.execSQL("""
@@ -390,6 +397,9 @@ class GameDbHelper(context: Context) : SQLiteOpenHelper(context, "neon_rush_comp
     }
     if (oldVersion < 14) {
         db.execSQL("ALTER TABLE game_profile ADD COLUMN completedWorldsCsv TEXT DEFAULT ''")
+    }
+    if (oldVersion < 15) {
+        db.execSQL("ALTER TABLE game_profile ADD COLUMN bestComboStreak INTEGER DEFAULT 0")
     }
 }
 }
