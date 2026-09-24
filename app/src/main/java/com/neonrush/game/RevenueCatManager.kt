@@ -8,7 +8,10 @@ import com.revenuecat.purchases.Package
 import com.revenuecat.purchases.PurchaseParams
 import com.revenuecat.purchases.Purchases
 import com.revenuecat.purchases.PurchasesConfiguration
+import com.revenuecat.purchases.PurchasesError
 import com.revenuecat.purchases.getOfferingsWith
+import com.revenuecat.purchases.interfaces.PurchaseCallback
+import com.revenuecat.purchases.models.StoreTransaction
 
 object RevenueCatManager {
     private const val TAG = "RevenueCatManager"
@@ -92,15 +95,18 @@ object RevenueCatManager {
         
         Purchases.sharedInstance.purchase(
             params,
-            onError = { error, userCancelled ->
-                if (!userCancelled) {
-                    Log.e(TAG, "Purchase Error: ${error.message}")
-                    onError(error.message)
+            object : PurchaseCallback {
+                override fun COMPLETED(storeTransaction: StoreTransaction, customerInfo: CustomerInfo) {
+                    Log.d(TAG, "Purchase completed successfully")
+                    onSuccess(customerInfo)
                 }
-            },
-            onSuccess = { _, customerInfo ->
-                Log.d(TAG, "Purchase completed successfully")
-                onSuccess(customerInfo)
+
+                override fun onError(error: PurchasesError, userCancelled: Boolean) {
+                    if (!userCancelled) {
+                        Log.e(TAG, "Purchase Error: ${error.message}")
+                        onError(error.message)
+                    }
+                }
             }
         )
     }
