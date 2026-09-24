@@ -215,16 +215,40 @@ private fun ParallaxWorldBackground(worldId: Int, distanceMeters: Float, fallbac
                         dstSize = IntSize(displayWidth.roundToInt(), ch.roundToInt())
                     )
                 } else {
-                    // One-directional pan only, matching travel direction —
-                    // clamp and hold at the edge once reached instead of
-                    // reversing. A ping-pong reverse looked like the pilot
-                    // was running backward whenever a layer bounced back.
-                    val pan = scrollPx.coerceIn(0f, panRange)
-                    drawImage(
-                        image = bmp,
-                        dstOffset = IntOffset((-pan).roundToInt(), 0),
-                        dstSize = IntSize(displayWidth.roundToInt(), ch.roundToInt())
-                    )
+                    // One-directional pan, matching travel direction. Since
+                    // this art can't tile edge-to-edge, a hard loop or a
+                    // permanent freeze once panRange is exhausted are both
+                    // bad — freezing is what was happening here before (the
+                    // fast foreground layer ran out of its ~1600px of pan
+                    // room within the first ~600m of a run that can span
+                    // tens of thousands of meters, so it sat frozen almost
+                    // the entire time). Instead, loop continuously and
+                    // cross-dissolve through a short window at the wrap
+                    // point so motion never stops, without a visible seam.
+                    val wrapWindow = (panRange * 0.15f).coerceIn(40f, 220f)
+                    val cycle = panRange + wrapWindow
+                    val cyclePos = scrollPx % cycle
+                    if (cyclePos <= panRange) {
+                        drawImage(
+                            image = bmp,
+                            dstOffset = IntOffset((-cyclePos).roundToInt(), 0),
+                            dstSize = IntSize(displayWidth.roundToInt(), ch.roundToInt())
+                        )
+                    } else {
+                        val progress = (cyclePos - panRange) / wrapWindow
+                        drawImage(
+                            image = bmp,
+                            dstOffset = IntOffset((-panRange).roundToInt(), 0),
+                            dstSize = IntSize(displayWidth.roundToInt(), ch.roundToInt()),
+                            alpha = 1f - progress
+                        )
+                        drawImage(
+                            image = bmp,
+                            dstOffset = IntOffset(0, 0),
+                            dstSize = IntSize(displayWidth.roundToInt(), ch.roundToInt()),
+                            alpha = progress
+                        )
+                    }
                 }
             }
         }
@@ -2878,6 +2902,21 @@ val bossImagesByWorld = mapOf(
                                                     center = Offset(x, y)
                                                 )
                                             }
+                                        }
+                                        "DRONE" -> {
+                                            // Hovering drone: a slightly faster,
+                                            // more erratic bob than STANDARD's
+                                            // gentle drift, since it's meant to
+                                            // read as a small tracking machine
+                                            // rather than a static obstacle.
+                                            val bob = sin(simState.tickIndex * 0.35f) * ch * 0.02f
+                                            val baseSize = ch * 0.15f
+                                            val w = baseSize * (droneImg.width.toFloat() / droneImg.height.toFloat())
+                                            drawImage(
+                                                image = droneImg,
+                                                dstOffset = IntOffset((x - w / 2f).roundToInt(), (y - baseSize / 2f + bob).roundToInt()),
+                                                dstSize = IntSize(w.roundToInt(), baseSize.roundToInt())
+                                            )
                                         }
                                         else -> {
                                             val bob = sin(simState.tickIndex * 0.2f) * ch * 0.015f
