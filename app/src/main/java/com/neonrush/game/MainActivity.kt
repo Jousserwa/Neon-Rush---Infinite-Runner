@@ -42,12 +42,14 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         // Start the real-time audio engine and haptics service.
-        // Without this call, sound/vibration silently do nothing.
         NeonSoundEngine.init(applicationContext)
         NeonSoundEngine.setHomeActive(false)
         AnalyticsManager.initialize(applicationContext)
         FirebaseLeaderboardManager.initialize(applicationContext)
         AdMobManager.initialize(applicationContext)
+        
+        // Initialize RevenueCat SDK on startup
+        RevenueCatManager.initialize(applicationContext)
 
         val defaultHandler = Thread.getDefaultUncaughtExceptionHandler()
         Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->
