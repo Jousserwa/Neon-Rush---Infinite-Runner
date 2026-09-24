@@ -4,13 +4,11 @@ import android.app.Activity
 import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.neonrush.game.db.GameDao
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 
 data class GameUiState(
     val gems: Int = 0,
@@ -31,31 +29,6 @@ class NeonRushViewModel(
 
     private val _uiState = MutableStateFlow(GameUiState())
     val uiState: StateFlow<GameUiState> = _uiState.asStateFlow()
-
-    init {
-        loadUserData()
-    }
-
-    private fun loadUserData() {
-        viewModelScope.launch {
-            try {
-                // Fetch cached state or load initial values from Database / DataStore
-                val initialGems = gameDao.getGemsCount() ?: 0
-                val adsRemoved = gameDao.areAdsRemoved() ?: false
-                val savedSkins = gameDao.getUnlockedSkins() ?: setOf("default_skin")
-
-                _uiState.update { currentState ->
-                    currentState.copy(
-                        gems = initialGems,
-                        isAdsDisabled = adsRemoved,
-                        unlockedSkins = savedSkins
-                    )
-                }
-            } catch (e: Exception) {
-                Log.e(TAG, "Error loading user data: ${e.message}")
-            }
-        }
-    }
 
     // --- REVENUECAT IN-APP PURCHASE HANDLERS ---
 
@@ -112,33 +85,22 @@ class NeonRushViewModel(
         )
     }
 
-    // --- STATE MUTATION & PERSISTENCE ---
+    // --- STATE MUTATIONS ---
 
     fun addGems(amount: Int) {
-        viewModelScope.launch {
-            val updatedGems = _uiState.value.gems + amount
-            _uiState.update { it.copy(gems = updatedGems) }
-            gameDao.saveGemsCount(updatedGems)
-        }
+        _uiState.update { it.copy(gems = it.gems + amount) }
     }
 
     fun setAdsDisabled(disabled: Boolean) {
-        viewModelScope.launch {
-            _uiState.update { it.copy(isAdsDisabled = disabled) }
-            gameDao.saveAdsRemoved(disabled)
-        }
+        _uiState.update { it.copy(isAdsDisabled = disabled) }
     }
 
     fun unlockSkin(skinId: String) {
-        viewModelScope.launch {
-            val updatedSkins = _uiState.value.unlockedSkins + skinId
-            _uiState.update { 
-                it.copy(
-                    unlockedSkins = updatedSkins,
-                    activeSkin = skinId 
-                ) 
-            }
-            gameDao.saveUnlockedSkins(updatedSkins)
+        _uiState.update { 
+            it.copy(
+                unlockedSkins = it.unlockedSkins + skinId,
+                activeSkin = skinId 
+            ) 
         }
     }
 }
