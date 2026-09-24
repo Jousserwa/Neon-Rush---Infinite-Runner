@@ -18,25 +18,22 @@ import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 object AdMobManager {
     private const val TAG = "AdMobManager"
     
-    // YOUR REAL ADMOB APP ID
+    // REAL ADMOB APP ID
     const val APP_ID = "ca-app-pub-3841327492203214~9145496921"
     
-    // YOUR REAL AD UNIT IDs
+    // REAL AD UNIT IDs
     const val BANNER_AD_UNIT_ID = "ca-app-pub-3841327492203214/6533049489"
     const val INTERSTITIAL_AD_UNIT_ID = "ca-app-pub-3841327492203214/3907006287"
-    const val REWARDED_AD_UNIT_ID = "ca-app-pub-3841327492203214/4182218315"
-    
-    // TEST IDs (use these for testing, switch to real IDs for production)
-    // const val BANNER_AD_UNIT_ID = "ca-app-pub-3940256099942544/6300978111"
-    // const val INTERSTITIAL_AD_UNIT_ID = "ca-app-pub-3940256099942544/1033173712"
-    // const val REWARDED_AD_UNIT_ID = "ca-app-pub-3940256099942544/5224354917"
+    const val REWARDED_REVIVE_AD_UNIT_ID = "ca-app-pub-3841327492203214/4182218315"
+    const val REWARDED_DOUBLE_GEMS_AD_UNIT_ID = "ca-app-pub-3841327492203214/8797213140"
 
     private var interstitialAd: InterstitialAd? = null
-    private var rewardedAd: RewardedAd? = null
+    private var rewardedReviveAd: RewardedAd? = null
+    private var rewardedDoubleGemsAd: RewardedAd? = null
     
     private var gameOverCount = 0
-    private const val INTERSTITIAL_INTERVAL = 3 // Show interstitial every 3 game overs
-    private const val PAYWALL_THRESHOLD = 5 // Show paywall after 5 ad views
+    private const val INTERSTITIAL_INTERVAL = 3 
+    private const val PAYWALL_THRESHOLD = 5 
 
     fun initialize(context: Context) {
         try {
@@ -44,7 +41,8 @@ object AdMobManager {
                 Log.d(TAG, "AdMob initialized: $initializationStatus")
             }
             loadInterstitial(context)
-            loadRewarded(context)
+            loadRewardedRevive(context)
+            loadRewardedDoubleGems(context)
         } catch (e: Exception) {
             Log.e(TAG, "AdMob initialization failed: ${e.message}")
         }
@@ -65,17 +63,32 @@ object AdMobManager {
             })
     }
 
-    private fun loadRewarded(context: Context) {
+    private fun loadRewardedRevive(context: Context) {
         val adRequest = AdRequest.Builder().build()
-        RewardedAd.load(context, REWARDED_AD_UNIT_ID, adRequest,
+        RewardedAd.load(context, REWARDED_REVIVE_AD_UNIT_ID, adRequest,
             object : RewardedAdLoadCallback() {
                 override fun onAdLoaded(ad: RewardedAd) {
-                    rewardedAd = ad
-                    Log.d(TAG, "Rewarded ad loaded")
+                    rewardedReviveAd = ad
+                    Log.d(TAG, "Rewarded Revive ad loaded")
                 }
                 override fun onAdFailedToLoad(error: LoadAdError) {
-                    rewardedAd = null
-                    Log.e(TAG, "Rewarded failed to load: ${error.message}")
+                    rewardedReviveAd = null
+                    Log.e(TAG, "Rewarded Revive failed to load: ${error.message}")
+                }
+            })
+    }
+
+    private fun loadRewardedDoubleGems(context: Context) {
+        val adRequest = AdRequest.Builder().build()
+        RewardedAd.load(context, REWARDED_DOUBLE_GEMS_AD_UNIT_ID, adRequest,
+            object : RewardedAdLoadCallback() {
+                override fun onAdLoaded(ad: RewardedAd) {
+                    rewardedDoubleGemsAd = ad
+                    Log.d(TAG, "Rewarded Double Gems ad loaded")
+                }
+                override fun onAdFailedToLoad(error: LoadAdError) {
+                    rewardedDoubleGemsAd = null
+                    Log.e(TAG, "Rewarded Double Gems failed to load: ${error.message}")
                 }
             })
     }
@@ -102,9 +115,6 @@ object AdMobManager {
                     loadInterstitial(activity)
                     onComplete()
                 }
-                override fun onAdShowedFullScreenContent() {
-                    // Ad is showing
-                }
             }
             ad.show(activity)
         } else {
@@ -113,28 +123,51 @@ object AdMobManager {
         }
     }
 
-    fun showRewardedIfReady(activity: Activity, onRewarded: () -> Unit) {
-        val ad = rewardedAd
+    // Call this method for Revive Button
+    fun showRewardedReviveIfReady(activity: Activity, onRewarded: () -> Unit) {
+        val ad = rewardedReviveAd
         if (ad != null) {
             ad.fullScreenContentCallback = object : FullScreenContentCallback() {
                 override fun onAdDismissedFullScreenContent() {
-                    rewardedAd = null
-                    loadRewarded(activity)
+                    rewardedReviveAd = null
+                    loadRewardedRevive(activity)
                 }
                 override fun onAdFailedToShowFullScreenContent(error: AdError) {
-                    rewardedAd = null
-                    loadRewarded(activity)
+                    rewardedReviveAd = null
+                    loadRewardedRevive(activity)
                 }
             }
             ad.show(activity) { rewardItem ->
-                Log.d(TAG, "User earned reward: ${rewardItem.amount} ${rewardItem.type}")
-                AnalyticsManager.logAdViewed("rewarded")
+                AnalyticsManager.logAdViewed("rewarded_revive")
                 onRewarded()
             }
         } else {
-            // No ad available, still give reward for good UX
             onRewarded()
-            loadRewarded(activity)
+            loadRewardedRevive(activity)
+        }
+    }
+
+    // Call this method for Double Gems Button
+    fun showRewardedDoubleGemsIfReady(activity: Activity, onRewarded: () -> Unit) {
+        val ad = rewardedDoubleGemsAd
+        if (ad != null) {
+            ad.fullScreenContentCallback = object : FullScreenContentCallback() {
+                override fun onAdDismissedFullScreenContent() {
+                    rewardedDoubleGemsAd = null
+                    loadRewardedDoubleGems(activity)
+                }
+                override fun onAdFailedToShowFullScreenContent(error: AdError) {
+                    rewardedDoubleGemsAd = null
+                    loadRewardedDoubleGems(activity)
+                }
+            }
+            ad.show(activity) { rewardItem ->
+                AnalyticsManager.logAdViewed("rewarded_double_gems")
+                onRewarded()
+            }
+        } else {
+            onRewarded()
+            loadRewardedDoubleGems(activity)
         }
     }
 
