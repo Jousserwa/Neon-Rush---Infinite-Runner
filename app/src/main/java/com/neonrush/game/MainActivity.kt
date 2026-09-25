@@ -49,9 +49,13 @@ class MainActivity : ComponentActivity() {
             try {
                 val sw = StringWriter()
                 throwable.printStackTrace(PrintWriter(sw))
+                // commit() (synchronous), not apply() (async) — the process
+                // may be killed within milliseconds of this handler running,
+                // and an async write can lose the crash text if it hasn't
+                // flushed to disk yet.
                 getSharedPreferences(prefsName, Context.MODE_PRIVATE).edit()
                     .putString(crashKey, sw.toString())
-                    .apply()
+                    .commit()
             } catch (e: Exception) {
                 // Ignore fallback exceptions
             }
