@@ -60,7 +60,11 @@ object RevenueCatManager {
             fetchOfferings()
             refreshProStatus()
             Log.d(TAG, "RevenueCat initialized successfully")
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
+            // Catches Throwable, not just Exception: a version mismatch or bad
+            // SDK state can throw an Error subtype (e.g. NoSuchMethodError),
+            // and we never want a billing hiccup to take down the whole app
+            // on launch.
             Log.e(TAG, "RevenueCat initialization failed: ${e.message}")
         }
     }
