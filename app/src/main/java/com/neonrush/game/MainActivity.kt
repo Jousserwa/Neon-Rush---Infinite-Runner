@@ -41,16 +41,9 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Start real-time audio, analytics, ads, and billing services
-        NeonSoundEngine.init(applicationContext)
-        NeonSoundEngine.setHomeActive(false)
-        AnalyticsManager.initialize(applicationContext)
-        FirebaseLeaderboardManager.initialize(applicationContext)
-        AdMobManager.initialize(applicationContext)
-        
-        // Initialize RevenueCat SDK
-        RevenueCatManager.initialize(applicationContext)
-
+        // Install the crash catcher FIRST, before anything else runs. If any
+        // of the initialize() calls below throw, we still want the next
+        // launch to show the saved crash log instead of just dying silently.
         val defaultHandler = Thread.getDefaultUncaughtExceptionHandler()
         Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->
             try {
@@ -64,6 +57,16 @@ class MainActivity : ComponentActivity() {
             }
             defaultHandler?.uncaughtException(thread, throwable)
         }
+
+        // Start real-time audio, analytics, ads, and billing services
+        NeonSoundEngine.init(applicationContext)
+        NeonSoundEngine.setHomeActive(false)
+        AnalyticsManager.initialize(applicationContext)
+        FirebaseLeaderboardManager.initialize(applicationContext)
+        AdMobManager.initialize(applicationContext)
+        
+        // Initialize RevenueCat SDK
+        RevenueCatManager.initialize(applicationContext)
 
         val lastCrash = getSharedPreferences(prefsName, Context.MODE_PRIVATE)
             .getString(crashKey, null)
