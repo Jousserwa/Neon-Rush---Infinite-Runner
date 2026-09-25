@@ -48,6 +48,10 @@ class MainActivity : ComponentActivity() {
         AnalyticsManager.initialize(applicationContext)
         FirebaseLeaderboardManager.initialize(applicationContext)
         AdMobManager.initialize(applicationContext)
+        // Without this call, Purchases.sharedInstance is never configured,
+        // so every purchase (gems, skins, subscriptions, fuel tank, remove
+        // ads) silently fails.
+        RevenueCatManager.initialize(applicationContext)
 
         val defaultHandler = Thread.getDefaultUncaughtExceptionHandler()
         Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->
