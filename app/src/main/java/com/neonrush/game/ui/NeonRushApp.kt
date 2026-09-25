@@ -3597,17 +3597,32 @@ fun PaywallDialog(onDismiss: () -> Unit, reason: String) {
             }
         },
         confirmButton = {
-            Button(
-                onClick = {
-                    activity?.let {
-                        RevenueCatManager.purchaseProSubscription(it) { success ->
-                            if (success) onDismiss()
+            Column(horizontalAlignment = Alignment.End) {
+                Button(
+                    onClick = {
+                        activity?.let {
+                            RevenueCatManager.purchaseProSubscription(it) { success ->
+                                if (success) onDismiss()
+                            }
                         }
-                    }
-                },
-                colors = ButtonDefaults.buttonColors(containerColor = CyberPrimary)
-            ) {
-                Text("SUBSCRIBE", color = CyberBackground, fontFamily = FontFamily.Monospace)
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = CyberPrimary)
+                ) {
+                    Text("SUBSCRIBE MONTHLY", color = CyberBackground, fontFamily = FontFamily.Monospace)
+                }
+                Spacer(modifier = Modifier.height(8.dp))
+                Button(
+                    onClick = {
+                        activity?.let {
+                            RevenueCatManager.purchaseProSubscriptionAnnual(it) { success ->
+                                if (success) onDismiss()
+                            }
+                        }
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = CyberSecondary)
+                ) {
+                    Text("SUBSCRIBE ANNUAL", color = CyberBackground, fontFamily = FontFamily.Monospace)
+                }
             }
         },
         dismissButton = {
