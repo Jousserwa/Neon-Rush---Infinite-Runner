@@ -3623,11 +3623,10 @@ fun PaywallDialog(onDismiss: () -> Unit, reason: String) {
                 ) {
                     Text("SUBSCRIBE ANNUAL", color = CyberBackground, fontFamily = FontFamily.Monospace)
                 }
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text("MAYBE LATER", color = CyberOnSurface, fontFamily = FontFamily.Monospace)
+                Spacer(modifier = Modifier.height(8.dp))
+                TextButton(onClick = onDismiss) {
+                    Text("MAYBE LATER", color = CyberOnSurface, fontFamily = FontFamily.Monospace)
+                }
             }
         },
         containerColor = CyberSurface,
