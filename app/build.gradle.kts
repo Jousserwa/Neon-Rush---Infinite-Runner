@@ -135,8 +135,3 @@ dependencies {
     androidTestImplementation(platform("androidx.compose:compose-bom:2024.02.00"))
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
 }
-
-// Disables the google-services task specifically for debug builds
-afterEvaluate {
-    tasks.findByName("processDebugGoogleServices")?.enabled = false
-}
